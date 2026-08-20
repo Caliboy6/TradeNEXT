@@ -1,38 +1,46 @@
-# TradeNEXT AI Capacity Market — Demo MVP
+# TradeNEXT Native AI Capacity Market — Demo MVP
 
-TradeNEXT 是面向 AI 推理容量的流动性、执行与市场数据层。这个可交互 Demo 将两类相关但不同的市场放进同一个产品框架：
+TradeNEXT 是面向 AI 容量的价格发现、RFQ、验证、分配、交割与结算基础设施。这个版本将产品重心从“统一 API / 智能路由”调整为真实市场已经验证的需求：**找到便宜、稳定、马上可用且来源清晰的原厂 AI Capacity**。
 
-- **Model Capacity**：Claude、GPT、Gemini、DeepSeek、Kimi、GLM 等模型的可执行推理容量。
-- **GPU Capacity**：H100、H200、B200、L40S 与其他 AI 加速器的标准卡时和预约容量。
+![TradeNEXT Native Capacity Market](docs/screenshots/overview.png)
 
-产品采用两条严格隔离的执行通道：
+## Phase 1 核心
 
-- **Lane A — Exchange-grade**：可即时购买、可预留、带 SLA、进入公开深度并具备核心指数资格。
-- **Private OTC / RFQ**：承接大额、长期和非标准需求，经 KYB、容量测试、私密报价、Broker 协调和合同结算完成交易；不进入公开库存或核心指数。
+- 首页是双边流量入口：买方可直接描述需求并发布 Native RFQ，供应方可验证容量并响应需求。
+- Model Capacity 默认采用 provenance-first 展示，价格之前先显示供应来源与买方实际获得内容。
+- RFQ 是首发成交机制：结构化需求 → KYB / 来源验证 → 容量测试 → 标准化报价 → 比较与分配 → 履约记录 → 结算。
+- Private OTC 是独立风险通道，不进入公开库存或 Native benchmark。
+- GPU Capacity 保留为第二市场，标准卡时与长期集群 RFQ 使用独立的履约逻辑。
 
-![TradeNEXT market overview](docs/screenshots/overview.png)
+### Supply provenance
 
-## Smart Orchestrator
+| 产品形态 | 买方实际获得 | TradeNEXT 角色 | 产品地位 |
+|---|---|---|---|
+| Native Direct | 原厂项目、账户或直接访问 | 来源验证、撮合、RFQ、结算 | 核心 |
+| Native Allocated | 企业协议下隔离的原厂配额 | 容量验证、分配与履约记录 | 核心 |
+| Enterprise Partner | 经验证合作方交付的企业配额 | 合作关系与交付条件验证 | 核心补充 |
+| Managed Gateway | TradeNEXT 托管 endpoint / key | 可选托管交付、计量与结算 | 可选 |
+| Hosted Inference | Provider endpoint | 开放或兼容模型的补充市场 | 补充 |
 
-Demo 内置任务级 AI 调度器。它不只是为整个请求挑一个模型，而是先把复杂任务拆成多个有依赖关系的子任务，再为每一步选择合适的执行目标：
+Native 不等于公开出售裸 Key。Demo 强调合同与授权证据、容量测试、交付边界、期限、速率、区域、SLA 和撤销条件；秘密凭证不会出现在商品页或报价中。
 
-`model + delivery route + region + verified capacity/SLA + disclosed compute`
+## 可选能力：Capacity Optimizer · Labs
 
-调度器支持：
+AI 智能调度作为 Phase 1 的锦上添花保留在 Product Labs。它在已经采购或接入的容量上：
 
-- Balanced、Lowest cost、Lowest latency 三种多目标策略。
-- 预算、关键路径时限、区域、质量门槛等硬约束。
-- 可编辑执行 DAG 与每一步的人工路线覆盖。
-- 预计质量、成本、p95 延迟、容量、执行硬件和选择原因。
-- Cerebras、H100、H200、B200、L40S 等已披露开放模型/自托管执行路线。
-- 闭源模型的 Provider-managed Capacity 路线。
-- 供应路线故障、自动回退、Plan vs Actual 与脱敏 Trace 回执。
+- 将复杂任务拆成带依赖关系的子任务；
+- 为每一步比较模型、交付路线、成本、质量、延迟和可用容量；
+- 对开放 / 自托管模型展示已披露的 H100、H200、B200、L40S 或 Cerebras 路线；
+- 对 Claude、GPT、Gemini 等闭源模型坚持显示 `Provider-managed / hardware undisclosed`，不虚构底层芯片；
+- 演示人工覆盖、故障切换、Plan vs Actual 和脱敏 Trace 回执。
 
-![TradeNEXT orchestrator receipt](docs/screenshots/orchestrator-receipt.png)
+该能力标记为 Optional Preview / Simulation，不是首页采购入口，也不会默认接管生产流量。
+
+![TradeNEXT Capacity Optimizer](docs/screenshots/orchestrator-receipt.png)
 
 ## 快速启动
 
-要求：Node.js 18 或更高版本，无需安装第三方依赖。
+要求 Node.js 18 或更高版本，不需要安装第三方依赖。
 
 ```bash
 npm start
@@ -46,37 +54,28 @@ npm start
 npm run check
 ```
 
-## 4 分钟演示路径
+## 推荐 Demo 路线
 
-1. 从市场总览解释 Model Capacity 是推理容量零售层，GPU Capacity 是上游算力批发层。
-2. 打开 Claude Sonnet，查看 Lane A Provider Depth、OEV、RPM/TPM、SLA 与 Instant Buy。
-3. 进入 Smart Orchestrator，使用“客服分析”任务生成 6 步执行计划。
-4. 对比三种策略，查看每一步的模型、供应路线、芯片、成本、延迟与 Why 解释。
-5. 运行 Simulation，观察一次自动故障切换与最终执行回执。
-6. 打开 Private RFQ，展示 Broker、容量测试和匿名私密报价流程。
-
-## 市场数据
-
-Demo 包含 TMCI、TGPI、AI Capacity Curve，以及与核心指数隔离的 OTC/RFQ 指标。
+1. 首页输入 Claude / GPT 原厂容量需求，说明首页已成为获客和需求捕获入口。
+2. 打开 Native Capacity，展示 Native Direct、Native Allocated、Enterprise Partner、Managed Gateway 与 Hosted Inference 的清晰区分。
+3. 查看 Supply Provenance Passport，解释买方拿到什么、TradeNEXT 验证什么，以及哪些交易有指数资格。
+4. 进入 Native RFQ Market，展示结构化需求、Demand Tape、标准化报价比较、分配和结算链路。
+5. 打开 Private OTC，强调大额非标准需求与公开 Native 市场严格隔离。
+6. 最后进入 Capacity Optimizer · Labs，作为可选技术能力演示任务拆解与“模型 + 芯片”调度。
 
 ## 数据与合规边界
 
 本仓库是产品 Demo，不是生产交易系统。
 
-- 所有行情、供应商、库存、SLA、指数、运行结果和节省比例均为 **synthetic / illustrative demo data**。
-- 不包含、不接收也不公开交易任何裸 API Key。
-- 买方看到的是通过 TradeNEXT Gateway 交付的受控容量，而不是上游凭证。
-- Claude、GPT、Gemini 等闭源模型未披露底层硬件时，一律显示为 `Provider-managed / hardware undisclosed`。
-- 只有开放模型、自托管路线或供应方可验证披露的路线才显示具体芯片。
-- AI 自动调度只消费符合条件的 Lane A 容量；Private RFQ 供给必须完成验证、测试和签约后才能成为受控分配容量。
-- 核心指数只使用符合资格的 Lane A 数据；OTC 数据单独统计，永不混池。
+- 所有行情、供应商、库存、SLA、RFQ、报价、指数和执行结果均为 **synthetic / illustrative demo data**。
+- 不包含、不接收、不展示也不交易任何真实 API Key、账户凭证或秘密材料。
+- `TradeNEXT Verified` 仅表示示例中的证据审查与容量测试状态，不代表原模型厂商背书。
+- Native、Managed Gateway 与 Hosted Inference 不混标；Private OTC 不进入公开库存或 Native benchmark。
+- 闭源模型未披露底层硬件时统一显示 `Provider-managed / hardware undisclosed`。
+- 真实上线需要完成供应权利、法律结构、支付托管、KYB、数据保护和各厂商政策审核。
 
-## 验收
+## 当前范围
 
-发布版已通过浏览器端闭环测试：市场导航、六个模型详情、GPU 字段、任务拆解、6/6 人工改路、故障切换、执行回执、RFQ 数据隔离、移动端布局，以及无页面脚本/控制台错误。
+该 Demo 包含：流量首页、Native Model Capacity、Supply Provenance Passport、Native RFQ、匿名 Demand Tape、报价比较、Private OTC、GPU Capacity、Market Data，以及可选的 Capacity Optimizer。
 
-完整验收结果见 [`docs/qa-report.json`](docs/qa-report.json)。
-
-## 当前状态
-
-这是用于产品演示、用户访谈和合作方沟通的前端 MVP。真实供应接入、身份与权限、资金托管、生产计量、账单结算、合规审查和实时市场数据均属于后续生产化范围。
+浏览器验收结果见 [`docs/qa-report.json`](docs/qa-report.json)。

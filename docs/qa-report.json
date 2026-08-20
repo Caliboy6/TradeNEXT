@@ -1,158 +1,134 @@
 {
-  "startedAt": "2026-08-20T14:45:49.368Z",
+  "generatedAt": "2026-08-20T15:55:02.946Z",
+  "baseURL": "http://127.0.0.1:4173/",
+  "viewportCoverage": [
+    "1440x1050",
+    "390x844"
+  ],
+  "passed": 24,
+  "failed": 0,
   "checks": [
     {
-      "name": "首页 HTTP 200",
+      "name": "Homepage positions Native Capacity first",
       "passed": true,
-      "detail": "HTTP 200"
+      "detail": "TN\nTradeNEXT\nNative AI Capacity Market\n⌂\n找容量\nSTART\nM\nNative Capacity\nCORE\nR\n发布 RFQ\nPHASE 1\nG\nGPU Capacity\nP2\n↗\nMarket Data\nOPTIONAL CAPABILITIES\n⇄\nManaged Gateway\nOPTIONAL\n✦\nCapaci"
     },
     {
-      "name": "首屏定位 AI Capacity Market",
-      "passed": true,
-      "detail": ""
-    },
-    {
-      "name": "首屏包含 Model / GPU 双市场",
+      "name": "Homepage has buyer RFQ entry",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "全局演示数据披露清晰",
+      "name": "Homepage has supplier traffic entry",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "六个模型家族完整",
+      "name": "Homepage exposes demand tape",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "六个模型均可进入详情",
-      "passed": true,
-      "detail": "6 cards"
-    },
-    {
-      "name": "Lane A 可执行深度可见",
+      "name": "Scheduler is not the homepage hero",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "Instant Buy 与 Private RFQ 分开",
+      "name": "Homepage labels optional capabilities",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "详情没有 NaN / undefined",
+      "name": "Desktop homepage has no horizontal overflow",
+      "passed": true,
+      "detail": "0px"
+    },
+    {
+      "name": "Model market is provenance-first",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "GPU 市场含 H100 / H200 / B200",
+      "name": "Native market cards are visible",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "GPU 卡片含价格、区域、租期、可用量",
+      "name": "Provenance appears before RFQ CTA",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "GPU 页面没有 NaN / undefined / [object Object]",
+      "name": "Provenance Passport opens",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "调度器显示三种策略",
+      "name": "Passport separates managed and hosted supply",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "闭源模型芯片边界明确",
+      "name": "Native RFQ is the core flow",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "复杂任务拆为 4 个以上子任务",
-      "passed": true,
-      "detail": "6 subtasks"
-    },
-    {
-      "name": "每步可人工覆盖执行路线",
-      "passed": true,
-      "detail": "6/6"
-    },
-    {
-      "name": "计划同时显示质量、成本、延迟和硬件",
+      "name": "RFQ defaults to Native provenance",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "展示三种策略即时对比",
+      "name": "Quote room compares provenance",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "执行后生成 Plan vs Actual 回执",
+      "name": "RFQ submission produces demo receipt",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "自动故障切换留有审计信息",
+      "name": "Private OTC is visibly separated",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "回执可导出脱敏 Trace",
+      "name": "Optimizer is labelled optional preview",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "RFQ 展示 Broker 与私密报价流程",
+      "name": "Original scheduler capability remains",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "RFQ 不进入公开库存或核心指数",
+      "name": "Scheduler simulation completes",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "数据页连通 Model / GPU 价格曲线",
+      "name": "Optional banner survives scheduler rerenders",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "移动端无页面级横向溢出",
-      "passed": true,
-      "detail": "390/390px"
-    },
-    {
-      "name": "移动端导航可打开",
+      "name": "Mobile homepage preserves primary CTA",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "无页面脚本错误",
+      "name": "Mobile homepage has no horizontal overflow",
       "passed": true,
-      "detail": ""
+      "detail": "0px"
     },
     {
-      "name": "无浏览器控制台错误",
+      "name": "No browser runtime errors",
       "passed": true,
       "detail": ""
     }
   ],
-  "consoleErrors": [],
-  "pageErrors": [],
-  "screenshots": [
-    "01-overview-desktop.png",
-    "02-model-depth.png",
-    "03-gpu-market.png",
-    "04-orchestrator-plan.png",
-    "05-orchestrator-receipt.png",
-    "06-private-rfq.png",
-    "07-overview-mobile.png"
-  ],
-  "finishedAt": "2026-08-20T14:45:56.866Z",
-  "passed": true
+  "runtimeErrors": [],
+  "note": "All market, supplier, inventory, RFQ, SLA, index and execution values are synthetic demo data."
 }

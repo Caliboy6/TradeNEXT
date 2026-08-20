@@ -1,0 +1,15 @@
+{
+  "name": "tradenext-ai-capacity-market-demo",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check data.js && node --check scheduler.js && node --check demo-core.js && node --check demo-pages.js && node --check demo-actions.js && node --check standalone.js && node --check release.js"
+  }
+}

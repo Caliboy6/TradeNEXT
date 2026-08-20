@@ -1,0 +1,158 @@
+{
+  "startedAt": "2026-08-20T14:45:49.368Z",
+  "checks": [
+    {
+      "name": "首页 HTTP 200",
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "首屏定位 AI Capacity Market",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "首屏包含 Model / GPU 双市场",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "全局演示数据披露清晰",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "六个模型家族完整",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "六个模型均可进入详情",
+      "passed": true,
+      "detail": "6 cards"
+    },
+    {
+      "name": "Lane A 可执行深度可见",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Instant Buy 与 Private RFQ 分开",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "详情没有 NaN / undefined",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "GPU 市场含 H100 / H200 / B200",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "GPU 卡片含价格、区域、租期、可用量",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "GPU 页面没有 NaN / undefined / [object Object]",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "调度器显示三种策略",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "闭源模型芯片边界明确",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "复杂任务拆为 4 个以上子任务",
+      "passed": true,
+      "detail": "6 subtasks"
+    },
+    {
+      "name": "每步可人工覆盖执行路线",
+      "passed": true,
+      "detail": "6/6"
+    },
+    {
+      "name": "计划同时显示质量、成本、延迟和硬件",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "展示三种策略即时对比",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "执行后生成 Plan vs Actual 回执",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "自动故障切换留有审计信息",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "回执可导出脱敏 Trace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RFQ 展示 Broker 与私密报价流程",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RFQ 不进入公开库存或核心指数",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "数据页连通 Model / GPU 价格曲线",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "移动端无页面级横向溢出",
+      "passed": true,
+      "detail": "390/390px"
+    },
+    {
+      "name": "移动端导航可打开",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "无页面脚本错误",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "无浏览器控制台错误",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "screenshots": [
+    "01-overview-desktop.png",
+    "02-model-depth.png",
+    "03-gpu-market.png",
+    "04-orchestrator-plan.png",
+    "05-orchestrator-receipt.png",
+    "06-private-rfq.png",
+    "07-overview-mobile.png"
+  ],
+  "finishedAt": "2026-08-20T14:45:56.866Z",
+  "passed": true
+}

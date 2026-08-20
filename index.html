@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TradeNEXT AI Capacity Market interactive MVP demo">
+    <title>TradeNEXT · AI Capacity Market</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <aside id="sidebar" class="sidebar" aria-label="主导航">
+        <div class="brand-block"><div class="brand-mark" aria-hidden="true">TN</div><div><strong>TradeNEXT</strong><span>AI Capacity Market</span></div></div>
+        <nav class="nav-list">
+          <button class="nav-item is-active" type="button" data-route="overview" data-nav="overview"><span class="nav-icon">⌂</span><span>市场总览</span></button>
+          <button class="nav-item" type="button" data-route="models" data-nav="models"><span class="nav-icon">M</span><span>Model Capacity</span></button>
+          <button class="nav-item" type="button" data-route="gpus" data-nav="gpus"><span class="nav-icon">G</span><span>GPU Capacity</span></button>
+          <button class="nav-item nav-item-accent" type="button" data-route="scheduler" data-nav="scheduler"><span class="nav-icon">✦</span><span>AI 智能调度</span></button>
+          <button class="nav-item" type="button" data-route="rfq" data-nav="rfq"><span class="nav-icon">R</span><span>Private RFQ</span></button>
+          <button class="nav-item" type="button" data-route="data" data-nav="data"><span class="nav-icon">↗</span><span>市场数据</span></button>
+        </nav>
+        <div class="sidebar-lanes"><p>Supply lanes</p><div><span class="status-dot status-dot-green"></span><strong>Lane A</strong><em>47 online</em></div><div><span class="status-dot status-dot-amber"></span><strong>Private RFQ</strong><em>18 active</em></div></div>
+        <div class="sidebar-account"><div class="avatar">DL</div><div><strong>Demo Workspace</strong><span>Enterprise buyer</span></div><button type="button" aria-label="账户菜单">•••</button></div>
+      </aside>
+      <div class="workspace">
+        <header class="topbar">
+          <div class="topbar-left"><button class="mobile-menu" id="mobileMenu" type="button" data-action="toggle-mobile-nav" aria-label="打开导航">☰</button><div class="environment-chip"><span></span> LIVE DEMO</div><p>Illustrative data · No real transaction</p></div>
+          <div class="topbar-right"><button class="topbar-action" type="button" data-action="open-demo-guide">4 min demo</button><button class="icon-button" type="button" aria-label="通知"><span class="notification-dot"></span>◎</button><button class="primary-button compact" type="button" data-action="new-rfq">发布需求</button></div>
+        </header>
+        <main id="mainContent"><div class="loading-view"><div><div class="loading-mark"></div><p>Loading AI Capacity Market…</p></div></div></main>
+      </div>
+    </div>
+    <div id="drawer-host"></div>
+    <div id="modal-host"></div>
+    <div id="toast-host" class="toast-root" aria-live="polite"></div>
+    <script type="module" src="./release.js"></script>
+  </body>
+</html>

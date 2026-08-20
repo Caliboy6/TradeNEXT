@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en" class="i18n-loading">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +7,19 @@
     <title>TradeNEXT · Native AI Capacity Market</title>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./phase1.css">
+    <link rel="stylesheet" href="./i18n.css">
   </head>
   <body>
     <div id="app" class="app-shell">
-      <aside id="sidebar" class="sidebar" aria-label="主导航">
+      <aside id="sidebar" class="sidebar" aria-label="Main navigation">
         <div class="brand-block">
           <div class="brand-mark" aria-hidden="true">TN</div>
           <div><strong>TradeNEXT</strong><span>Native AI Capacity Market</span></div>
         </div>
         <nav class="nav-list">
-          <button class="nav-item is-active" type="button" data-route="overview" data-nav="overview"><span class="nav-icon">⌂</span><span class="nav-item-copy"><span>找容量</span><span class="nav-mini-badge">START</span></span></button>
+          <button class="nav-item is-active" type="button" data-route="overview" data-nav="overview"><span class="nav-icon">⌂</span><span class="nav-item-copy"><span>Find capacity</span><span class="nav-mini-badge">START</span></span></button>
           <button class="nav-item" type="button" data-route="models" data-nav="models"><span class="nav-icon">M</span><span class="nav-item-copy"><span>Native Capacity</span><span class="nav-mini-badge">CORE</span></span></button>
-          <button class="nav-item nav-item-accent" type="button" data-route="rfq" data-nav="rfq"><span class="nav-icon">R</span><span class="nav-item-copy"><span>发布 RFQ</span><span class="nav-mini-badge">PHASE 1</span></span></button>
+          <button class="nav-item nav-item-accent" type="button" data-route="rfq" data-nav="rfq"><span class="nav-icon">R</span><span class="nav-item-copy"><span>Post an RFQ</span><span class="nav-mini-badge">PHASE 1</span></span></button>
           <button class="nav-item" type="button" data-route="gpus" data-nav="gpus"><span class="nav-icon">G</span><span class="nav-item-copy"><span>GPU Capacity</span><span class="nav-mini-badge">P2</span></span></button>
           <button class="nav-item" type="button" data-route="data" data-nav="data"><span class="nav-icon">↗</span><span>Market Data</span></button>
           <div class="nav-divider"></div>
@@ -31,18 +32,22 @@
           <div><span class="status-dot status-dot-green"></span><strong>Native RFQ</strong><em>Core market</em></div>
           <div><span class="status-dot status-dot-amber"></span><strong>Private OTC</strong><em>Separate lane</em></div>
         </div>
-        <div class="sidebar-account"><div class="avatar">DL</div><div><strong>Demo Workspace</strong><span>Enterprise buyer · Synthetic</span></div><button type="button" aria-label="账户菜单">•••</button></div>
+        <div class="sidebar-account"><div class="avatar">DL</div><div><strong>Demo Workspace</strong><span>Enterprise buyer · Synthetic</span></div><button type="button" aria-label="Account menu">•••</button></div>
       </aside>
       <div class="workspace">
         <header class="topbar">
           <div class="topbar-left">
-            <button class="mobile-menu" id="mobileMenu" type="button" data-action="toggle-mobile-nav" aria-label="打开导航">☰</button>
+            <button class="mobile-menu" id="mobileMenu" type="button" data-action="toggle-mobile-nav" aria-label="Open navigation">☰</button>
             <div class="environment-chip"><span></span> MVP DEMO</div>
             <p>Synthetic data · No real transaction</p>
           </div>
           <div class="topbar-right">
-            <button class="topbar-action" type="button" data-phase-action="sell-capacity">出售容量</button>
-            <button class="primary-button compact" type="button" data-phase-action="new-native-rfq">发布 Native RFQ</button>
+            <div class="language-switch" role="group" aria-label="Language">
+              <button type="button" data-locale="en" aria-label="Switch to English">EN</button>
+              <button type="button" data-locale="zh-CN" aria-label="Switch to Chinese">ZH</button>
+            </div>
+            <button class="topbar-action" type="button" data-phase-action="sell-capacity">List capacity</button>
+            <button class="primary-button compact" type="button" data-phase-action="new-native-rfq">Post a Native RFQ</button>
           </div>
         </header>
         <main id="mainContent"><div class="loading-view"><div><div class="loading-mark"></div><p>Loading Native Capacity Market…</p></div></div></main>
@@ -51,6 +56,6 @@
     <div id="drawer-host"></div>
     <div id="modal-host"></div>
     <div id="toast-host" class="toast-root" aria-live="polite"></div>
-    <script type="module" src="./phase1-entry.js"></script>
+    <script type="module" src="./phase1-entry-v2.js"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-product.js";
+import * as runtime from "./i18n-procurement.js";
 
 function updateMetadata() {
   const chinese = runtime.getLocale() === "zh-CN";

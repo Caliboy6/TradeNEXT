@@ -1,0 +1,55 @@
+.search-clear {
+  display: grid;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.search-clear:hover,
+.search-clear:focus-visible {
+  color: var(--text);
+  background: var(--surface);
+  outline: 1px solid var(--line);
+}
+
+.search-result-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.search-empty {
+  margin: 14px;
+}
+
+.search-empty[hidden],
+tr[hidden] {
+  display: none !important;
+}
+
+.stability-search {
+  min-width: 250px;
+}
+
+@media (max-width: 760px) {
+  .stability-search,
+  .market-search {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .search-result-count {
+    width: 100%;
+    margin-left: 0;
+  }
+}

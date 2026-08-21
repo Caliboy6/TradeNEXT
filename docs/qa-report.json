@@ -11,7 +11,7 @@
     {
       "name": "Homepage positions Native Capacity first",
       "passed": true,
-      "detail": "TN\nTradeNEXT\nNative AI Capacity Market\n⌂\n找容量\nSTART\nM\nNative Capacity\nCORE\nR\n发布 RFQ\nPHASE 1\nG\nGPU Capacity\nP2\n↗\nMarket Data\nOPTIONAL CAPABILITIES\n⇄\nManaged Gateway\nOPTIONAL\n✦\nCapaci"
+      "detail": "TN\nOpenNEXT\nNative AI Capacity Market\n⌂\n找容量\nSTART\nM\nNative Capacity\nCORE\nR\n发布 RFQ\nPHASE 1\nG\nGPU Capacity\nP2\n↗\nMarket Data\nOPTIONAL CAPABILITIES\n⇄\nManaged Gateway\nOPTIONAL\n✦\nCapaci"
     },
     {
       "name": "Homepage has buyer RFQ entry",

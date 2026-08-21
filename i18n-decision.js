@@ -43,7 +43,7 @@ export function getLocale() { return locale; }
 export function getI18nDiagnostics() { return runtime.getI18nDiagnostics(); }
 export function translateText(value, target = locale, options = {}) { return runtime.translateText(translate(value, target), target, options); }
 export function localizeDocument(root = document) { apply(root); runtime.localizeDocument(root); apply(root); }
-export function setLocale(next, options = {}) { locale = next; apply(document); const result = runtime.setLocale(next, options); apply(document); window.TradeNEXTI18n = api; return result; }
+export function setLocale(next, options = {}) { locale = next; apply(document); const result = runtime.setLocale(next, options); apply(document); window.OpenNEXTI18n = api; return result; }
 const api = { getLocale, getI18nDiagnostics, translateText, localizeDocument, setLocale };
 
 export function initI18n() {
@@ -53,6 +53,6 @@ export function initI18n() {
   apply(document);
   const result = runtime.initI18n();
   localizeDocument(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return result;
 }

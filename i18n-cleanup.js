@@ -11,7 +11,7 @@ const canonicalPairs = [
   ["这些能力保留在演示中，但不会偏离第一阶段的产品主线。", "These capabilities remain in the demo without displacing the Phase 1 product focus."],
   ["原厂直连、原厂分配、企业合作方、托管网关与 Hosted Inference 不再混为一个最低价。默认仅显示可验证的原厂供应。", "Native Direct, Native Allocated, Enterprise Partner, Managed Gateway and Hosted Inference are no longer collapsed into one lowest price. Verified Native supply is shown by default."],
   ["Native 不是裸密钥", "Native does not mean a raw key"],
-  ["价格发现、容量发现、RFQ、验证、分配和结算，是 TradeNEXT 第一阶段的核心市场。", "Price discovery, capacity discovery, RFQ, verification, allocation and settlement form TradeNEXT's Phase 1 core market."],
+  ["价格发现、容量发现、RFQ、验证、分配和结算，是 OpenNEXT 第一阶段的核心市场。", "Price discovery, capacity discovery, RFQ, verification, allocation and settlement form OpenNEXT's Phase 1 core market."],
   ["大额或复杂供应进入私密撮合，不公开库存，也不进入原厂基准指数。", "Large or complex supply enters private matching, with no public inventory and no inclusion in the Native benchmark."],
   ["进入 OTC 服务台 →", "Enter the OTC Desk →"],
   ["只有买方主动选择时才启用；不与 Native 供应混标，也不是平台的核心切入点。", "Enabled only when the buyer opts in. It is labelled separately from Native supply and is not the platform's core wedge."],
@@ -47,7 +47,7 @@ const zhAliases = new Map([
   ["原厂直连、原厂分配、企业合作方、托管网关与 Hosted Inference 不再混成一个最低价。默认仅显示可验证的 Native 供应。", "原厂直连、原厂分配、企业合作方、托管网关与 Hosted Inference 不再混为一个最低价。默认仅显示可验证的原厂供应。"],
   ["Native 不是裸 Key", "Native 不是裸密钥"],
   ["5 个模型市场符合当前来源筛选 · 所有报价与库存均为 Demo 数据", "5 个模型市场符合当前来源筛选 · 所有报价与库存均为演示数据"],
-  ["价格发现、容量发现、RFQ、验证、分配和结算，是 TradeNEXT 的 Phase 1 主市场。", "价格发现、容量发现、RFQ、验证、分配和结算，是 TradeNEXT 第一阶段的核心市场。"],
+  ["价格发现、容量发现、RFQ、验证、分配和结算，是 OpenNEXT 的 Phase 1 主市场。", "价格发现、容量发现、RFQ、验证、分配和结算，是 OpenNEXT 第一阶段的核心市场。"],
   ["大额或复杂供应进入私密撮合，不公开库存，不进入 Native 基准指数。", "大额或复杂供应进入私密撮合，不公开库存，也不进入原厂基准指数。"],
   ["进入 OTC Desk →", "进入 OTC 服务台 →"],
   ["只有买方主动选择时才启用；不与 Native 供应混标，也不是平台核心 wedge。", "只有买方主动选择时才启用；不与 Native 供应混标，也不是平台的核心切入点。"],
@@ -154,7 +154,7 @@ export function setLocale(next, options = {}) {
   apply(document);
   runtime.setLocale(next, options);
   apply(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return locale;
 }
 
@@ -176,6 +176,6 @@ export function initI18n() {
   apply(document);
   runtime.initI18n();
   localizeDocument(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return locale;
 }

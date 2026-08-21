@@ -10,7 +10,7 @@ const extraPairs = [
   ["✦ 运行 AI 调度 Demo", "✦ Run AI orchestration demo"],
   ["不是只挑一个模型。", "Do more than choose one model."],
   ["先拆任务，再为每一步选择最合适的执行路线。", "Decompose the task, then choose the best execution route for each step."],
-  ["TradeNEXT 同时考虑预期效果、可执行容量、价格、延迟、区域、SLA 和硬件适配。闭源模型只选择已验证的 Provider Capacity；开放模型则可以进一步选择 H100、H200、B200 或 Cerebras 等已披露执行路线。", "TradeNEXT considers expected quality, executable capacity, price, latency, region, SLA and hardware fit. Closed models use only verified provider capacity; open models can also select disclosed routes such as H100, H200, B200 or Cerebras."],
+  ["OpenNEXT 同时考虑预期效果、可执行容量、价格、延迟、区域、SLA 和硬件适配。闭源模型只选择已验证的 Provider Capacity；开放模型则可以进一步选择 H100、H200、B200 或 Cerebras 等已披露执行路线。", "OpenNEXT considers expected quality, executable capacity, price, latency, region, SLA and hardware fit. Closed models use only verified provider capacity; open models can also select disclosed routes such as H100, H200, B200 or Cerebras."],
   ["生成优化执行计划", "Generate an optimized execution plan"],
   ["查看 4 分钟演示路径", "View the 4-minute demo flow"],
   ["示例调度计划", "Sample orchestration plan"],
@@ -38,7 +38,7 @@ const extraPairs = [
   ["大额、长期或非标准吞吐进入邀请制报价；响应不会计入公开 Available 或核心指数。", "Large, long-term or non-standard throughput enters invite-only quoting; responses are excluded from public available capacity and the core index."],
   ["购买", "Buy"],
   ["受控容量交付", "Controlled capacity delivery"],
-  ["买家通过 TradeNEXT Gateway 使用容量，不接触供应方裸 Key。", "The buyer accesses capacity through TradeNEXT Gateway and never receives the supplier's raw key."],
+  ["买家通过 OpenNEXT Gateway 使用容量，不接触供应方裸 Key。", "The buyer accesses capacity through OpenNEXT Gateway and never receives the supplier's raw key."],
   ["供应路线", "Supply route"],
   ["容量成本", "Capacity cost"],
   ["平台服务费（1.5%）", "Platform service fee (1.5%)"],
@@ -245,7 +245,7 @@ const extraPairs = [
   ["已验证", "Verified"],
   ["待验证", "Pending"],
   ["供应商声明", "Supplier declared"],
-  ["TradeNEXT 已验证", "TradeNEXT Verified"],
+  ["OpenNEXT 已验证", "OpenNEXT Verified"],
   ["请求报价", "Request quote"],
   ["买方获得", "Buyer receives"],
   ["已验证容量", "Verified capacity"],
@@ -320,12 +320,12 @@ const extraPairs = [
   ["原厂项目、账户或直接访问", "Original-provider project, account or direct access"],
   ["企业协议下的专属配额", "Dedicated allocation under an enterprise agreement"],
   ["合作方交付的企业配额", "Partner-delivered enterprise allocation"],
-  ["TradeNEXT 托管 key 或 endpoint", "TradeNEXT-managed key or endpoint"],
+  ["OpenNEXT 托管 key 或 endpoint", "OpenNEXT-managed key or endpoint"],
   ["供应商托管 endpoint", "Provider-hosted endpoint"],
   ["原厂项目访问", "Original-provider project access"],
   ["专属企业配额", "Dedicated enterprise allocation"],
   ["合作方交付配额", "Partner-delivered allocation"],
-  ["TradeNEXT 托管 endpoint", "TradeNEXT managed endpoint"],
+  ["OpenNEXT 托管 endpoint", "OpenNEXT managed endpoint"],
   ["合同证据 + 实时容量测试", "Contract evidence + live capacity test"],
   ["企业配额函 + 配额遥测", "Enterprise allocation letter + quota telemetry"],
   ["Endpoint 健康 + 计量审计", "Endpoint health + metering audit"],
@@ -461,7 +461,7 @@ export function setLocale(nextLocale, options = {}) {
   localizeExtra(document);
   base.setLocale(nextLocale, options);
   localizeExtra(document);
-  window.TradeNEXTI18n = publicApi;
+  window.OpenNEXTI18n = publicApi;
   return locale;
 }
 
@@ -493,6 +493,6 @@ export function initI18n() {
   localizeExtra(document);
   base.initI18n();
   localizeDocument(document);
-  window.TradeNEXTI18n = publicApi;
+  window.OpenNEXTI18n = publicApi;
   return locale;
 }

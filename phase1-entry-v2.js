@@ -17,4 +17,4 @@ await import("./phase1-entry.js");
 localizeDocument(document);
 document.documentElement.classList.remove("i18n-loading");
 
-console.info("TradeNEXT bilingual UI ready");
+console.info("OpenNEXT bilingual UI ready");

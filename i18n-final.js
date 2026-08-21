@@ -22,8 +22,8 @@ const finalPairs = [
   ["GLM 通用 / 编程", "GLM general / coding"],
   ["供应来源", "SUPPLY PROVENANCE"],
   ["Native 是核心市场；Managed Gateway 是成交后的可选交付能力；Hosted Inference 是补充供应。", "Native is the core market. Managed Gateway is an optional post-trade delivery capability, while Hosted Inference is supplemental supply."],
-  ["TradeNEXT 托管密钥或端点", "TradeNEXT-managed key or endpoint"],
-  ["TradeNEXT 托管密钥或端点", "TradeNEXT managed key or endpoint"],
+  ["OpenNEXT 托管密钥或端点", "OpenNEXT-managed key or endpoint"],
+  ["OpenNEXT 托管密钥或端点", "OpenNEXT managed key or endpoint"],
   ["供应商托管端点", "Provider-hosted endpoint"],
   ["第一阶段核心流程", "PHASE 1 CORE FLOW"],
   ["进入原厂 RFQ 市场", "Enter the Native RFQ Market"],
@@ -39,7 +39,7 @@ const finalPairs = [
   ["大额或复杂供应进入私密撮合，不公开库存，也不进入原厂基准指数。", "Large or complex supply enters private matching, with no public inventory and no inclusion in the Native benchmark."],
   ["进入 OTC 服务台 →", "Enter the OTC Desk →"],
   ["只有买方主动选择时才启用；不与 Native 供应混标，也不是平台的核心切入点。", "Enabled only when the buyer opts in. It is labelled separately from Native supply and is not the platform's core wedge."],
-  ["价格发现、容量发现、RFQ、验证、分配和结算，是 TradeNEXT 第一阶段的核心市场。", "Price discovery, capacity discovery, RFQ, verification, allocation and settlement form TradeNEXT's Phase 1 core market."],
+  ["价格发现、容量发现、RFQ、验证、分配和结算，是 OpenNEXT 第一阶段的核心市场。", "Price discovery, capacity discovery, RFQ, verification, allocation and settlement form OpenNEXT's Phase 1 core market."],
 
   ["第一阶段 · 核心交易流程", "PHASE 1 · CORE TRANSACTION FLOW"],
   ["核心 MVP", "Core MVP"],
@@ -243,7 +243,7 @@ export function setLocale(next, options = {}) {
   localizeFinal(document);
   runtime.setLocale(next, options);
   localizeFinal(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return locale;
 }
 
@@ -271,6 +271,6 @@ export function initI18n() {
   localizeFinal(document);
   runtime.initI18n();
   localizeDocument(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return locale;
 }

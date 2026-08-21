@@ -53,4 +53,4 @@ repairObserver.observe(document.documentElement, { childList: true, subtree: tru
 
 await import("./standalone.js");
 repairTree(document.body);
-console.info("TradeNEXT release UI ready");
+console.info("OpenNEXT release UI ready");

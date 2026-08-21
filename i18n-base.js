@@ -1,4 +1,4 @@
-const STORAGE_KEY = "tradenext.locale";
+const STORAGE_KEY = "opennext.locale";
 const SUPPORTED_LOCALES = new Set(["en", "zh-CN"]);
 
 // One bilingual source of truth. Brand names, model names, acronyms and
@@ -29,12 +29,12 @@ const pairs = [
   ["有可交付的原厂容量？", "Have deliverable native capacity?"],
   ["验证并响应买方需求 →", "Verify supply and respond →"],
   ["先看来源，再比较价格", "See provenance before comparing price"],
-  ["TradeNEXT 不把所有供应抽象成同一种 API。买方在报价之前就知道容量从哪里来、最终拿到什么。", "TradeNEXT does not hide every supply source behind one API. Buyers know where capacity comes from and what they will receive before quoting."],
+  ["OpenNEXT 不把所有供应抽象成同一种 API。买方在报价之前就知道容量从哪里来、最终拿到什么。", "OpenNEXT does not hide every supply source behind one API. Buyers know where capacity comes from and what they will receive before quoting."],
   ["查看全部 Model Capacity →", "View all Model Capacity →"],
   ["四种产品，四种清晰的交付边界", "Four products with four clear delivery boundaries"],
   ["Native 是核心市场；Managed Gateway 是成交后的可选交付能力；Hosted Inference 是补充供应。", "Native is the core market. Managed Gateway is an optional post-trade delivery capability, while Hosted Inference is supplemental supply."],
   ["把微信里的询价，变成可验证、可比较、可结算的市场", "Turn fragmented private inquiries into a verifiable, comparable and settleable market"],
-  ["买方发布一次结构化需求，平台只向满足来源与容量门槛的供应方开放。报价不再散落在群聊里。", "A buyer posts one structured request. TradeNEXT opens it only to suppliers that meet provenance and capacity thresholds, keeping quotes out of scattered group chats."],
+  ["买方发布一次结构化需求，平台只向满足来源与容量门槛的供应方开放。报价不再散落在群聊里。", "A buyer posts one structured request. OpenNEXT opens it only to suppliers that meet provenance and capacity thresholds, keeping quotes out of scattered group chats."],
   ["进入 Native RFQ Market", "Enter the Native RFQ Market"],
   ["描述需求", "Describe demand"],
   ["来源验证", "Verify provenance"],
@@ -57,12 +57,12 @@ const pairs = [
   ["原厂直连、原厂分配、企业合作方、托管网关与 Hosted Inference 不再混成一个最低价。默认仅显示可验证的 Native 供应。", "Native Direct, Native Allocated, Enterprise Partner, Managed Gateway and Hosted Inference are no longer collapsed into one lowest price. Verified Native supply is shown by default."],
   ["搜索 Claude、GPT、Gemini…", "Search Claude, GPT, Gemini…"],
   ["Native 不是裸 Key", "Native does not mean a raw key"],
-  ["TradeNEXT 验证来源证据与容量测试；买方获得清晰约定的项目访问、专属配额或合作方交付，不公开秘密凭证。", "TradeNEXT verifies provenance evidence and capacity tests. Buyers receive clearly defined project access, dedicated allocation or partner delivery; secret credentials are never published."],
+  ["OpenNEXT 验证来源证据与容量测试；买方获得清晰约定的项目访问、专属配额或合作方交付，不公开秘密凭证。", "OpenNEXT verifies provenance evidence and capacity tests. Buyers receive clearly defined project access, dedicated allocation or partner delivery; secret credentials are never published."],
   ["查看验证标准 →", "View verification standards →"],
   ["当前筛选暂无可展示供应", "No displayable supply matches this filter"],
   ["切换到 All provenance 查看托管与 Hosted 供应。", "Switch to All provenance to view managed and Hosted supply."],
   ["查看全部来源", "View all provenance"],
-  ["价格发现、容量发现、RFQ、验证、分配和结算，是 TradeNEXT 的 Phase 1 主市场。", "Price discovery, capacity discovery, RFQ, verification, allocation and settlement form TradeNEXT's Phase 1 core market."],
+  ["价格发现、容量发现、RFQ、验证、分配和结算，是 OpenNEXT 的 Phase 1 主市场。", "Price discovery, capacity discovery, RFQ, verification, allocation and settlement form OpenNEXT's Phase 1 core market."],
   ["大额或复杂供应进入私密撮合，不公开库存，不进入 Native 基准指数。", "Large or complex supply enters private matching, with no public inventory and no inclusion in the Native benchmark."],
   ["进入 OTC Desk →", "Enter the OTC Desk →"],
   ["只有买方主动选择时才启用；不与 Native 供应混标，也不是平台核心 wedge。", "Enabled only when the buyer opts in. It is labelled separately from Native supply and is not the platform's core wedge."],
@@ -94,7 +94,7 @@ const pairs = [
   ["示例：Claude Sonnet · $100k allocation · 30 days · 2M TPM · US", "Example: Claude Sonnet · $100k allocation · 30 days · 2M TPM · US"],
   ["选择报价", "Select quote"],
   ["从需求到结算的可审计链路", "An auditable path from demand to settlement"],
-  ["TradeNEXT 负责市场基础设施，不要求买方先接受统一 API。", "TradeNEXT provides market infrastructure without requiring buyers to adopt a unified API first."],
+  ["OpenNEXT 负责市场基础设施，不要求买方先接受统一 API。", "OpenNEXT provides market infrastructure without requiring buyers to adopt a unified API first."],
   ["大额、匿名或非标准需求进入独立私密通道。非 Native / 第三方来源必须清晰标注，不公开库存，不进入 Native benchmark。", "Large, anonymous or non-standard requests enter a separate private lane. Non-native and third-party provenance must be explicit, with no public inventory and no Native benchmark inclusion."],
   ["进入 Private OTC Desk", "Enter the Private OTC Desk"],
   ["查看来源档案", "View provenance passport"],
@@ -105,7 +105,7 @@ const pairs = [
   ["托管网关", "Managed Gateway"],
   ["托管推理", "Hosted Inference"],
   ["来源待验证", "Provenance pending"],
-  ["原厂合同或项目下的直接访问，由 TradeNEXT 验证来源、容量与交付条件。", "Direct access under an original-provider contract or project, with provenance, capacity and delivery terms verified by TradeNEXT."],
+  ["原厂合同或项目下的直接访问，由 OpenNEXT 验证来源、容量与交付条件。", "Direct access under an original-provider contract or project, with provenance, capacity and delivery terms verified by OpenNEXT."],
   ["企业协议下隔离的原厂配额，明确期限、速率、区域与撤销条件。", "Isolated native allocation under an enterprise agreement, with explicit term, throughput, region and revocation terms."],
   ["由经验证的企业合作方交付，买方清楚看到合同与服务责任边界。", "Delivered by a verified enterprise partner, with clear contractual and service-responsibility boundaries."],
   ["可选的托管交付、计量与结算能力，不代表 Native Direct，默认不启用。", "Optional managed delivery, metering and settlement. It is not Native Direct and is disabled by default."],
@@ -173,11 +173,11 @@ const pairs = [
   ["个性化最终回复", "Personalize final response"],
   ["结合上下文输出最终回复和下一步。", "Use context to produce the final response and next steps."],
   ["该子任务可并行且对延迟敏感，选择 Cerebras 交付路线以缩短执行时间。", "This subtask is parallelizable and latency-sensitive, so a Cerebras delivery route is selected to reduce execution time."],
-  ["TradeNEXT 验证什么", "What TradeNEXT verifies"],
+  ["OpenNEXT 验证什么", "What OpenNEXT verifies"],
   ["提交的合同与授权证据、容量测试、吞吐、地区、期限和交付条件。验证不代表原模型厂商背书。", "Submitted contract and authorization evidence, capacity tests, throughput, region, term and delivery conditions. Verification is not an endorsement by the original model provider."],
   ["Native、Gateway 与 Hosted 供应不混标、不混算。", "Native, Gateway and Hosted supply are labelled and calculated separately."],
   ["不进入公开库存或 Native benchmark", "Excluded from public inventory and the Native benchmark"],
-  ["TradeNEXT 提供 KYB、能力验证、测试执行、经纪撮合与安全交割。Non-native / third-party 来源必须显式标注。", "TradeNEXT provides KYB, capability verification, test execution, brokered matching and secure delivery. Non-native and third-party provenance must be explicit."],
+  ["OpenNEXT 提供 KYB、能力验证、测试执行、经纪撮合与安全交割。Non-native / third-party 来源必须显式标注。", "OpenNEXT provides KYB, capability verification, test execution, brokered matching and secure delivery. Non-native and third-party provenance must be explicit."],
   ["大额或匿名需求", "Large or anonymous demand"],
   ["复杂合同、非标准期限、不希望公开身份与库存。", "Complex contracts, non-standard terms, or identities and inventory that must remain private."],
   ["验证", "Verification"],
@@ -202,7 +202,7 @@ const pairs = [
   ["保存草稿", "Save draft"],
   ["提交并匹配供应方", "Submit and match suppliers"],
   ["这不是 Native Direct", "This is not Native Direct"],
-  ["使用 TradeNEXT endpoint / key 的报价会明确显示 Managed Gateway，不会和原厂项目访问混标。", "Quotes delivered through a TradeNEXT endpoint or key are explicitly labelled Managed Gateway and never blended with original-provider project access."],
+  ["使用 OpenNEXT endpoint / key 的报价会明确显示 Managed Gateway，不会和原厂项目访问混标。", "Quotes delivered through a OpenNEXT endpoint or key are explicitly labelled Managed Gateway and never blended with original-provider project access."],
   ["理解边界", "Acknowledge boundary"],
   ["适合", "Best for"],
   ["接受", "Accept"],
@@ -240,7 +240,7 @@ const pairs = [
   ["按配置、时间与任务购买算力", "Buy compute by configuration, schedule and workload"],
   ["原厂项目或专属企业配额", "Original-provider project or dedicated enterprise allocation"],
   ["可部署开放模型", "Deployable open model"],
-  ["底层芯片由模型服务商管理且不披露；TradeNEXT 仅选择可验证的服务交付路线。", "The underlying chip is provider-managed and undisclosed; TradeNEXT selects only a verifiable service-delivery route."],
+  ["底层芯片由模型服务商管理且不披露；OpenNEXT 仅选择可验证的服务交付路线。", "The underlying chip is provider-managed and undisclosed; OpenNEXT selects only a verifiable service-delivery route."],
   ["该路线允许选择并展示已验证的模型与加速硬件组合。", "This route allows a verified model and accelerator combination to be selected and displayed."],
   ["当前目录中没有同时满足质量门槛与预算的路线组合。", "No route combination in the current catalog satisfies both the quality floor and budget."],
   ["当前目录中没有同时满足质量门槛与时限的路线组合。", "No route combination in the current catalog satisfies both the quality floor and deadline."],
@@ -288,13 +288,13 @@ const pairs = [
   ["交付 / SLA", "Delivery / SLA"],
   ["价格倍数 / 总价", "Rate / Total"],
   ["来源档案可用", "Passport available"],
-  ["TradeNEXT 已验证", "TradeNEXT Verified"],
+  ["OpenNEXT 已验证", "OpenNEXT Verified"],
   ["合成响应", "Synthetic responses"],
   ["供应侧", "Supply side"],
   ["原厂项目、账户或直接访问", "Original-provider project, account or direct access"],
   ["企业协议下的专属配额", "Dedicated allocation under an enterprise agreement"],
   ["合作方交付的企业配额", "Partner-delivered enterprise allocation"],
-  ["TradeNEXT 托管的 key 或 endpoint", "TradeNEXT-managed key or endpoint"],
+  ["OpenNEXT 托管的 key 或 endpoint", "OpenNEXT-managed key or endpoint"],
   ["供应商托管 endpoint", "Provider-hosted endpoint"],
   ["原厂项目访问", "Original-provider project access"],
   ["专属企业配额", "Dedicated enterprise allocation"],
@@ -564,12 +564,12 @@ function updateLocaleChrome() {
     button.setAttribute("aria-pressed", String(active));
   });
   document.title = locale === "en"
-    ? "TradeNEXT · Native AI Capacity Market"
-    : "TradeNEXT · 原厂 AI Capacity 市场";
+    ? "OpenNEXT · Native AI Capacity Market"
+    : "OpenNEXT · 原厂 AI Capacity 市场";
   const description = document.querySelector('meta[name="description"]');
   if (description) description.content = locale === "en"
-    ? "TradeNEXT Native AI Capacity Market and RFQ MVP demo"
-    : "TradeNEXT 原厂 AI Capacity 市场与 RFQ MVP 演示";
+    ? "OpenNEXT Native AI Capacity Market and RFQ MVP demo"
+    : "OpenNEXT 原厂 AI Capacity 市场与 RFQ MVP 演示";
 }
 
 export function localizeDocument(root = document) {
@@ -597,7 +597,7 @@ export function setLocale(nextLocale, options = {}) {
   try { localStorage.setItem(STORAGE_KEY, locale); } catch { /* no-op */ }
   localizeDocument(document);
   if (changed && options.announce !== false) {
-    document.dispatchEvent(new CustomEvent("tradenext:localechange", { detail: { locale } }));
+    document.dispatchEvent(new CustomEvent("opennext:localechange", { detail: { locale } }));
   }
   return locale;
 }
@@ -631,7 +631,7 @@ export function initI18n() {
     attributeFilter: ["placeholder", "aria-label", "title", "data-tooltip"],
   });
   localizeDocument(document);
-  window.TradeNEXTI18n = { getLocale, setLocale, translateText, localizeDocument, getI18nDiagnostics };
+  window.OpenNEXTI18n = { getLocale, setLocale, translateText, localizeDocument, getI18nDiagnostics };
   return locale;
 }
 

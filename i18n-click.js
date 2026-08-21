@@ -7,7 +7,7 @@ const api = {
   localizeDocument: (...args) => runtime.localizeDocument(...args),
   setLocale(next, options = {}) {
     const result = runtime.setLocale(next, options);
-    window.TradeNEXTI18n = api;
+    window.OpenNEXTI18n = api;
     return result;
   },
 };
@@ -39,6 +39,6 @@ export function initI18n() {
   }, true);
 
   const result = runtime.initI18n();
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return result;
 }

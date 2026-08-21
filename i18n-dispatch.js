@@ -43,7 +43,7 @@ export function setLocale(next, options = {}) {
   apply(document);
   runtime.setLocale(next, options);
   apply(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return locale;
 }
 
@@ -63,6 +63,6 @@ export function initI18n() {
   apply(document);
   runtime.initI18n();
   localizeDocument(document);
-  window.TradeNEXTI18n = api;
+  window.OpenNEXTI18n = api;
   return locale;
 }

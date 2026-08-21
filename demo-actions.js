@@ -28,12 +28,14 @@ const toast = document.querySelector("#toast-host");
 let toastTimer;
 
 function renderPage(route = state.route) {
+  if (window.__openNextProcurementRender) return window.__openNextProcurementRender(route);
   state.route = pageRenderers[route] ? route : "overview";
   main.innerHTML = pageRenderers[state.route]();
   document.querySelectorAll("[data-nav]").forEach((item) => item.classList.toggle("is-active", item.dataset.nav === state.route));
 }
 
 function navigate(route) {
+  if (window.__openNextProcurementNavigate) return window.__openNextProcurementNavigate(route);
   closeOverlays();
   state.route = pageRenderers[route] ? route : "overview";
   history.replaceState(null, "", `#${state.route}`);

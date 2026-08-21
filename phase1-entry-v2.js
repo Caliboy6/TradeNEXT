@@ -13,7 +13,7 @@ if (titleDescriptor?.get && titleDescriptor?.set) {
 const { initI18n, localizeDocument } = await import("./i18n.js");
 
 initI18n();
-await import("./phase1-entry.js");
+await import("./procurement-entry.js");
 localizeDocument(document);
 document.documentElement.classList.remove("i18n-loading");
 

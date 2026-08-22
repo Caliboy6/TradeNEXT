@@ -74,7 +74,7 @@ function showRateTransaction(id) {
 function showPassport(id) {
   const row = findProvider(id);
   const profile = providerProfiles[id] || { ...provenanceCatalog.unknown, method: "Pending", deliveryMode: "Pending", lastVerifiedAt: "Pending" };
-  showModal("Provenance Passport", row?.providerName || "Supplier provenance", `<div class="passport-scope"><span class="provenance-badge provenance-${profile.tone}">${escapeHtml(profile.productLabel)}</span><h3>${escapeHtml(profile.category)}</h3><p>${escapeHtml(profile.authorization)}</p></div><dl class="passport-grid"><div><dt>Authorization class</dt><dd>${escapeHtml(profile.category)}</dd></div><div><dt>Evidence reviewed</dt><dd>${escapeHtml(profile.method || profile.verificationScope)}</dd></div><div><dt>Technical capacity test</dt><dd>${profile.technicalTested ? "Completed" : "Pending"}</dd></div><div><dt>Buyer receives</dt><dd>${escapeHtml(profile.deliveryMode || profile.buyerReceives)}</dd></div><div><dt>Last reviewed</dt><dd>${escapeHtml(profile.lastVerifiedAt || "Pending")}</dd></div><div><dt>Benchmark eligibility</dt><dd>${profile.indexEligible ? "Eligible only after qualified settlement" : "Excluded"}</dd></div></dl><div class="authorization-boundary"><span>i</span><div><strong>Scope of OpenNEXT review</strong><p>OpenNEXT records the evidence reviewed and test completed. Review does not imply endorsement by the original model provider, and technical verification never creates resale authorization.</p></div></div>`);
+  showModal("Supply Verification Record", row?.providerName || "Supplier provenance", `<div class="passport-scope"><span class="provenance-badge provenance-${profile.tone}">${escapeHtml(profile.productLabel)}</span><h3>${escapeHtml(profile.category)}</h3><p>${escapeHtml(profile.authorization)}</p></div><dl class="passport-grid"><div><dt>Authorization class</dt><dd>${escapeHtml(profile.category)}</dd></div><div><dt>Evidence reviewed</dt><dd>${escapeHtml(profile.method || profile.verificationScope)}</dd></div><div><dt>Technical capacity test</dt><dd>${profile.technicalTested ? "Completed" : "Pending"}</dd></div><div><dt>Buyer receives</dt><dd>${escapeHtml(profile.deliveryMode || profile.buyerReceives)}</dd></div><div><dt>Last reviewed</dt><dd>${escapeHtml(profile.lastVerifiedAt || "Pending")}</dd></div><div><dt>Benchmark eligibility</dt><dd>${profile.indexEligible ? "Eligible only after qualified settlement" : "Excluded"}</dd></div></dl><div class="authorization-boundary"><span>i</span><div><strong>Scope of OpenNEXT review</strong><p>OpenNEXT records the evidence reviewed and test completed. Review does not imply endorsement by the original model provider, and technical verification never creates resale authorization.</p></div></div>`);
 }
 
 function showGateway() {
@@ -128,10 +128,12 @@ function handleAction(action, element) {
 document.addEventListener("click", (event) => {
   const element = event.target.closest?.("[data-proc-action]");
   if (!element) return;
-  if (element.hasAttribute("data-modal-panel") && event.target === element) return;
+  const action = element.dataset.procAction;
+  const isBackdrop = action === "close-modal" && element.classList.contains("modal-backdrop");
+  if (isBackdrop && event.target !== element) return;
   event.preventDefault();
   event.stopImmediatePropagation();
-  handleAction(element.dataset.procAction, element);
+  handleAction(action, element);
 }, true);
 
 document.addEventListener("input", (event) => {

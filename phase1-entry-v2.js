@@ -13,10 +13,12 @@ if (titleDescriptor?.get && titleDescriptor?.set) {
 const { initI18n, localizeDocument } = await import("./i18n-stable.js");
 const { installInteractionStability, finalizeInteractionStability } = await import("./interaction-stability.js");
 const { installSearchCopyFix } = await import("./search-copy-fix-v2.js");
+const { installMarketTools } = await import("./market-tools.js");
 
 initI18n();
 installInteractionStability();
 installSearchCopyFix();
+installMarketTools();
 await import("./procurement-entry.js");
 finalizeInteractionStability();
 localizeDocument(document);

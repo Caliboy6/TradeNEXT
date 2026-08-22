@@ -7,7 +7,7 @@ function isChinese() {
 
 function visibleRows(selector) {
   const rows = [...document.querySelectorAll(selector)];
-  return { total: rows.length, visible: rows.filter((row) => !row.hidden).length };
+  return { total: rows.length, visible: rows.filter((row) => !row.hidden && !row.classList.contains("is-market-filtered")).length };
 }
 
 function setCount(input, selector) {

@@ -282,6 +282,10 @@ export const marketDataSignals = [
 export const procurementState = {
   provenanceFilter: "native",
   modelQuery: "",
+  modelFilter: "all",
+  modelSort: "price_asc",
+  starredOfferIds: [],
+  cartOfferIds: [],
   dataMarket: "model",
   dataAsset: "claude",
   dataRange: 14,

@@ -92,17 +92,17 @@ export const providerProfiles = Object.fromEntries(
 );
 
 export const demandTape = [
-  { id: "RFQ-8421", type: "Native Model", model: "Claude Sonnet", notional: "$100k", term: "30 days", throughput: "2M TPM", region: "US", provenance: "Native only", responses: 6, age: "3 min", status: "Comparing quotes" },
-  { id: "RFQ-8418", type: "Native Model", model: "GPT Enterprise", notional: "$250k", term: "90 days", throughput: "5M TPM", region: "US · EU", provenance: "Native / Partner", responses: 4, age: "11 min", status: "Capacity test" },
-  { id: "RFQ-8412", type: "Native Model", model: "Gemini Capacity", notional: "$80k", term: "45 days", throughput: "3M TPM", region: "APAC", provenance: "Native only", responses: 3, age: "18 min", status: "Supplier matching" },
+  { id: "RFQ-8421", type: "Native Model", model: "Claude Sonnet", notional: "$100k", term: "30 days", throughput: "33.3K TPS", region: "US", provenance: "Native only", responses: 6, age: "3 min", status: "Comparing quotes" },
+  { id: "RFQ-8418", type: "Native Model", model: "GPT Enterprise", notional: "$250k", term: "90 days", throughput: "83.3K TPS", region: "US · EU", provenance: "Native / Partner", responses: 4, age: "11 min", status: "Capacity test" },
+  { id: "RFQ-8412", type: "Native Model", model: "Gemini Capacity", notional: "$80k", term: "45 days", throughput: "50K TPS", region: "APAC", provenance: "Native only", responses: 3, age: "18 min", status: "Supplier matching" },
   { id: "RFQ-8405", type: "GPU Cluster", model: "H100 SXM × 64", notional: "$640k", term: "60 days", throughput: "400G IB", region: "Singapore", provenance: "Verified operator", responses: 5, age: "26 min", status: "Commercial review" },
-  { id: "RFQ-8399", type: "Private OTC", model: "Claude capacity", notional: "$500k", term: "120 days", throughput: "8M TPM", region: "Global", provenance: "Authorization unconfirmed", responses: 2, age: "41 min", status: "Risk review" },
+  { id: "RFQ-8399", type: "Private OTC", model: "Claude capacity", notional: "$500k", term: "120 days", throughput: "133.3K TPS", region: "Global", provenance: "Authorization unconfirmed", responses: 2, age: "41 min", status: "Risk review" },
 ];
 
 export const quoteComparison = [
-  { supplier: "Aurora Authorized Channel", provenance: "native_direct", rate: 0.82, total: "$82,000", capacity: "$120,000", throughput: "2.0M TPM", delivery: "24h", sla: "99.97%", validUntil: "21 Aug · 18:00 SGT", quoteState: "Indicative", fee: "Included", highlight: "Strongest authorization evidence" },
-  { supplier: "Meridian Enterprise AI", provenance: "native_allocated", rate: 0.835, total: "$83,500", capacity: "$180,000", throughput: "2.5M TPM", delivery: "18h", sla: "99.96%", validUntil: "21 Aug · 16:30 SGT", quoteState: "Indicative", fee: "Included", highlight: "Fastest delivery" },
-  { supplier: "Pinnacle Enterprise Partner", provenance: "enterprise_partner", rate: 0.84, total: "$84,000", capacity: "$240,000", throughput: "4.0M TPM", delivery: "36h", sla: "99.98%", validUntil: "22 Aug · 12:00 SGT", quoteState: "Indicative", fee: "Included", highlight: "Highest throughput" },
+  { supplier: "Aurora Authorized Channel", provenance: "native_direct", rate: 0.82, total: "$82,000", capacity: "$120,000", inputPer1MUsd: 2.46, outputPer1MUsd: 12.30, tps: 33333, delivery: "24h", sla: "99.97%", validUntil: "21 Aug · 18:00 SGT", quoteState: "Indicative", fee: "Included", highlight: "Strongest authorization evidence" },
+  { supplier: "Meridian Enterprise AI", provenance: "native_allocated", rate: 0.835, total: "$83,500", capacity: "$180,000", inputPer1MUsd: 2.505, outputPer1MUsd: 12.525, tps: 41667, delivery: "18h", sla: "99.96%", validUntil: "21 Aug · 16:30 SGT", quoteState: "Indicative", fee: "Included", highlight: "Fastest delivery" },
+  { supplier: "Pinnacle Enterprise Partner", provenance: "enterprise_partner", rate: 0.84, total: "$84,000", capacity: "$240,000", inputPer1MUsd: 2.52, outputPer1MUsd: 12.60, tps: 66667, delivery: "36h", sla: "99.98%", validUntil: "22 Aug · 12:00 SGT", quoteState: "Indicative", fee: "Included", highlight: "Highest throughput" },
 ];
 
 export const rfqTypes = {
@@ -183,6 +183,19 @@ export const gpuSupplyListings = [
   ...makeGpuSupply("RTX PRO 6000 Blackwell", "96GB", 2, 2.18, 32, 30, ["quote", "cluster"]),
   ...makeGpuSupply("B300", "288GB class", 2, 7.8, 24, 32, ["quote", "cluster"]),
   ...makeGpuSupply("GB200 / GB300 NVL72", "186GB / 279GB class", 2, 13.4, 72, 34, ["cluster", "managed"]),
+];
+
+export const gpuHardwareListings = [
+  { id: "hw-h100-pcie-1", accelerator: "H100 PCIe", memory: "80GB", formFactor: "PCIe card", condition: "New", supplier: "Pinnacle Systems", region: "US East", unitPriceUsd: 27800, quantity: 24, minOrder: 2, leadTime: "7–10 days", warranty: "3-year OEM", inspection: "Serials + burn-in verified", verified: true },
+  { id: "hw-h100-sxm-1", accelerator: "H100 SXM5", memory: "80GB", formFactor: "SXM module", condition: "OEM surplus", supplier: "Cobalt Datacenter", region: "Singapore", unitPriceUsd: 24900, quantity: 64, minOrder: 8, leadTime: "10–14 days", warranty: "1-year seller", inspection: "Serials + photos reviewed", verified: true },
+  { id: "hw-h200-sxm-1", accelerator: "H200 SXM", memory: "141GB", formFactor: "SXM module", condition: "New", supplier: "Vertex AI Infrastructure", region: "Frankfurt", unitPriceUsd: 36800, quantity: 32, minOrder: 4, leadTime: "14–21 days", warranty: "3-year OEM", inspection: "Factory seal verified", verified: true },
+  { id: "hw-b200-sxm-1", accelerator: "B200 SXM", memory: "180GB", formFactor: "SXM module", condition: "New allocation", supplier: "Sovereign GPU", region: "Tokyo", unitPriceUsd: 44500, quantity: 16, minOrder: 8, leadTime: "21–30 days", warranty: "OEM terms", inspection: "Allocation evidence reviewed", verified: true },
+  { id: "hw-a100-pcie-1", accelerator: "A100 PCIe", memory: "80GB", formFactor: "PCIe card", condition: "Refurbished", supplier: "Aperture Compute", region: "US West", unitPriceUsd: 11800, quantity: 80, minOrder: 4, leadTime: "5–7 days", warranty: "90-day seller", inspection: "Burn-in + benchmark passed", verified: true },
+  { id: "hw-l40s-1", accelerator: "L40S", memory: "48GB", formFactor: "PCIe card", condition: "New", supplier: "Meridian Compute", region: "Hong Kong", unitPriceUsd: 7200, quantity: 120, minOrder: 4, leadTime: "5–8 days", warranty: "3-year OEM", inspection: "Serials verified", verified: true },
+  { id: "hw-rtx4090-1", accelerator: "RTX 4090", memory: "24GB", formFactor: "PCIe card", condition: "Used · tested", supplier: "Kinetic Compute", region: "Singapore", unitPriceUsd: 1950, quantity: 45, minOrder: 2, leadTime: "3–5 days", warranty: "30-day seller", inspection: "Stress test passed", verified: true },
+  { id: "hw-rtx5090-1", accelerator: "RTX 5090", memory: "32GB", formFactor: "PCIe card", condition: "New", supplier: "Helix Accelerated", region: "US West", unitPriceUsd: 3100, quantity: 60, minOrder: 2, leadTime: "5–7 days", warranty: "OEM terms", inspection: "Factory seal verified", verified: true },
+  { id: "hw-rtxpro6000-1", accelerator: "RTX PRO 6000 Blackwell", memory: "96GB", formFactor: "PCIe card", condition: "New", supplier: "Nebula GPU", region: "London", unitPriceUsd: 9800, quantity: 18, minOrder: 2, leadTime: "10–14 days", warranty: "3-year OEM", inspection: "Serials verified", verified: true },
+  { id: "hw-b300-1", accelerator: "B300", memory: "288GB class", formFactor: "SXM module", condition: "New allocation", supplier: "Stratus AI Infra", region: "Tokyo", unitPriceUsd: 52800, quantity: 8, minOrder: 8, leadTime: "30–45 days", warranty: "OEM terms", inspection: "Allocation + export scope reviewed", verified: true },
 ];
 
 export const ratingPolicy = {
@@ -282,13 +295,15 @@ export const marketDataSignals = [
 export const procurementState = {
   provenanceFilter: "native",
   modelQuery: "",
-  modelFilter: "all",
-  modelSort: "price_asc",
-  starredOfferIds: [],
-  cartOfferIds: [],
   dataMarket: "model",
   dataAsset: "claude",
   dataRange: 14,
+  gpuMode: "rental",
+  hardwareRegion: "all",
+  hardwareCondition: "all",
+  hardwareSort: "price_asc",
+  supplierReviewStatus: "not_started",
+  supplierReviewId: "",
 };
 
 export function getProvenance(row) {

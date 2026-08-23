@@ -228,7 +228,7 @@ export function isProviderManagedRoute(route) {
 
 /**
  * Enforces the product disclosure rule: closed-model APIs cannot be presented
- * as if TradeNEXT selected their underlying GPU or accelerator.
+ * as if OpenNEXT selected their underlying GPU or accelerator.
  */
 export function validateRoute(route) {
   if (!route || !route.id) return { valid: false, reason: "Route is missing an id." };
@@ -379,7 +379,7 @@ function routeSummary(route) {
     availability: route.availability,
     sla: route.sla,
     disclosure: providerManaged
-      ? "底层芯片由模型服务商管理且不披露；TradeNEXT 仅选择可验证的服务交付路线。"
+      ? "底层芯片由模型服务商管理且不披露；OpenNEXT 仅选择可验证的服务交付路线。"
       : "该路线允许选择并展示已验证的模型与加速硬件组合。",
   };
 }

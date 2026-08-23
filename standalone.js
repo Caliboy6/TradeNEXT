@@ -21,4 +21,4 @@ state.scheduler.text = presets.support.text;
 state.scheduler.plan = null;
 generatePlan();
 await import("./demo-actions.js");
-console.info("TradeNEXT standalone interactions ready");
+console.info("OpenNEXT standalone interactions ready");

@@ -34,8 +34,8 @@ createServer(async (request, response) => {
     response.end(await readFile(file));
   } catch (error) {
     response.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
-    response.end(`TradeNEXT demo server error: ${error.message}`);
+    response.end(`OpenNEXT demo server error: ${error.message}`);
   }
 }).listen(port, "127.0.0.1", () => {
-  console.log(`TradeNEXT Demo MVP: http://127.0.0.1:${port}`);
+  console.log(`OpenNEXT Demo MVP: http://127.0.0.1:${port}`);
 });

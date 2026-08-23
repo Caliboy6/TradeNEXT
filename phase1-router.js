@@ -60,5 +60,5 @@ const contextObserver = new MutationObserver(() => {
 
 if (main) contextObserver.observe(main, { childList: true, subtree: false });
 
-window.__tradeNextPhase1Navigate = navigatePhase;
+window.__openNextPhase1Navigate = navigatePhase;
 

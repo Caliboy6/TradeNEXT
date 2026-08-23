@@ -1,5 +1,5 @@
 /**
- * TradeNEXT interactive MVP — illustrative market data only.
+ * OpenNEXT interactive MVP — illustrative market data only.
  *
  * Every quote, supplier, index level, availability figure and SLA below is
  * synthetic. It exists to make the product workflow tangible; it is not a
@@ -9,13 +9,13 @@
  */
 
 export const demoMeta = Object.freeze({
-  dataset: "TradeNEXT illustrative demo market",
+  dataset: "OpenNEXT illustrative demo market",
   kind: "illustrative-demo-data",
   live: false,
   asOf: "2026-08-20T10:00:00+08:00",
   currency: "USD",
   refreshLabel: "Static demo snapshot",
-  sourceLabel: "Synthetic TradeNEXT demo data",
+  sourceLabel: "Synthetic OpenNEXT demo data",
   disclaimer:
     "Illustrative demo data only — not live quotes, verified inventory, investment advice, or an offer to transact.",
   oevDefinition:
@@ -1067,7 +1067,7 @@ export const rfqExamples = [
     indicativeRange: { lowMultiple: 0.79, highMultiple: 0.87 },
     matchedSuppliers: 6,
     nextStep: "Capacity test",
-    broker: "TradeNEXT Broker Desk · B-017",
+    broker: "OpenNEXT Broker Desk · B-017",
     publicInventory: false,
     indexEligible: false,
     illustrative: true
@@ -1092,7 +1092,7 @@ export const rfqExamples = [
     indicativeRange: { lowPricePerGpuHour: 1.84, highPricePerGpuHour: 2.28 },
     matchedSuppliers: 4,
     nextStep: "Topology validation",
-    broker: "TradeNEXT Broker Desk · B-004",
+    broker: "OpenNEXT Broker Desk · B-004",
     publicInventory: false,
     indexEligible: false,
     illustrative: true

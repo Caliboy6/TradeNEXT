@@ -520,13 +520,13 @@ export function translateText(original, targetLocale = locale, options = {}) {
 
 function translateTextNode(node) {
   const parent = node.parentElement;
-  if (!parent || parent.closest("script, style, noscript, template")) return;
+  if (!parent || parent.closest("script, style, noscript, template, #publicContent, .public-info-dialog")) return;
   const translated = translateText(node.nodeValue);
   if (translated !== node.nodeValue) node.nodeValue = translated;
 }
 
 function translateElementAttributes(element) {
-  if (!(element instanceof Element)) return;
+  if (!(element instanceof Element) || element.closest("#publicContent,.public-info-dialog")) return;
   for (const attribute of ["placeholder", "aria-label", "title", "data-tooltip"]) {
     if (!element.hasAttribute(attribute)) continue;
     const current = element.getAttribute(attribute);
@@ -559,6 +559,7 @@ function updateLocaleChrome() {
   document.documentElement.lang = locale;
   document.documentElement.dataset.locale = locale;
   document.querySelectorAll("[data-locale]").forEach((button) => {
+    if (button.closest("#publicContent,.public-info-dialog")) return;
     const active = button.dataset.locale === locale;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", String(active));

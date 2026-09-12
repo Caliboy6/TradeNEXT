@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-brand.js";
+import * as runtime from "./i18n-brand.js?v=opennext-20260912-2";
 
 const SAFE = "Rhein AI F\u2060abric";
 let locale = runtime.getLocale();
@@ -17,7 +17,7 @@ function translate(value, target = locale) {
 function apply(root = document) {
   const processText = (node) => {
     const parent = node.parentElement;
-    if (!parent || parent.closest("script,style,noscript,template")) return;
+    if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) return;
     const next = translate(node.nodeValue);
     if (next !== node.nodeValue) node.nodeValue = next;
   };

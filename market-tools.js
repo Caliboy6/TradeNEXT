@@ -1,5 +1,5 @@
-import { modelMarkets, providerDepth, modelView, compactMoney, compactNumber, escapeHtml } from "./demo-core.js";
-import { gpuSupplyListings, gpuDemandRatings, procurementState, getProvenance, getSupplierReputation } from "./procurement-data.js";
+import { modelMarkets, providerDepth, modelView, compactMoney, compactNumber, escapeHtml } from "./demo-core.js?v=opennext-20260912-2";
+import { gpuSupplyListings, gpuDemandRatings, procurementState, getProvenance, getSupplierReputation } from "./procurement-data.js?v=opennext-20260912-2";
 
 const main = document.querySelector("#mainContent");
 const modal = document.querySelector("#modal-host");
@@ -474,7 +474,7 @@ export function installMarketTools() {
   restoreSelections();
   const style = document.createElement("link");
   style.rel = "stylesheet";
-  style.href = "./market-tools.css";
+  style.href = "./market-tools.css?v=opennext-20260912-2";
   document.head.append(style);
 
   document.addEventListener("click", (event) => {

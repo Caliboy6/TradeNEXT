@@ -10,16 +10,16 @@ if (titleDescriptor?.get && titleDescriptor?.set) {
   });
 }
 
-const { initI18n, localizeDocument } = await import("./i18n-stable.js");
-const { installInteractionStability, finalizeInteractionStability } = await import("./interaction-stability.js");
-const { installSearchCopyFix } = await import("./search-copy-fix-v2.js");
-const { installMarketTools } = await import("./market-tools.js");
+const { initI18n, localizeDocument } = await import("./i18n-stable.js?v=opennext-20260912-2");
+const { installInteractionStability, finalizeInteractionStability } = await import("./interaction-stability.js?v=opennext-20260912-2");
+const { installSearchCopyFix } = await import("./search-copy-fix-v2.js?v=opennext-20260912-2");
+const { installMarketTools } = await import("./market-tools.js?v=opennext-20260912-2");
 
 initI18n();
 installInteractionStability();
 installSearchCopyFix();
 installMarketTools();
-await import("./procurement-entry.js");
+await import("./procurement-entry.js?v=opennext-20260912-2");
 finalizeInteractionStability();
 localizeDocument(document);
 document.documentElement.classList.remove("i18n-loading");

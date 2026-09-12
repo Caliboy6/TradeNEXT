@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-runtime.js";
+import * as runtime from "./i18n-runtime.js?v=opennext-20260912-2";
 
 // Final terminology layer: Chinese UI uses Chinese product copy while keeping
 // brands, model names, market acronyms and hardware SKUs in their native form.
@@ -182,7 +182,7 @@ function translateFinal(original, target = locale) {
 }
 
 function translateAttributes(element) {
-  if (!(element instanceof Element)) return;
+  if (!(element instanceof Element) || element.closest("#publicContent,.public-info-dialog")) return;
   for (const attribute of ["placeholder", "aria-label", "title", "data-tooltip"]) {
     if (!element.hasAttribute(attribute)) continue;
     const value = element.getAttribute(attribute);
@@ -199,7 +199,7 @@ function translateAttributes(element) {
 function localizeFinal(root = document) {
   if (root.nodeType === Node.TEXT_NODE) {
     const parent = root.parentElement;
-    if (!parent || parent.closest("script,style,noscript,template")) return;
+    if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) return;
     const translated = translateFinal(root.nodeValue);
     if (translated !== root.nodeValue) root.nodeValue = translated;
     return;
@@ -211,7 +211,7 @@ function localizeFinal(root = document) {
   while ((node = walker.nextNode())) {
     if (node.nodeType === Node.TEXT_NODE) {
       const parent = node.parentElement;
-      if (!parent || parent.closest("script,style,noscript,template")) continue;
+      if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) continue;
       const translated = translateFinal(node.nodeValue);
       if (translated !== node.nodeValue) node.nodeValue = translated;
     } else translateAttributes(node);

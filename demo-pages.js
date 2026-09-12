@@ -2,7 +2,7 @@ import {
   state, presets, modelMarkets, gpuOffers, providerDepth, routeCatalog, rfqExamples, indexSeries, marketStats,
   money, compactMoney, compactNumber, escapeHtml, modelView, gpuView, modelCard, gpuCard,
   currentPlan, createSchedule, getEligibleRoutes, scheduleInput, formatCost, formatLatency, lineChart
-} from "./demo-core.js";
+} from "./demo-core.js?v=opennext-20260912-2";
 
 export function renderOverview() {
   const first = modelView(modelMarkets[0]);

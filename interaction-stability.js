@@ -1,4 +1,4 @@
-import { procurementState } from "./procurement-data.js";
+import { procurementState } from "./procurement-data.js?v=opennext-20260912-2";
 
 const main = document.querySelector("#mainContent");
 const drawer = document.querySelector("#drawer-host");
@@ -212,7 +212,7 @@ export function installInteractionStability() {
 
   const style = document.createElement("link");
   style.rel = "stylesheet";
-  style.href = "./stability.css";
+  style.href = "./stability.css?v=opennext-20260912-2";
   document.head.append(style);
 
   // Registered before the legacy route and search listeners.

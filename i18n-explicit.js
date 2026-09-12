@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-click.js";
+import * as runtime from "./i18n-click.js?v=opennext-20260912-2";
 
 const pairs = [
   ["出售已验证的原厂容量", "Sell verified native capacity"],
@@ -31,7 +31,7 @@ function translate(value, target = locale) {
 function apply(root = document) {
   const processText = (node) => {
     const parent = node.parentElement;
-    if (!parent || parent.closest("script,style,noscript,template")) return;
+    if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) return;
     const next = translate(node.nodeValue);
     if (next !== node.nodeValue) node.nodeValue = next;
   };

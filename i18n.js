@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-procurement.js";
+import * as runtime from "./i18n-procurement.js?v=opennext-20260912-2";
 
 function updateMetadata() {
   const chinese = runtime.getLocale() === "zh-CN";

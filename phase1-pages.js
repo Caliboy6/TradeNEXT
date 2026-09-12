@@ -9,7 +9,7 @@ import {
   escapeHtml,
   modelView,
   sparkline,
-} from "./demo-core.js";
+} from "./demo-core.js?v=opennext-20260912-2";
 import {
   phase1Meta,
   provenanceCatalog,
@@ -19,12 +19,12 @@ import {
   phaseState,
   getProvenance,
   isNativeType,
-} from "./phase1-data.js";
+} from "./phase1-data.js?v=opennext-20260912-2";
 import {
   renderGpus as renderBaseGpus,
   renderScheduler as renderBaseScheduler,
   renderData as renderBaseData,
-} from "./demo-pages.js";
+} from "./demo-pages.js?v=opennext-20260912-2";
 
 const nativeTypes = new Set(["native_direct", "native_allocated", "enterprise_partner"]);
 

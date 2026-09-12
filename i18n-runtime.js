@@ -1,4 +1,4 @@
-import * as base from "./i18n-base.js";
+import * as base from "./i18n-base.js?v=opennext-20260912-2";
 
 // Extensions for the legacy GPU, Market Data and Orchestrator renderers that
 // are still part of the Phase 1 demo. The extension observer is registered
@@ -400,13 +400,13 @@ function translateExtra(original, targetLocale = locale) {
 
 function translateNode(node) {
   const parent = node.parentElement;
-  if (!parent || parent.closest("script,style,noscript,template")) return;
+  if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) return;
   const translated = translateExtra(node.nodeValue);
   if (translated !== node.nodeValue) node.nodeValue = translated;
 }
 
 function translateAttributes(element) {
-  if (!(element instanceof Element)) return;
+  if (!(element instanceof Element) || element.closest("#publicContent,.public-info-dialog")) return;
   for (const attribute of ["placeholder", "aria-label", "title", "data-tooltip"]) {
     if (!element.hasAttribute(attribute)) continue;
     const current = element.getAttribute(attribute);

@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-cleanup.js";
+import * as runtime from "./i18n-cleanup.js?v=opennext-20260912-2";
 
 // Preserve the supplier's proper name while preventing the generic word
 // “fabric” in topology descriptions from translating the brand itself.
@@ -14,7 +14,7 @@ function translate(value, target = locale) {
 }
 
 function translateElement(element) {
-  if (!(element instanceof Element)) return;
+  if (!(element instanceof Element) || element.closest("#publicContent,.public-info-dialog")) return;
   for (const attr of ["placeholder", "aria-label", "title", "data-tooltip"]) {
     if (!element.hasAttribute(attr)) continue;
     const current = element.getAttribute(attr);
@@ -26,7 +26,7 @@ function translateElement(element) {
 function apply(root = document) {
   if (root.nodeType === Node.TEXT_NODE) {
     const parent = root.parentElement;
-    if (!parent || parent.closest("script,style,noscript,template")) return;
+    if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) return;
     const next = translate(root.nodeValue);
     if (next !== root.nodeValue) root.nodeValue = next;
     return;
@@ -38,7 +38,7 @@ function apply(root = document) {
   while ((node = walker.nextNode())) {
     if (node.nodeType === Node.TEXT_NODE) {
       const parent = node.parentElement;
-      if (!parent || parent.closest("script,style,noscript,template")) continue;
+      if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) continue;
       const next = translate(node.nodeValue);
       if (next !== node.nodeValue) node.nodeValue = next;
     } else translateElement(node);

@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-procurement.js";
+import * as runtime from "./i18n-procurement.js?v=opennext-20260912-2";
 
 const SUPPORTED_LOCALES = new Set(["en", "zh-CN"]);
 const observerOptions = {
@@ -47,6 +47,8 @@ export function getI18nDiagnostics() { return runtime.getI18nDiagnostics(); }
 export function translateText(...args) { return runtime.translateText(...args); }
 
 export function localizeDocument(root = document) {
+  const element = root?.nodeType === Node.TEXT_NODE ? root.parentElement : root;
+  if (element instanceof Element && element.closest("#publicContent,.public-info-dialog")) return;
   return withoutObserver(() => {
     const result = runtime.localizeDocument(root);
     updateMetadata();
@@ -71,6 +73,7 @@ const api = { getLocale, getI18nDiagnostics, translateText, localizeDocument, se
 function addPendingRoot(node) {
   const root = node?.nodeType === Node.TEXT_NODE ? node.parentElement : node;
   if (!(root instanceof Element || root instanceof Document || root instanceof DocumentFragment)) return;
+  if (root instanceof Element && root.closest("#publicContent,.public-info-dialog")) return;
   pendingRoots.add(root);
 }
 

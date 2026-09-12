@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-a11y.js";
+import * as runtime from "./i18n-a11y.js?v=opennext-20260912-2";
 
 const ZH = "识别意图与优先级 · 调度决策";
 const EN = "Identify intent and priority · Routing decision";
@@ -15,12 +15,12 @@ function translate(value, target = locale) {
 function apply(root = document) {
   const processText = (node) => {
     const parent = node.parentElement;
-    if (!parent || parent.closest("script,style,noscript,template")) return;
+    if (!parent || parent.closest("script,style,noscript,template,#publicContent,.public-info-dialog")) return;
     const next = translate(node.nodeValue);
     if (next !== node.nodeValue) node.nodeValue = next;
   };
   const processElement = (element) => {
-    if (!(element instanceof Element)) return;
+    if (!(element instanceof Element) || element.closest("#publicContent,.public-info-dialog")) return;
     for (const attr of ["aria-label", "title"]) {
       if (!element.hasAttribute(attr)) continue;
       const current = element.getAttribute(attr);

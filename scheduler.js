@@ -1,4 +1,4 @@
-import { routeCatalog } from "./data.js";
+import { routeCatalog } from "./data.js?v=opennext-20260912-2";
 
 const CLOSED_FAMILY_PATTERN = /(claude|anthropic|gpt|openai|gemini|kimi|moonshot|glm)/i;
 const OPAQUE_HARDWARE_PATTERN = /(provider[- ]managed|opaque|undisclosed|not disclosed)/i;

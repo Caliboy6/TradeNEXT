@@ -1,4 +1,4 @@
-import { providerProvenance as legacyProviderProfiles } from "./phase1-data.js?v=opennext-20260912-2";
+import { providerProvenance as legacyProviderProfiles } from "./phase1-data.js?v=opennext-20260912-3";
 
 export const procurementMeta = {
   dataMode: "Demo environment",

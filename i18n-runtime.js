@@ -1,4 +1,4 @@
-import * as base from "./i18n-base.js?v=opennext-20260912-2";
+import * as base from "./i18n-base.js?v=opennext-20260912-3";
 
 // Extensions for the legacy GPU, Market Data and Orchestrator renderers that
 // are still part of the Phase 1 demo. The extension observer is registered

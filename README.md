@@ -25,7 +25,7 @@ npm test
 
 Open `http://127.0.0.1:4173`. The optional `docs/responsive-preview.html` harness renders the same application at mobile and tablet widths.
 
-The public deployment uses the `gh-pages` branch. This redesign starts from the deployed source, preserving the newer procurement features absent from the older `main` snapshot.
+The public deployment uses the `gh-pages` branch. Both `main` and `gh-pages` contain the current source. This redesign preserves the existing model, rental and physical GPU procurement features.
 
 ---
 
@@ -86,7 +86,7 @@ npm run check
 
 ## 推荐 Demo 路线
 
-1. 默认进入 Native Market，高密度展示多模型、多供应商供应信号与实时 Demand Tape。
+1. 从公开 Landing Page 进入登录页，点击演示入口后打开模型容量市场，展示多模型、多供应商供应信号与 Demand Tape。
 2. 打开任意 Provenance Passport，区分上游授权转售、企业配额、合作方交付与技术验证第三方交付。
 3. 点击全局 `Post RFQ`，依次展示 Native Model、GPU、Hosted Inference 与 Private OTC 四种交易类型。
 4. 进入 My RFQs，比较标准化报价，并展示价格、容量、期限、交付方式与履约记录的沉淀链路。

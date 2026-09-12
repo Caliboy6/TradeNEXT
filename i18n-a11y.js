@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-explicit.js?v=opennext-20260912-2";
+import * as runtime from "./i18n-explicit.js?v=opennext-20260912-3";
 
 const PAIRS = [
   ["出售已验证的原厂容量", "Sell verified native capacity"],

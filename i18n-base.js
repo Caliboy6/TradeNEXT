@@ -144,6 +144,7 @@ const pairs = [
   ["优化目标", "Optimization objective"],
   ["效果 / 成本 / 延迟", "Quality / cost / latency"],
   ["✦ 拆解任务并生成计划", "✦ Decompose task and generate plan"],
+  ["拆解任务并生成计划", "Generate execution plan"],
   ["三种策略即时对比", "Compare three strategies instantly"],
   ["同一任务、同一硬约束；长度表示相对预计成本。", "Same task and hard constraints; bar length represents relative estimated cost."],
   ["硬件选择边界", "Hardware selection boundary"],

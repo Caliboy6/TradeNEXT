@@ -19,11 +19,14 @@ GitHub Pages serves static files. Authentication is a **demonstration only**, us
 
 ```sh
 npm start
+npm run build
 npm run check
 npm test
 ```
 
 Open `http://127.0.0.1:4173`. The optional `docs/responsive-preview.html` harness renders the same application at mobile and tablet widths.
+
+The full landing page is prerendered into `index.html` by `npm run build`. Rebuild after editing public-page content or module URLs. Public navigation and demo sign-in initialize before the procurement modules; workspace startup failures show a retry/home choice instead of leaving the website on a loading placeholder. Module preloads remove the sequential network request chain during a fresh visit.
 
 The public deployment uses the `gh-pages` branch. Both `main` and `gh-pages` contain the current source. This redesign preserves the existing model, rental and physical GPU procurement features.
 

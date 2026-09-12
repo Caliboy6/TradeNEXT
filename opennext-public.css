@@ -159,3 +159,9 @@
 .public-page .public-listing-table th,.public-page .public-side-tag,.public-page .public-footer-links,.public-page .public-footer-links button,.auth-page .public-footer-links button,.auth-page .public-auth-hint,.public-page .public-supplier-column small{font-size:12px}
 .public-page .on-button,.auth-page .on-button{font-size:14px!important}
 @media(max-width:480px){.public-header-actions{gap:12px}.public-hero-actions{flex-wrap:wrap}.public-page .public-market-row{grid-template-columns:24px minmax(0,1fr)}.public-page .public-market-row .on-button{grid-column:2;grid-row:auto;justify-self:start;font-size:14px!important}.public-market-row p{grid-column:2}.public-auth-header-links{gap:10px}.public-auth-header-links>button{font-size:12px}.public-auth-story .on-eyebrow{font-size:12px}.public-preview-actions{flex-wrap:wrap}.public-supplier-column .on-button{white-space:normal;min-height:44px}.public-listing-tab{padding-left:0;padding-right:10px}.public-page .public-listing-table{min-width:570px}.public-hero{min-height:625px}.public-page[lang=zh-CN] .public-hero{min-height:640px}}
+.public-startup { min-height: 100vh; }
+.public-startup header { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:28px 0; border-bottom:1px solid #ddd; }
+.public-startup section { max-width:680px; margin:12vh auto; }
+.public-startup h1 { font-family:Georgia,'Times New Roman',serif; font-size:clamp(32px,5vw,54px); font-weight:400; letter-spacing:-.04em; }
+.public-startup section > p:not(.on-eyebrow) { font-size:16px; line-height:1.7; color:#666; }
+.public-startup section > div { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }

@@ -1,5 +1,5 @@
-import { state } from "./demo-core.js?v=opennext-20260912-3";
-import { renderModels, renderGpus, renderData, renderRfq, renderSupply, renderDocs, renderScheduler } from "./procurement-pages.js?v=opennext-20260912-3";
+import { state } from "./demo-core.js?v=opennext-20260912-5";
+import { renderModels, renderGpus, renderData, renderRfq, renderSupply, renderDocs, renderScheduler } from "./procurement-pages.js?v=opennext-20260912-5";
 
 const main = document.querySelector("#mainContent");
 const renderers = { models: renderModels, gpus: renderGpus, data: renderData, rfq: renderRfq, supply: renderSupply, docs: renderDocs, scheduler: renderScheduler };

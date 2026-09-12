@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-a11y.js?v=opennext-20260912-3";
+import * as runtime from "./i18n-a11y.js?v=opennext-20260912-5";
 
 const ZH = "识别意图与优先级 · 调度决策";
 const EN = "Identify intent and priority · Routing decision";

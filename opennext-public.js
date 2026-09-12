@@ -1,18 +1,22 @@
-import { renderLanding, renderLogin } from './opennext-public-pages.js?v=opennext-20260912-3';
-import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260912-3';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260912-5';
+import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260912-5';
 
 const publicContent = document.querySelector('#publicContent');
 const workspace = document.querySelector('#app');
 const storage = (() => { try { return sessionStorage; } catch { return { getItem: () => null, setItem() {}, removeItem() {} }; } })();
 let session = readSession(storage);
 let ready = false;
+let shellReady = false;
+let startupFailed = false;
+let pendingGpuMode = '';
+let publicLocale = (() => { try { return localStorage.getItem('opennext.locale') === 'zh-CN' ? 'zh-CN' : 'en'; } catch { return 'en'; } })();
 let workspaceRender;
 let workspaceNavigate;
 let current = '';
 let pending = 'models';
 let ignoreNextHash = false;
 let draft = { mode: 'email', email: '', name: '', company: '', error: '' };
-const lang = () => window.OpenNEXTI18n?.getLocale?.() || 'en';
+const lang = () => window.OpenNEXTI18n?.getLocale?.() || publicLocale;
 const copy = (en, zh) => lang() === 'zh-CN' ? zh : en;
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -30,6 +34,27 @@ function showPublic(route) {
   document.body.classList.add('is-public');
   publicContent.innerHTML = route === 'home' ? renderLanding(lang()) : renderLogin(lang(), { ...draft, mode: route === 'signup' ? 'register' : draft.mode });
   document.documentElement.classList.remove('i18n-loading');
+}
+
+function showWorkspaceStartup() {
+  workspace.hidden = true;
+  publicContent.hidden = false;
+  document.body.classList.add('is-public');
+  document.documentElement.classList.remove('i18n-loading');
+  publicContent.innerHTML = `<div class="public-startup public-container"><header>${logoMarkup()}<button type="button" class="on-button on-button-text" data-public-action="home">${copy('Back to homepage', '返回首页')}</button></header><section role="status"><p class="on-eyebrow">OPENNEXT WORKSPACE</p><h1>${startupFailed ? copy('Let’s reconnect.', '重新连接工作台。') : copy('Opening your workspace.', '正在打开工作台。')}</h1><p>${startupFailed ? copy('The workspace could not finish loading. Your session is safe. Retry the connection or return to the homepage.', '工作台未能完成加载，登录状态仍会保留。你可以重试连接，或返回首页。') : copy('The homepage is ready. We are connecting the procurement workspace; this may take a moment on a slow connection.', '首页已就绪，正在连接采购工作台。网络较慢时可能需要一点时间。')}</p><div><button type="button" class="on-button on-button-primary" data-public-action="retry">${copy('Retry connection', '重试连接')}</button><button type="button" class="on-button on-button-outline" data-public-action="home">${copy('Back to homepage', '返回首页')}</button></div></section></div>`;
+}
+
+export function initializePublicShell(initialRoute) {
+  shellReady = true;
+  window.OpenNEXTPublicReady = true;
+  navigatePublic(initialRoute || 'home', { replace: true });
+  document.getElementById('startup-fallback')?.setAttribute('hidden', '');
+}
+
+export function reportWorkspaceFailure() {
+  if (ready) return;
+  startupFailed = true;
+  if (workspaceRoutes.has(current)) showWorkspaceStartup();
 }
 
 function updateLocation(route, replace = false) {
@@ -57,11 +82,15 @@ export function navigatePublic(raw = 'home', options = {}) {
       showPublic('login');
     } else {
       current = route;
-      publicContent.hidden = true;
-      workspace.hidden = false;
-      document.body.classList.remove('is-public');
-      if (ready) workspaceNavigate(route, { ...options, history: options.replace ? 'replace' : undefined });
-      else updateLocation(route, options.replace);
+      if (ready) {
+        publicContent.hidden = true;
+        workspace.hidden = false;
+        document.body.classList.remove('is-public');
+        workspaceNavigate(route, { ...options, history: options.replace ? 'replace' : undefined });
+      } else {
+        updateLocation(route, options.replace);
+        showWorkspaceStartup();
+      }
     }
   } else {
     const next = ['home', 'login', 'signup'].includes(route) ? route : 'home';
@@ -107,13 +136,17 @@ document.addEventListener('click', event => {
   if (item.classList.contains('modal-backdrop') && item !== event.target) return;
   event.preventDefault(); event.stopImmediatePropagation();
   const action = item.dataset.publicAction;
+  if (action === 'retry') return location.reload();
   if (action === 'home') return navigatePublic('home');
   if (action === 'signin') { draft.mode = 'email'; draft.error = ''; return navigatePublic('login'); }
   if (action === 'register') { draft.error = ''; return navigatePublic('signup'); }
   if (action === 'demo') return completeDemo({});
   if (action === 'open-workspace') {
     pending = safeDestination(item.dataset.target);
-    if (item.dataset.mode) window.OpenNEXTSetGpuMode?.(item.dataset.mode);
+    if (item.dataset.mode) {
+      pendingGpuMode = item.dataset.mode;
+      window.OpenNEXTSetGpuMode?.(pendingGpuMode);
+    }
     return navigatePublic(pending);
   }
   if (action === 'locale') {
@@ -123,6 +156,8 @@ document.addEventListener('click', event => {
       for (const [field, key] of [['email', 'email'], ['fullName', 'name'], ['company', 'company']]) if (values.has(field)) draft[key] = String(values.get(field));
     }
     const next = item.dataset.locale === 'zh-CN' ? 'zh-CN' : 'en';
+    publicLocale = next;
+    try { localStorage.setItem('opennext.locale', next); } catch { /* Private browsing may disable storage. */ }
     if (draft.error) draft.error = next === 'zh-CN' ? '请输入页面显示的演示验证码：123456。' : 'Use the displayed demo code: 123456.';
     window.OpenNEXTI18n?.setLocale?.(next);
     if (document.body.classList.contains('is-public')) showPublic(current === 'home' ? 'home' : current);
@@ -162,7 +197,7 @@ document.addEventListener('submit', event => {
 }, true);
 
 for (const eventName of ['popstate', 'hashchange']) window.addEventListener(eventName, event => {
-  if (!ready) return;
+  if (!shellReady) return;
   event.stopImmediatePropagation();
   if (eventName === 'hashchange' && ignoreNextHash) { ignoreNextHash = false; return; }
   const top = eventName === 'popstate' ? Number(event.state?.scrollY || 0) : 0;
@@ -178,6 +213,7 @@ document.addEventListener('opennext:localechange', () => {
 export function initializePublic(initialRoute) {
   workspaceRender = window.__openNextProcurementRender;
   workspaceNavigate = window.__openNextProcurementNavigate;
+  if (typeof workspaceRender !== 'function' || typeof workspaceNavigate !== 'function') throw new Error('Workspace router did not initialize');
   window.__openNextProcurementRender = route => {
     // Locale events on the public site must not reveal the workspace.
     if (document.body.classList.contains('is-public')) return route;
@@ -187,7 +223,9 @@ export function initializePublic(initialRoute) {
   window.__openNextProcurementNavigate = navigatePublic;
   window.__openNextPhase1Navigate = navigatePublic;
   ready = true;
-  navigatePublic(initialRoute || 'home', { replace: true });
+  window.OpenNEXTWorkspaceReady = true;
+  if (pendingGpuMode) window.OpenNEXTSetGpuMode?.(pendingGpuMode);
+  navigatePublic(current || initialRoute || 'home', { replace: true });
   // These files deliberately override legacy styles injected during startup.
   for (const id of ['opennext-workspace-style', 'opennext-public-style']) document.head.append(document.getElementById(id));
 }

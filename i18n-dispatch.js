@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-brand.js?v=opennext-20260912-3";
+import * as runtime from "./i18n-brand.js?v=opennext-20260912-5";
 
 const SAFE = "Rhein AI F\u2060abric";
 let locale = runtime.getLocale();

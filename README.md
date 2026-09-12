@@ -1,4 +1,33 @@
-# OpenNEXT Native AI Capacity Market — Demo MVP
+# OpenNEXT — Public site & procurement demo
+
+## September 2026 UI update
+
+The public site and procurement workspace now have separate entry points with the approved monochrome OpenNEXT identity, editorial typography, engineering illustrations and fine-rule tables.
+
+- `/` or `#home`: full public landing page, model / GPU rental / physical hardware listing previews, buyer and supplier paths.
+- `#login`: email sign-in demonstration and direct **Explore demo workspace** entry.
+- `#signup`: demo organization registration.
+- `#models`, `#gpus`, `#rfq`, `#supply`, `#data`, `#docs`, `#scheduler`: existing procurement workspace after demo sign-in.
+- A protected deep link returns to the requested market after sign-in. Sign-out clears the tab session. Browser navigation and English / Chinese switching are supported.
+- Saved offers, quote cart, comparison, supplier review, physical hardware, RFQ workflows, messages, ratings and scheduler simulations remain available.
+
+### Demo authentication
+
+GitHub Pages serves static files. Authentication is a **demonstration only**, using a tab-scoped session that expires after eight hours. The displayed code is `123456`; no email is sent and no backend account is created. Do not enter real credentials or confidential data. This is not an access-control boundary for private production data. Production sign-in requires a backend identity provider, server-side sessions and route/API authorization.
+
+### Run and validate
+
+```sh
+npm start
+npm run check
+npm test
+```
+
+Open `http://127.0.0.1:4173`. The optional `docs/responsive-preview.html` harness renders the same application at mobile and tablet widths.
+
+The public deployment uses the `gh-pages` branch. This redesign starts from the deployed source, preserving the newer procurement features absent from the older `main` snapshot.
+
+---
 
 OpenNEXT 是面向 AI 容量的价格发现、RFQ、验证、分配、交割与结算基础设施。这个版本将产品重心从“统一 API / 智能路由”调整为真实市场已经验证的需求：**找到便宜、稳定、马上可用且来源清晰的原厂 AI Capacity**。
 
@@ -6,7 +35,7 @@ OpenNEXT 是面向 AI 容量的价格发现、RFQ、验证、分配、交割与�
 
 ## Phase 1 核心
 
-- 默认首页是 Native Market 采购看板，集中展示大量合格供应信号、价格基准、可用配额、有效期和交付方式。`Post RFQ` 是全局唯一主按钮。
+- 登录后的工作台默认是 Native Market 采购看板，集中展示大量合格供应信号、价格基准、可用配额、有效期和交付方式。`Post RFQ` 是全局唯一主按钮。
 - Model Capacity 默认采用 provenance-first 展示，价格之前先显示供应来源与买方实际获得内容。
 - RFQ 是首发成交机制。全局入口先选择 Native Model Capacity、GPU Capacity、Hosted Inference 或 Private OTC，再进入各自字段与风险通道。
 - Private OTC 是独立风险通道，不进入公开库存或 Native benchmark。

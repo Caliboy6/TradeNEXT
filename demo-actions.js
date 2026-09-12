@@ -48,6 +48,7 @@ function closeOverlays() {
   if (drawer) drawer.innerHTML = "";
   if (modal) modal.innerHTML = "";
   document.body.classList.remove("overlay-open");
+  document.body.style.removeProperty("overflow");
 }
 
 function showToast(title, description = "Demo Simulation") {
@@ -130,11 +131,17 @@ async function runSimulation() {
   let plan = currentPlan();
   let fallbackEvent = null;
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const leftScheduler = () => {
+    const left = state.route !== "scheduler" || document.body.classList.contains("is-public");
+    if (left) state.scheduler.running = false;
+    return left;
+  };
   for (let index = 0; index < plan.steps.length; index += 1) {
     const step = plan.steps[index];
     state.scheduler.statuses[step.id] = "running";
     renderPage("scheduler");
     await wait(220);
+    if (leftScheduler()) return;
     if (!fallbackEvent && index >= Math.floor(plan.steps.length / 2)) {
       try {
         const result = simulateFallback(plan, { seed: "opennext-live-demo" }, routeCatalog);
@@ -146,6 +153,7 @@ async function runSimulation() {
         renderPage("scheduler");
         showToast("主路线健康下降，已自动切换备用路线", `${result.event.detectedInMs + result.event.reroutedInMs} ms recovery · audit logged`);
         await wait(420);
+        if (leftScheduler()) return;
       } catch (error) {
         console.warn("Fallback simulation unavailable", error);
       }
@@ -194,7 +202,7 @@ document.addEventListener("click", (event) => {
   }
   const element = event.target.closest?.("[data-final-action], [data-action]");
   if (!element) return;
-  if (element.hasAttribute("data-modal-panel") && event.target === element) return;
+  if (element.classList.contains("modal-backdrop") && event.target !== element) return;
   const action = element.dataset.finalAction || element.dataset.action;
   if (!action) return;
   event.preventDefault();

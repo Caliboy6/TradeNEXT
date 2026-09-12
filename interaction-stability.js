@@ -43,7 +43,8 @@ function navigateStable(route, options = {}) {
   closeTransientUi();
   const normalized = renderWithoutSearchNarrowing(route);
   const nextHash = `#${normalized}`;
-  const nextState = { route: normalized, scrollY: 0 };
+  const preserveScroll = options.history === "replace" && options.scroll === false && location.hash === nextHash;
+  const nextState = { route: normalized, scrollY: preserveScroll ? Number(history.state?.scrollY || 0) : 0 };
   if (options.history === "replace") history.replaceState(nextState, "", nextHash);
   else if (location.hash !== nextHash) history.pushState(nextState, "", nextHash);
   if (options.scroll !== false) window.scrollTo({ top: 0, behavior: options.smooth ? "smooth" : "auto" });
@@ -140,7 +141,10 @@ function ensureGpuSearch() {
 function filterGpuMarket() {
   const input = ensureGpuSearch();
   if (!input) return;
-  const rows = [...document.querySelectorAll(".gpu-listing-table tbody tr")];
+  const hardware = procurementState.gpuMode === "hardware";
+  const table = document.querySelector(hardware ? ".gpu-hardware-table" : ".gpu-listing-table");
+  // A colspan empty-state row is presentation, not inventory.
+  const rows = [...(table?.querySelectorAll("tbody tr") || [])].filter(row => row.cells.length > 1);
   const query = normalizeSearch(input.value);
   let visible = 0;
   let units = 0;
@@ -149,20 +153,25 @@ function filterGpuMarket() {
     row.hidden = !matches;
     if (!matches) continue;
     visible += 1;
-    const unitMatch = row.cells?.[3]?.innerText.match(/[\d,]+/);
+    const unitMatch = row.cells?.[hardware ? 4 : 3]?.innerText.match(/[\d,]+/);
     units += Number((unitMatch?.[0] || "0").replaceAll(",", ""));
   }
   const page = input.closest(".gpu-procurement");
-  const empty = ensureEmptyState(page?.querySelector(".gpu-supply-board"), "gpu", "No matching GPU supply found.", "Try an accelerator, supplier, region, topology or workload keyword.");
-  if (empty) empty.hidden = visible > 0;
+  const empty = ensureEmptyState(page?.querySelector(hardware ? ".gpu-hardware-board" : ".gpu-supply-board"), "gpu", "No matching GPU supply found.", "Try an accelerator, supplier, region, topology or workload keyword.");
+  if (empty) empty.hidden = visible > 0 || rows.length === 0;
   const metrics = page?.querySelectorAll(".procurement-metrics > div strong");
   if (metrics?.[0]) metrics[0].textContent = String(visible);
+  if (hardware && metrics?.[1]) {
+    const sellers = new Set(rows.filter(row => !row.hidden).map(row => row.cells[2]?.querySelector(".strong")?.textContent));
+    metrics[1].textContent = String(sellers.size);
+  }
   if (metrics?.[2]) metrics[2].textContent = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(units);
   updateResultCount(input, visible, rows.length);
 }
 
 function enhanceCurrentPage() {
   enhancementFrame = 0;
+  if (document.body.classList.contains("is-public")) return;
   filterNativeMarket();
   filterGpuMarket();
   window.OpenNEXTI18n?.localizeDocument?.(main);

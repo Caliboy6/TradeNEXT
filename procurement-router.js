@@ -42,4 +42,9 @@ document.addEventListener("click", (event) => {
   navigateProcurement(target.dataset.route, { smooth: true });
 }, true);
 
-document.addEventListener("opennext:localechange", () => renderCurrentProcurement(state.route));
+document.addEventListener("opennext:localechange", () => {
+  // The public shell owns its locale render. A hidden workspace must never
+  // replace the landing/login destination or bypass its session gate.
+  if (document.body.classList.contains("is-public")) return;
+  (window.__openNextProcurementRender || renderCurrentProcurement)(state.route);
+});

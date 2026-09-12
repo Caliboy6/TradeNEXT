@@ -1,6 +1,6 @@
 {
-  "name": "opennext-native-capacity-market-demo",
-  "version": "0.2.0",
+  "name": "opennext-capacity-market-demo",
+  "version": "0.3.0",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check data.js && node --check scheduler.js && node --check demo-core.js && node --check demo-pages.js && node --check demo-actions.js && node --check standalone.js && node --check release.js && node --check phase1-data.js && node --check phase1-pages.js && node --check phase1-interactions.js && node --check phase1-router.js && node --check phase1-entry.js && node --check procurement-data.js && node --check procurement-pages.js && node --check procurement-workflows.js && node --check procurement-interactions.js && node --check procurement-router.js && node --check procurement-entry.js && node --check i18n-procurement.js"
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/session.test.mjs"
   }
 }

@@ -1,47 +1,49 @@
 <!doctype html>
-<html lang="en" class="i18n-loading">
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="OpenNEXT Native AI Capacity Market and RFQ MVP demo">
-    <title>OpenNEXT · Native AI Capacity Market</title>
+    <meta name="description" content="Source model capacity and GPU compute. Compare supply, request quotes, and manage delivery with OpenNEXT.">
+    <title>OpenNEXT · AI capacity, on your terms.</title>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./phase1.css">
     <link rel="stylesheet" href="./procurement.css">
     <link rel="stylesheet" href="./i18n.css">
+    <link rel="icon" type="image/svg+xml" href="./assets/opennext-mark.svg">
+    <link id="opennext-workspace-style" rel="stylesheet" href="./opennext-workspace.css">
+    <link id="opennext-public-style" rel="stylesheet" href="./opennext-public.css">
+    <style>[hidden]{display:none!important}.boot-message{font:16px Arial,sans-serif;padding:4rem;color:#555}body{margin:0;background:white}</style>
   </head>
-  <body>
-    <div id="app" class="app-shell">
+  <body class="is-public">
+    <div id="publicContent"><div class="boot-message">OpenNEXT is loading…</div></div>
+    <noscript><p class="boot-message">Please enable JavaScript to explore the OpenNEXT demo.</p></noscript>
+    <div id="app" class="app-shell" hidden>
       <aside id="sidebar" class="sidebar" aria-label="Main navigation">
-        <div class="brand-block">
-          <div class="brand-mark" aria-hidden="true">ON</div>
-          <div><strong>OpenNEXT</strong><span>Native AI Capacity Market</span></div>
-        </div>
+        <a class="brand-block" href="#home" data-public-action="home" aria-label="OpenNEXT homepage"><img src="./assets/opennext-mark.svg" width="30" height="32" alt=""><strong>OpenNEXT</strong></a>
         <nav class="nav-list">
-          <button class="nav-item is-active" type="button" data-route="models" data-nav="models"><span class="nav-icon">M</span><span>Native Market</span></button>
+          <button class="nav-item is-active" type="button" data-route="models" data-nav="models"><span class="nav-icon">M</span><span>Model capacity</span></button>
           <button class="nav-item" type="button" data-route="gpus" data-nav="gpus"><span class="nav-icon">G</span><span>GPU Market</span></button>
           <button class="nav-item" type="button" data-route="data" data-nav="data"><span class="nav-icon">↗</span><span>Market Data</span></button>
           <button class="nav-item" type="button" data-route="rfq" data-nav="rfq"><span class="nav-icon">R</span><span class="nav-item-copy"><span>My RFQs</span><span class="nav-mini-badge">5</span></span></button>
           <button class="nav-item" type="button" data-route="supply" data-nav="supply"><span class="nav-icon">S</span><span class="nav-item-copy"><span>Supply / Respond</span><span class="nav-mini-badge">LIVE</span></span></button>
           <div class="nav-divider"></div>
-          <div class="nav-section-label">More</div>
+          <div class="nav-section-label">Workspace</div>
           <button class="nav-item" type="button" data-flow-action="messages"><span class="nav-icon">✉</span><span class="nav-item-copy"><span>Messages</span><span class="nav-mini-badge">3</span></span></button>
           <button class="nav-item" type="button" data-proc-action="managed-gateway"><span class="nav-icon">⇄</span><span class="nav-item-copy"><span>Managed Gateway</span><span class="nav-mini-badge">OPTIONAL</span></span></button>
           <button class="nav-item" type="button" data-route="scheduler" data-nav="scheduler"><span class="nav-icon">✦</span><span class="nav-item-copy"><span>Capacity Optimizer</span><span class="nav-mini-badge">OPTIONAL</span></span></button>
         </nav>
-        <div class="sidebar-lanes">
-          <p>Market structure</p>
-          <div><span class="status-dot status-dot-green"></span><strong>Native RFQ</strong><em>Core market</em></div>
-          <div><span class="status-dot status-dot-amber"></span><strong>Private OTC</strong><em>Separate lane</em></div>
-        </div>
-        <div class="sidebar-account"><div class="avatar">DL</div><div><strong>Demo Workspace</strong><span>Enterprise buyer · Synthetic</span></div><button type="button" data-flow-action="account-menu" aria-label="Account menu">•••</button></div>
+        <nav class="sidebar-utility" aria-label="Support">
+          <button class="nav-item" type="button" data-route="docs" data-nav="docs"><span>Documentation</span></button>
+          <a class="nav-item" href="#home" data-public-action="home"><span>Back to homepage</span></a>
+        </nav>
+        <div class="sidebar-account"><div class="avatar">ON</div><div><strong>Demo Workspace</strong><span>Enterprise buyer · Synthetic</span></div><button type="button" data-flow-action="account-menu" aria-label="Account menu">•••</button></div>
       </aside>
       <div class="workspace">
         <header class="topbar">
           <div class="topbar-left">
             <button class="mobile-menu" id="mobileMenu" type="button" data-action="toggle-mobile-nav" aria-label="Open navigation">☰</button>
-            <div class="environment-chip"><span></span> MVP DEMO</div>
-            <p>Synthetic data · No real transaction</p>
+            <div class="environment-chip"><span></span> DEMO</div>
+            <p>Sample data · Demo workspace</p>
           </div>
           <div class="topbar-right">
             <div class="market-selection-summary topbar-selection-summary" data-selection-state="en-0-0">
@@ -61,6 +63,6 @@
     <div id="drawer-host"></div>
     <div id="modal-host"></div>
     <div id="toast-host" class="toast-root" aria-live="polite"></div>
-    <script type="module" src="./phase1-entry-v2.js"></script>
+    <script type="module" src="./opennext-entry.js"></script>
   </body>
 </html>

@@ -361,7 +361,11 @@ function ensureRankControls() {
   if (modelFilter) modelFilter.value = procurementState.modelFilter;
   if (modelSort) modelSort.value = procurementState.modelSort;
 
-  const gpuToolbar = document.querySelector(".gpu-procurement .filter-bar");
+  // Physical hardware already has its own price/quantity sort. Cloud-only
+  // ranking metadata must not create a second, non-functional hardware sort.
+  const gpuToolbar = document.querySelector(".gpu-supply-board")
+    ? document.querySelector(".gpu-procurement .filter-bar") : null;
+  if (!gpuToolbar) document.querySelector(".gpu-rank-control")?.remove();
   if (gpuToolbar && !gpuToolbar.querySelector("#marketGpuSort")) {
     gpuToolbar.insertAdjacentHTML("beforeend", `<label class="gpu-rank-control"><span>${copy("Rank by", "排序方式")}</span><select class="select" id="marketGpuSort"><option value="price_asc">${copy("Lowest price", "价格最低")}</option><option value="capacity_desc">${copy("Most units", "数量最多")}</option><option value="delivery_asc">${copy("Earliest available", "最早可用")}</option><option value="rating_desc">${copy("Best rated", "评价最高")}</option></select></label>`);
   }
@@ -406,24 +410,17 @@ function applyTerminology() {
   const nav = document.querySelector('[data-nav="models"] > span:last-child');
   setText(nav, copy("Native Capacity", "原厂容量"));
   if (!page) return;
-  const heading = page.querySelector(".page-head h1");
-  const intro = page.querySelector(".page-head p");
+  // Headings and explanatory copy belong to the page renderer; enhancement
+  // must not restore the previous visual design after every DOM change.
   const metricLabels = page.querySelectorAll(".procurement-metrics > div > span");
-  const board = page.querySelector(".market-board");
-  setText(heading, copy("Native Capacity Market", "原厂容量市场"));
-  setText(intro, copy("Discover qualified capacity offers, issue private RFQs, compare standardized terms and preserve a complete fulfilment record.", "发现合格容量供应、发起私密 RFQ、比较标准化条款，并保留完整履约记录。"));
   setText(metricLabels[0], copy("Qualified offers", "合格供应"));
   setText(metricLabels[1], copy("Indicative available capacity", "指示性可用容量"));
-  const eyebrow = board?.querySelector(".eyebrow");
-  const boardTitle = board?.querySelector("h2");
-  const boardCopy = board?.querySelector("p");
-  setText(eyebrow, copy("QUALIFIED CAPACITY OFFERS", "合格容量供应"));
-  setText(boardTitle, copy("Capacity available for RFQ", "可发起 RFQ 的容量"));
-  setText(boardCopy, copy("Compare indicative offers and supplier evidence before opening a private RFQ. This is not a public order book.", "在发起私密 RFQ 前比较指示性供应和供应商证据；这里不是公开订单簿。"));
+
 }
 
 function enhance() {
   enhancementFrame = 0;
+  if (document.body.classList.contains("is-public")) return;
   applyTerminology();
   decorateMarketRows();
   ensureSelectionSummaries();
@@ -437,6 +434,10 @@ function scheduleEnhancement() {
 }
 
 function renderActiveOverlay() {
+  if (document.body.classList.contains("is-public") || !modal?.querySelector(".market-tools-modal")) {
+    activeOverlay = null;
+    return;
+  }
   if (!activeOverlay) return;
   if (activeOverlay.kind === "detail") renderDetail(activeOverlay.key, activeOverlay.returnList);
   if (activeOverlay.kind === "selection") renderSelection(activeOverlay.listType);
@@ -519,6 +520,11 @@ export function installMarketTools() {
     renderActiveOverlay();
   }));
   window.addEventListener("popstate", () => { activeOverlay = null; });
+  // Public navigation and shared Escape handling can close the modal before
+  // this module receives an event. Forget that closed view immediately.
+  if (modal) new MutationObserver(() => {
+    if (!modal.querySelector(".market-tools-modal")) activeOverlay = null;
+  }).observe(modal, { childList: true });
   new MutationObserver(scheduleEnhancement).observe(main, { childList: true, subtree: true });
   scheduleEnhancement();
 }

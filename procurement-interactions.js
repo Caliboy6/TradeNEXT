@@ -128,7 +128,7 @@ function handleAction(action, element) {
 document.addEventListener("click", (event) => {
   const element = event.target.closest?.("[data-proc-action]");
   if (!element) return;
-  if (element.hasAttribute("data-modal-panel") && event.target === element) return;
+  if (element.classList.contains("modal-backdrop") && event.target !== element) return;
   event.preventDefault();
   event.stopImmediatePropagation();
   handleAction(element.dataset.procAction, element);

@@ -6,7 +6,7 @@ function isChinese() {
 }
 
 function visibleRows(selector) {
-  const rows = [...document.querySelectorAll(selector)];
+  const rows = [...document.querySelectorAll(selector)].filter(row => row.cells?.length > 1);
   return { total: rows.length, visible: rows.filter((row) => !row.hidden && !row.classList.contains("is-market-filtered")).length };
 }
 
@@ -14,7 +14,7 @@ function setCount(input, selector) {
   const output = input?.closest(".market-toolbar, .filter-bar")?.querySelector("[data-search-count]");
   if (!input || !output) return;
   const { total, visible } = visibleRows(selector);
-  const filtered = Boolean(input.value.trim());
+  const filtered = Boolean(input.value.trim()) || visible !== total;
   output.textContent = isChinese()
     ? filtered ? `显示 ${visible} / ${total} 条结果` : `共 ${total} 条结果`
     : filtered ? `${visible} of ${total} results` : `${total} results`;
@@ -30,6 +30,7 @@ function setAttribute(element, name, value) {
 
 function updateSearchCopy() {
   frame = 0;
+  if (document.body.classList.contains("is-public")) return;
   const chinese = isChinese();
   const nativeInput = document.querySelector("#nativeMarketSearch");
   setAttribute(nativeInput, "aria-label", chinese ? "搜索模型容量和供应商" : "Search model capacity and suppliers");
@@ -40,7 +41,7 @@ function updateSearchCopy() {
   }
   document.querySelectorAll("[data-search-clear]").forEach((button) => setAttribute(button, "aria-label", chinese ? "清除搜索" : "Clear search"));
   setCount(nativeInput, ".supply-board-table tbody tr");
-  setCount(gpuInput, ".gpu-listing-table tbody tr");
+  setCount(gpuInput, ".gpu-listing-table tbody tr, .gpu-hardware-table tbody tr");
 
   const nativeEmpty = document.querySelector('[data-search-empty="native"]');
   if (nativeEmpty) {

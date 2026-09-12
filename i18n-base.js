@@ -464,12 +464,8 @@ let scheduled = false;
 const diagnostics = { fallbackEnglish: new Set(), untranslatedEnglish: new Set() };
 
 function readStoredLocale() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return SUPPORTED_LOCALES.has(saved) ? saved : "en";
-  } catch {
-    return "en";
-  }
+  // English-only demo release, including visitors with a saved Chinese locale.
+  return "en";
 }
 
 function preserveOuterWhitespace(original, translated) {
@@ -636,4 +632,3 @@ export function initI18n() {
   window.OpenNEXTI18n = { getLocale, setLocale, translateText, localizeDocument, getI18nDiagnostics };
   return locale;
 }
-

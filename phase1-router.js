@@ -1,5 +1,5 @@
-import { state } from "./demo-core.js?v=opennext-20260912-5";
-import { renderOverview, renderModels, renderGpus, renderScheduler, renderRfq, renderData } from "./phase1-pages.js?v=opennext-20260912-5";
+import { state } from "./demo-core.js?v=opennext-20260912-6";
+import { renderOverview, renderModels, renderGpus, renderScheduler, renderRfq, renderData } from "./phase1-pages.js?v=opennext-20260912-6";
 
 const renderers = {
   overview: renderOverview,

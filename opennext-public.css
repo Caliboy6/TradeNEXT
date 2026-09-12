@@ -165,3 +165,77 @@
 .public-startup h1 { font-family:Georgia,'Times New Roman',serif; font-size:clamp(32px,5vw,54px); font-weight:400; letter-spacing:-.04em; }
 .public-startup section > p:not(.on-eyebrow) { font-size:16px; line-height:1.7; color:#666; }
 .public-startup section > div { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+
+/* A market tape, framed as a price preview rather than a live feed. */
+.public-gpu-ticker{display:flex;align-items:stretch;position:relative;min-height:61px;max-width:100%;background:#111310;color:#f7f8f5;overflow:hidden;border-bottom:1px solid #272b25}
+.public-ticker-caption{position:relative;z-index:2;display:flex;flex:none;flex-direction:column;justify-content:center;gap:2px;padding:11px 23px 11px max(24px,calc((100vw - 1200px)/2));background:#111310;border-right:1px solid #3b3f37;white-space:nowrap}
+.public-ticker-caption strong{font-size:10px;font-weight:500;letter-spacing:1.55px;line-height:1.3}
+.public-ticker-caption>span{font-size:10px;line-height:1.3;color:#a5aba0}
+.public-ticker-window{flex:1;min-width:0;overflow:hidden;display:flex;align-items:center;mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+.public-ticker-window:focus-visible{outline:1px solid #d9e1d3;outline-offset:-5px}
+.public-ticker-track{display:flex;width:max-content;animation:public-market-tape 38s linear infinite;will-change:transform}
+.public-ticker-group{display:flex;align-items:center;flex-shrink:0}
+.public-ticker-item{display:flex;align-items:center;gap:12px;padding:0 23px;font-size:14px;white-space:nowrap;line-height:1.2;font-variant-numeric:tabular-nums;letter-spacing:-.1px}
+.public-ticker-model{color:#c3c9bd;font-size:13px}
+.public-ticker-item strong{font-weight:500;color:#fff}
+.public-ticker-change{font-size:12px}
+.public-ticker-change.is-up{color:#b4cf9b}
+.public-ticker-change.is-down{color:#e8a598}
+.public-ticker-toggle{position:absolute;width:1px;height:1px;opacity:0;left:0;top:0}
+.public-ticker-control{width:56px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;border-left:1px solid #3b3f37;background:#111310;color:#cdd3c7;cursor:pointer;user-select:none}
+.public-ticker-control:hover{background:#242820;color:#fff}
+.public-ticker-pause{font-size:18px;letter-spacing:2px;line-height:1}
+.public-ticker-play{display:none;font-size:22px;line-height:1}
+.public-ticker-control-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.public-ticker-toggle:focus-visible~.public-ticker-control{outline:2px solid #fff;outline-offset:-6px}
+.public-ticker-toggle:checked~.public-ticker-window .public-ticker-track,.public-gpu-ticker:hover .public-ticker-track,.public-gpu-ticker:focus-within .public-ticker-track{animation-play-state:paused}
+.public-ticker-toggle:checked~.public-ticker-control .public-ticker-pause{display:none}
+.public-ticker-toggle:checked~.public-ticker-control .public-ticker-play{display:block}
+@keyframes public-market-tape{to{transform:translateX(-50%)}}
+
+/* Sign-in options keep the same restrained type, rules and square geometry. */
+.auth-page .public-auth-main{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:7%;padding-top:48px;padding-bottom:48px}
+.auth-page .public-auth-panel{max-width:560px}
+.auth-page .public-auth-story h1{font-size:clamp(55px,5vw,79px)}
+.auth-page .public-auth-intro{font-size:18px;max-width:460px}
+.auth-page .public-auth-panel h2{font-size:37px;letter-spacing:-1.5px}
+.auth-page .public-auth-description{margin-top:12px!important;font-size:15px}
+.auth-page .public-auth-form{margin-top:29px}
+.public-account-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.public-account-fields>div{min-width:0}
+.auth-page .public-account-fields input{height:49px;padding:0 12px;font-size:14px}
+.public-password-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:12px}
+.auth-page .public-password-actions .public-auth-link{font-size:12px;border:0;text-decoration:underline;text-underline-offset:3px;color:#61675b;line-height:1.5}
+.auth-page .public-password-actions .public-auth-link:last-child{color:#22251f}
+.auth-page .public-account-form>.public-auth-hint{font-size:11px;margin-top:13px!important;color:#747b6d;line-height:1.5}
+.auth-page .public-account-form>.on-button{min-height:48px;margin-top:17px;font-size:15px!important}
+.auth-page .public-account-form>.on-button>span{font-size:20px;line-height:1}
+.public-consent{display:flex;align-items:flex-start;gap:12px;padding:15px 16px;margin-top:20px;border:1px solid #d5d9d0;background:#f8f9f6;color:#626a58;font-size:12px;line-height:1.75}
+.auth-page .public-auth-form .public-consent input[type=checkbox]{appearance:auto;accent-color:#111310;position:static;flex:0 0 17px;min-width:17px;width:17px;height:17px;min-height:17px;margin:2px 0 0;padding:0;border-radius:0;cursor:pointer}
+.auth-page .public-consent label{display:inline;margin:0;padding:0;font-size:inherit;line-height:inherit;cursor:pointer;color:inherit}
+.auth-page .public-consent button{display:inline;border:0;border-radius:0;background:transparent;color:#32372c;padding:0;margin:0;font-size:inherit;font-weight:500;line-height:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px;text-decoration-color:#a3ab98}
+.auth-page .public-consent button:hover{text-decoration-color:#111310;color:#111310}
+.auth-page .public-auth-error[hidden]{display:none!important}
+.public-auth-divider{display:flex;align-items:center;gap:15px;margin:23px 0 15px;color:#78816d;font-size:12px;text-align:center}
+.public-auth-divider::before,.public-auth-divider::after{content:"";height:1px;background:#d5d9d0;flex:1}
+.public-provider-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid #bdc3b5;min-height:54px;background:#fff}
+.auth-page .public-provider{border:0;border-right:1px solid #dce0d6;border-radius:0;background:transparent;color:#404738;padding:12px 9px;display:flex;align-items:center;justify-content:center;gap:9px;min-width:0;font-size:13px;line-height:1.3;transition:background .15s,color .15s}
+.auth-page .public-provider:last-child{border-right:0}
+.auth-page .public-provider:hover{background:#f1f3ed;color:#111310}
+.auth-page .public-provider svg{width:18px;height:18px;flex:none}
+.auth-page .public-provider>span{white-space:nowrap}
+.public-wallet-row{margin-top:10px;min-height:50px}
+.auth-page .public-provider-wallet{gap:8px;font-size:11px}
+.auth-page .public-provider-wallet svg{width:19px;height:19px}
+.public-provider-hint{color:#818978;font-size:10px;line-height:1.5;margin-top:10px!important}
+.auth-page .public-demo-button{margin-top:16px;min-height:42px;padding:10px 15px;font-size:12px!important;color:#59614f}
+.auth-page .public-auth-secondary{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding-top:20px;margin-top:23px}
+.auth-page .public-auth-secondary h3{font-size:22px;letter-spacing:-.6px;margin-bottom:0}
+.auth-page .public-auth-secondary .public-auth-link{font-size:13px;white-space:nowrap}
+.auth-page .public-account-fallback{margin-top:18px;font-size:12px}
+.public-register-page .public-auth-form .public-consent label{margin:0}
+@media(min-width:1450px){.auth-page .public-auth-main{gap:95px}.auth-page .public-auth-story h1{font-size:84px}}
+@media(max-width:1100px){.auth-page .public-auth-main{gap:5%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.auth-page .public-auth-story h1{font-size:57px;letter-spacing:-3px}.auth-page .public-auth-intro{font-size:16px}.auth-page .public-auth-panel h2{font-size:32px}.public-account-fields{grid-template-columns:1fr;gap:15px}.public-ticker-caption{padding-left:24px}.auth-page .public-provider-wallet{font-size:10px;gap:6px}.public-consent{padding:13px;font-size:11px}.auth-page .public-auth-secondary h3{font-size:21px}}
+@media(max-width:800px){.auth-page .public-auth-main{display:flex;padding-top:38px;padding-bottom:35px;gap:33px}.auth-page .public-auth-panel{align-self:center;max-width:560px;padding-top:29px}.auth-page .public-auth-story{align-self:center;max-width:560px;width:100%}.auth-page .public-auth-story h1{font-size:56px}.auth-page .public-auth-intro{font-size:16px}.public-account-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.public-ticker-caption{padding:10px 17px 10px 24px}.public-ticker-caption strong{font-size:9px}.public-ticker-caption>span{font-size:9px}.public-gpu-ticker{min-height:55px}.public-ticker-control{width:45px}.public-ticker-item{gap:10px;padding:0 18px}.auth-page .public-provider-wallet{font-size:11px;gap:8px}.public-consent{font-size:12px}.auth-page .public-auth-secondary h3{font-size:23px}}
+@media(max-width:480px){.public-gpu-ticker{min-height:51px}.public-ticker-caption{padding:8px 11px 8px 20px;max-width:142px;gap:3px}.public-ticker-caption strong{font-size:9px;letter-spacing:1.15px}.public-ticker-caption>span{font-size:8px}.public-ticker-window{mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}.public-ticker-control{width:37px}.public-ticker-item{font-size:13px;gap:10px;padding:0 15px}.public-ticker-model{font-size:12px}.public-ticker-change{font-size:11px}.public-ticker-track{animation-duration:42s}.auth-page .public-auth-main{gap:25px;padding-top:30px}.auth-page .public-auth-story h1{font-size:46px;letter-spacing:-2.4px}.auth-page .public-auth-intro{font-size:14px}.auth-page .public-auth-panel h2{font-size:30px}.auth-page .public-auth-description{font-size:14px}.auth-page .public-auth-form{margin-top:26px}.public-account-fields{grid-template-columns:1fr;gap:17px}.auth-page .public-account-fields input{height:49px;font-size:16px;padding:0 14px}.public-consent{gap:10px;padding:13px 12px;font-size:11px;margin-top:18px}.auth-page .public-consent input[type=checkbox]{margin-top:1px}.public-auth-divider{margin-top:21px;margin-bottom:13px;gap:12px}.public-provider-row{min-height:51px}.auth-page .public-provider{gap:7px;padding:12px 6px;font-size:12px}.auth-page .public-provider svg{width:17px;height:17px}.auth-page .public-provider-wallet{flex-direction:column;gap:7px;font-size:10px;padding:10px 3px}.public-wallet-row{min-height:62px}.public-provider-hint{font-size:10px}.auth-page .public-auth-secondary{margin-top:23px;padding-top:21px;gap:10px}.auth-page .public-auth-secondary h3{font-size:22px}.auth-page .public-auth-secondary .public-auth-link{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.public-ticker-track{animation:none;transform:none;will-change:auto}.public-ticker-group[aria-hidden=true]{display:none}.public-ticker-window{overflow-x:auto;scrollbar-width:thin;scrollbar-color:#59624d #111310;mask-image:none}.public-ticker-control,.public-ticker-toggle{display:none}}

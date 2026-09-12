@@ -5,15 +5,17 @@
 The public site and procurement workspace now have separate entry points with the approved monochrome OpenNEXT identity, editorial typography, engineering illustrations and fine-rule tables.
 
 - `/` or `#home`: full public landing page, model / GPU rental / physical hardware listing previews, buyer and supplier paths.
-- `#login`: email sign-in demonstration and direct **Explore demo workspace** entry.
+- `#login`: account/password, email-code, Google, GitHub, Lark and wallet sign-in demonstrations with an explicit policy checkbox.
 - `#signup`: demo organization registration.
 - `#models`, `#gpus`, `#rfq`, `#supply`, `#data`, `#docs`, `#scheduler`: existing procurement workspace after demo sign-in.
-- A protected deep link returns to the requested market after sign-in. Sign-out clears the tab session. Browser navigation and English / Chinese switching are supported.
+- A protected deep link returns to the requested market after sign-in. Sign-out clears the tab session and agent conversation. This release defaults to English and hides language switching, including for returning visitors.
+- The landing page includes a pausable GPU price ticker. Values and changes match the supplied design reference and are explicitly demo prices, not a live feed.
+- Workspace navigation lives in the top bar. The collapsible Master Agent panel uses the synthetic GPU catalog for sourcing, quote estimates and a prefilled RFQ handoff; a user must submit the RFQ explicitly.
 - Saved offers, quote cart, comparison, supplier review, physical hardware, RFQ workflows, messages, ratings and scheduler simulations remain available.
 
 ### Demo authentication
 
-GitHub Pages serves static files. Authentication is a **demonstration only**, using a tab-scoped session that expires after eight hours. The displayed code is `123456`; no email is sent and no backend account is created. Do not enter real credentials or confidential data. This is not an access-control boundary for private production data. Production sign-in requires a backend identity provider, server-side sessions and route/API authorization.
+GitHub Pages serves static files. Authentication is a **demonstration only**, using a tab-scoped session that expires after eight hours. Any sample account/password works; password values are never stored or transmitted. The email-code flow uses `123456`; no email is sent. Third-party and wallet buttons open a demo confirmation without connecting accounts or requesting signatures. Every entry requires the demo policy checkbox. Do not enter real credentials or confidential data. Production sign-in requires a backend identity provider, server-side sessions and route/API authorization.
 
 ### Run and validate
 

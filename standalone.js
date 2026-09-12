@@ -1,4 +1,4 @@
-import { state, presets, generatePlan } from "./demo-core.js?v=opennext-20260912-5";
+import { state, presets, generatePlan } from "./demo-core.js?v=opennext-20260912-6";
 
 Object.assign(presets.support, {
   label: "客服分析",
@@ -20,5 +20,5 @@ Object.assign(presets.multimodal, {
 state.scheduler.text = presets.support.text;
 state.scheduler.plan = null;
 generatePlan();
-await import("./demo-actions.js?v=opennext-20260912-5");
+await import("./demo-actions.js?v=opennext-20260912-6");
 console.info("OpenNEXT standalone interactions ready");

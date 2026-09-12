@@ -1,5 +1,5 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260912-5';
-import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260912-5';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260912-6';
+import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260912-6';
 
 const publicContent = document.querySelector('#publicContent');
 const workspace = document.querySelector('#app');
@@ -9,14 +9,14 @@ let ready = false;
 let shellReady = false;
 let startupFailed = false;
 let pendingGpuMode = '';
-let publicLocale = (() => { try { return localStorage.getItem('opennext.locale') === 'zh-CN' ? 'zh-CN' : 'en'; } catch { return 'en'; } })();
+let pendingProvider = '';
 let workspaceRender;
 let workspaceNavigate;
 let current = '';
 let pending = 'models';
 let ignoreNextHash = false;
-let draft = { mode: 'email', email: '', name: '', company: '', error: '' };
-const lang = () => window.OpenNEXTI18n?.getLocale?.() || publicLocale;
+let draft = { mode: 'account', email: '', name: '', company: '', terms: false, error: '' };
+const lang = () => 'en';
 const copy = (en, zh) => lang() === 'zh-CN' ? zh : en;
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -25,6 +25,7 @@ function closeOverlays() {
   document.body.classList.remove('overlay-open');
   document.body.style.removeProperty('overflow');
   document.querySelector('#sidebar')?.classList.remove('is-open');
+  window.OpenNEXTCloseTransientUi?.();
 }
 
 function showPublic(route) {
@@ -45,6 +46,7 @@ function showWorkspaceStartup() {
 }
 
 export function initializePublicShell(initialRoute) {
+  try { localStorage.setItem('opennext.locale', 'en'); } catch { /* Storage can be disabled. */ }
   shellReady = true;
   window.OpenNEXTPublicReady = true;
   navigatePublic(initialRoute || 'home', { replace: true });
@@ -77,7 +79,7 @@ export function navigatePublic(raw = 'home', options = {}) {
     if (!session || session.expiresAt <= Date.now()) {
       session = null;
       pending = route;
-      draft.mode = 'email';
+      draft.mode = 'account';
       updateLocation(`login?next=${route}`, options.replace);
       showPublic('login');
     } else {
@@ -103,15 +105,52 @@ export function navigatePublic(raw = 'home', options = {}) {
 function completeDemo(profile) {
   session = writeSession(storage, profile);
   draft.error = '';
-  draft.mode = 'email';
+  draft.mode = 'account';
   navigatePublic(pending, { replace: true });
 }
 
 function showInfo(type) {
-  const content = type === 'privacy'
+  const policies = {
+    terms: ['Terms of Service · Demo preview', 'OpenNEXT is currently a product demonstration. Accounts, listings, quotes and transactions are illustrative. No purchase, payment or delivery is executed. Production service terms will be presented before real trading is enabled.'],
+    usage: ['Usage Policy · Demo preview', 'Use sample business details and procurement requirements in this demo. Do not enter production passwords, API keys, recovery phrases or confidential documents.'],
+    regions: ['Supported Countries and Regions · Demo preview', 'Locations in the market describe sample delivery regions. They do not represent a published eligibility list. Account and service availability will be confirmed before production onboarding.'],
+    service: ['Service-Specific Terms · Demo preview', 'Model capacity, GPU rental and physical hardware use different price units and delivery conditions. The production quote will specify capacity, duration, region, acceptance and payment terms before confirmation.'],
+  };
+  const content = policies[type] || (type === 'privacy'
     ? [copy('Demo privacy', '演示数据说明'), copy('This is a product demonstration. Sign-in details stay in this browser tab; no email is sent. Listings, messages and transactions are sample data. Please use demonstration details only.', '这是产品演示。登录信息仅保存在当前浏览器标签页，不会发送邮件。挂单、消息和交易均为示例数据，请使用演示信息。')]
-    : [copy('Talk to the capacity desk', '联系算力服务台'), copy('Sign in to open Messages and start a demo conversation with the OpenNEXT Capacity Desk about capacity, delivery or commercial terms.', '登录后打开消息，与 OpenNEXT 算力服务台演示沟通容量、交付和商务条件。')];
+    : [copy('Talk to the capacity desk', '联系算力服务台'), copy('Sign in to open Messages and start a demo conversation with the OpenNEXT Capacity Desk about capacity, delivery or commercial terms.', '登录后打开消息，与 OpenNEXT 算力服务台演示沟通容量、交付和商务条件。')]);
   document.getElementById('modal-host').innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog" role="dialog" aria-modal="true" aria-label="${escape(content[0])}"><header class="modal-head"><h2>${escape(content[0])}</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><p>${escape(content[1])}</p></div><footer class="modal-footer"><button class="primary-button" type="button" data-public-action="close-info">${copy('Got it','知道了')}</button></footer></section></div>`;
+  document.body.classList.add('overlay-open');
+  document.querySelector('.public-info-dialog .close-button')?.focus();
+}
+
+function requireConsent() {
+  const checkbox = document.getElementById('public-terms');
+  draft.terms = checkbox ? checkbox.checked === true : draft.terms;
+  if (draft.terms) { draft.error = ''; return true; }
+  draft.error = 'Please review and accept the demo policies to continue.';
+  const error = document.getElementById('public-auth-error');
+  if (error) { error.textContent = draft.error; error.hidden = false; }
+  checkbox?.focus?.();
+  return false;
+}
+
+function captureAuthDraft() {
+  const form = publicContent.querySelector('[data-auth-form]');
+  if (form) for (const [field, key] of [['email', 'email'], ['fullName', 'name'], ['company', 'company']]) {
+    const input = form.querySelector(`[name="${field}"]`);
+    if (input) draft[key] = input.value.trim();
+  }
+  const checkbox = document.getElementById('public-terms');
+  if (checkbox) draft.terms = checkbox.checked;
+}
+
+const providers = { google:'Google', github:'GitHub', lark:'Lark', walletconnect:'WalletConnect', binance:'Binance Wallet', metamask:'MetaMask' };
+function showProvider(provider) {
+  if (!providers[provider]) return;
+  pendingProvider = provider;
+  const name = providers[provider];
+  document.getElementById('modal-host').innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog" role="dialog" aria-modal="true" aria-label="${name} demo sign-in"><header class="modal-head"><h2>${name} demo sign-in</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><p>Preview the workspace as a ${name} user. No external account or wallet will be connected, and no password or signature is requested.</p></div><footer class="modal-footer"><button class="secondary-button" type="button" data-public-action="close-info">Cancel</button><button class="primary-button" type="button" data-public-action="confirm-provider">Continue in demo</button></footer></section></div>`;
   document.body.classList.add('overlay-open');
   document.querySelector('.public-info-dialog .close-button')?.focus();
 }
@@ -122,7 +161,8 @@ document.addEventListener('click', event => {
   const flow = event.target.closest?.('[data-flow-action]');
   if (flow?.dataset.flowAction === 'confirm-logout') {
     event.preventDefault(); event.stopImmediatePropagation();
-    clearSession(storage); session = null; draft = { mode: 'email', email: '', error: '' }; pending = 'models';
+    clearSession(storage); session = null; draft = { mode: 'account', email: '', terms: false, error: '' }; pending = 'models'; pendingProvider = '';
+    window.dispatchEvent?.(new Event('opennext:signout'));
     navigatePublic('login', { replace: true }); return;
   }
   if (flow?.dataset.flowAction === 'sign-in') {
@@ -138,9 +178,16 @@ document.addEventListener('click', event => {
   const action = item.dataset.publicAction;
   if (action === 'retry') return location.reload();
   if (action === 'home') return navigatePublic('home');
-  if (action === 'signin') { draft.mode = 'email'; draft.error = ''; return navigatePublic('login'); }
-  if (action === 'register') { draft.error = ''; return navigatePublic('signup'); }
-  if (action === 'demo') return completeDemo({});
+  if (action === 'signin') { captureAuthDraft(); draft.mode = 'account'; draft.error = ''; return navigatePublic('login'); }
+  if (action === 'register') { captureAuthDraft(); draft.error = ''; return navigatePublic('signup'); }
+  if (action === 'email-code' || action === 'forgot-password') { captureAuthDraft(); draft.mode = 'email'; draft.error = ''; return navigatePublic('login'); }
+  if (action === 'demo') { if (!requireConsent()) return; return completeDemo({}); }
+  if (action === 'provider') { if (!requireConsent()) return; return showProvider(item.dataset.provider); }
+  if (action === 'confirm-provider') {
+    if (!pendingProvider || !draft.terms) return;
+    const provider = pendingProvider; pendingProvider = '';
+    return completeDemo({ email:`${provider}.user@demo.example`, name:`${providers[provider]} demo user` });
+  }
   if (action === 'open-workspace') {
     pending = safeDestination(item.dataset.target);
     if (item.dataset.mode) {
@@ -150,17 +197,6 @@ document.addEventListener('click', event => {
     return navigatePublic(pending);
   }
   if (action === 'locale') {
-    const form = publicContent.querySelector('[data-auth-form]');
-    if (form) {
-      const values = new FormData(form);
-      for (const [field, key] of [['email', 'email'], ['fullName', 'name'], ['company', 'company']]) if (values.has(field)) draft[key] = String(values.get(field));
-    }
-    const next = item.dataset.locale === 'zh-CN' ? 'zh-CN' : 'en';
-    publicLocale = next;
-    try { localStorage.setItem('opennext.locale', next); } catch { /* Private browsing may disable storage. */ }
-    if (draft.error) draft.error = next === 'zh-CN' ? '请输入页面显示的演示验证码：123456。' : 'Use the displayed demo code: 123456.';
-    window.OpenNEXTI18n?.setLocale?.(next);
-    if (document.body.classList.contains('is-public')) showPublic(current === 'home' ? 'home' : current);
     return;
   }
   if (action === 'scroll') return document.getElementById(item.dataset.section)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -182,7 +218,12 @@ document.addEventListener('submit', event => {
   if (!form) return;
   event.preventDefault(); event.stopImmediatePropagation();
   if (!form.reportValidity()) return;
+  if (!requireConsent()) return;
   const values = new FormData(form);
+  if (form.dataset.authForm === 'account') {
+    // The password input belongs to the visual demo. Never store or transmit it.
+    return completeDemo({ email:String(values.get('email') || '').trim() });
+  }
   if (form.dataset.authForm === 'code') {
     if (String(values.get('code') || '').trim() !== DEMO_CODE) {
       draft.error = copy('Use the displayed demo code: 123456.', '请输入页面显示的演示验证码：123456。');
@@ -190,11 +231,21 @@ document.addEventListener('submit', event => {
     }
     return completeDemo(draft);
   }
-  draft = { mode: 'code', email: String(values.get('email') || '').trim(), name: String(values.get('fullName') || ''), company: String(values.get('company') || ''), error: '' };
+  draft = { mode: 'code', email: String(values.get('email') || '').trim(), name: String(values.get('fullName') || ''), company: String(values.get('company') || ''), terms:true, error: '' };
   updateLocation(`login?next=${pending}`, true);
   showPublic('login');
   document.querySelector('[name="code"]')?.focus();
 }, true);
+
+document.addEventListener('change', event => {
+  if (event.target.id !== 'public-terms') return;
+  draft.terms = event.target.checked;
+  if (draft.terms) {
+    draft.error = '';
+    const error = document.getElementById('public-auth-error');
+    if (error) error.hidden = true;
+  }
+});
 
 for (const eventName of ['popstate', 'hashchange']) window.addEventListener(eventName, event => {
   if (!shellReady) return;
@@ -227,5 +278,8 @@ export function initializePublic(initialRoute) {
   if (pendingGpuMode) window.OpenNEXTSetGpuMode?.(pendingGpuMode);
   navigatePublic(current || initialRoute || 'home', { replace: true });
   // These files deliberately override legacy styles injected during startup.
-  for (const id of ['opennext-workspace-style', 'opennext-public-style']) document.head.append(document.getElementById(id));
+  for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style']) {
+    const style = document.getElementById(id);
+    if (style) document.head.append(style);
+  }
 }

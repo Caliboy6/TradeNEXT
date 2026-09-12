@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-procurement.js?v=opennext-20260912-5";
+import * as runtime from "./i18n-procurement.js?v=opennext-20260912-6";
 
 const SUPPORTED_LOCALES = new Set(["en", "zh-CN"]);
 const observerOptions = {
@@ -57,6 +57,7 @@ export function localizeDocument(root = document) {
 }
 
 export function setLocale(next, options = {}) {
+  next = "en";
   if (!SUPPORTED_LOCALES.has(next)) return runtime.getLocale();
   if (runtime.getLocale() === next) {
     updateMetadata();

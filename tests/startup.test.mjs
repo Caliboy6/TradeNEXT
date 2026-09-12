@@ -8,7 +8,7 @@ function setup() {
     const classes = new Set();
     return { hidden: false, innerHTML: '', classList: { add: v => classes.add(v), remove: v => classes.delete(v), contains: v => classes.has(v) }, style: { removeProperty() {} }, replaceChildren() {}, setAttribute() {}, querySelector() { return null; } };
   };
-  const elements = new Map(['publicContent', 'app', 'sidebar', 'drawer-host', 'modal-host', 'toast-host', 'startup-fallback', 'opennext-workspace-style', 'opennext-public-style'].map(id => [id, makeElement()]));
+  const elements = new Map(['publicContent', 'app', 'sidebar', 'drawer-host', 'modal-host', 'toast-host', 'startup-fallback', 'opennext-workspace-style', 'opennext-public-style', 'public-terms', 'public-auth-error'].map(id => [id, makeElement()]));
   globalThis.document = { body: makeElement(), documentElement: makeElement(), head: { append() {} }, querySelector: selector => elements.get(selector.slice(1)), getElementById: id => elements.get(id), addEventListener: (name, fn) => listeners.set(name, fn) };
   globalThis.location = { hash: '', href: 'https://demo.example/TradeNEXT/', reload() {} };
   const update = (state, _, url) => { history.state = state; location.href = new URL(url, location.href).href; location.hash = new URL(location.href).hash; };
@@ -40,6 +40,7 @@ test('public UI and deep-link sign-in work before procurement scripts arrive; fa
   app.navigatePublic('gpus');
   assert.equal(location.hash, '#login?next=gpus');
   assert.match(elements.get('publicContent').innerHTML, /Sign in to OpenNEXT/);
+  elements.get('public-terms').checked = true;
   click({ publicAction: 'demo' });
   assert.equal(location.hash, '#gpus');
   assert.match(elements.get('publicContent').innerHTML, /Opening your workspace/);
@@ -56,6 +57,7 @@ test('startup completion preserves the latest user destination and GPU mode', as
   const app = await import('../opennext-public.js?startup-test=2');
   app.initializePublicShell('home');
   click({ publicAction: 'open-workspace', target: 'gpus', mode: 'hardware' });
+  elements.get('public-terms').checked = true;
   click({ publicAction: 'demo' });
   let visited, gpuMode;
   window.__openNextProcurementRender = route => route;
@@ -67,4 +69,21 @@ test('startup completion preserves the latest user destination and GPU mode', as
   assert.equal(gpuMode, 'hardware');
   assert.equal(elements.get('app').hidden, false);
   assert.equal(elements.get('publicContent').hidden, true);
+});
+
+test('provider sign-in requires consent and a separate demo confirmation', async () => {
+  const { elements, click } = setup();
+  const app = await import('../opennext-public.js?startup-test=3');
+  app.initializePublicShell('login');
+  click({ publicAction: 'provider', provider: 'google' });
+  assert.match(elements.get('public-auth-error').textContent, /accept the demo policies/);
+  assert.equal(elements.get('modal-host').innerHTML, '');
+  assert.equal(location.hash, '#login?next=models');
+  elements.get('public-terms').checked = true;
+  click({ publicAction: 'provider', provider: 'google' });
+  assert.match(elements.get('modal-host').innerHTML, /Google demo sign-in/);
+  assert.equal(location.hash, '#login?next=models');
+  click({ publicAction: 'confirm-provider' });
+  assert.equal(location.hash, '#models');
+  assert.match(elements.get('publicContent').innerHTML, /Opening your workspace/);
 });

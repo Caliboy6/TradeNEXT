@@ -1,4 +1,4 @@
-import { rfqExamples } from "./demo-core.js?v=opennext-20260912-6";
+import { rfqExamples } from "./demo-core.js?v=opennext-20260912-7";
 
 for (const rfq of rfqExamples) {
   if (rfq.indicativeRange && (!Number.isFinite(rfq.indicativeRange.lowMultiple) || !Number.isFinite(rfq.indicativeRange.highMultiple))) {
@@ -51,6 +51,6 @@ const repairObserver = new MutationObserver((records) => {
 });
 repairObserver.observe(document.documentElement, { childList: true, subtree: true });
 
-await import("./standalone.js?v=opennext-20260912-6");
+await import("./standalone.js?v=opennext-20260912-7");
 repairTree(document.body);
 console.info("OpenNEXT release UI ready");

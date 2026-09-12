@@ -1,4 +1,4 @@
-import { gpuSupplyListings } from './procurement-data.js?v=opennext-20260912-6';
+import { gpuSupplyListings } from './procurement-data.js?v=opennext-20260912-7';
 
 // This assistant is intentionally local and deterministic. All prices and stock
 // below come from the same synthetic catalog displayed in the GPU marketplace.
@@ -6,6 +6,7 @@ const defaultRequest = { accelerator: 'H100', quantity: 32, region: 'Singapore',
 const stages = ['Source capacity', 'Compare terms', 'Review constraints'];
 let agentState = freshState();
 let timer = null;
+let rfqPrefillTimer = null;
 let initialized = false;
 let runId = 0;
 
@@ -152,15 +153,16 @@ function marketSummary() {
 
 function resetPanel() {
   stopRun();
+  if (rfqPrefillTimer !== null) clearTimeout(rfqPrefillTimer);
+  rfqPrefillTimer = null;
   agentState = freshState();
   const panel = document.querySelector('.agent-panel');
   if (panel) panel.innerHTML = renderAgentPanel();
 }
 
-function prefillRfq() {
+function prefillRfq(request) {
   const form = document.getElementById('unifiedRfqForm');
   if (!form) return;
-  const request = agentState.request;
   const set = (name, value) => { const field = form.elements.namedItem(name); if (field) field.value = value; };
   set('quantity', `${request.quantity} accelerators`);
   set('amount', money(request.budget));
@@ -179,10 +181,18 @@ export function initializeAgentPanel() {
   if (initialized) return;
   initialized = true;
   // Window capture runs before the legacy procurement document handler, which
-  // opens the modal and stops propagation. Prefill after its synchronous work.
+  // opens the modal and stops propagation. A microtask may run between those
+  // two browser event listeners, before the form exists. Defer to the next
+  // task so the entire click dispatch (including modal creation) has finished.
   window.addEventListener('click', (event) => {
     const target = event.target.closest?.('.agent-panel [data-agent-rfq]');
-    if (target) queueMicrotask(prefillRfq);
+    if (!target) return;
+    const request = { ...agentState.request };
+    if (rfqPrefillTimer !== null) clearTimeout(rfqPrefillTimer);
+    rfqPrefillTimer = setTimeout(() => {
+      rfqPrefillTimer = null;
+      prefillRfq(request);
+    }, 0);
   }, true);
   document.addEventListener('click', (event) => {
     const button = event.target.closest?.('.agent-panel [data-agent-action]');

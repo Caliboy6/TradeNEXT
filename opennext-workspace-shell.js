@@ -1,4 +1,4 @@
-import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260912-6';
+import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260912-7';
 
 export function initializeWorkspaceShell() {
   const app = document.querySelector('#app');

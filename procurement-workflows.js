@@ -1,5 +1,5 @@
 
-import { escapeHtml } from "./demo-core.js?v=opennext-20260912-6";
+import { escapeHtml } from "./demo-core.js?v=opennext-20260912-7";
 import {
   demandTape,
   quoteComparison,
@@ -8,7 +8,7 @@ import {
   procurementState,
   currentBuyerReputation,
   getSupplierReputation,
-} from "./procurement-data.js?v=opennext-20260912-6";
+} from "./procurement-data.js?v=opennext-20260912-7";
 
 const modal = document.querySelector("#modal-host");
 const toast = document.querySelector("#toast-host");

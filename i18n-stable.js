@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-procurement.js?v=opennext-20260912-6";
+import * as runtime from "./i18n-procurement.js?v=opennext-20260912-7";
 
 const SUPPORTED_LOCALES = new Set(["en", "zh-CN"]);
 const observerOptions = {

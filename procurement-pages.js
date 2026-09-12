@@ -11,8 +11,8 @@ import {
   modelView,
   gpuView,
   lineChart,
-} from "./demo-core.js?v=opennext-20260912-6";
-import { renderScheduler as renderBaseScheduler } from "./demo-pages.js?v=opennext-20260912-6";
+} from "./demo-core.js?v=opennext-20260912-7";
+import { renderScheduler as renderBaseScheduler } from "./demo-pages.js?v=opennext-20260912-7";
 import {
   procurementMeta,
   provenanceCatalog,
@@ -32,7 +32,7 @@ import {
   getSupplierReputation,
   getProvenance,
   isNativeType,
-} from "./procurement-data.js?v=opennext-20260912-6";
+} from "./procurement-data.js?v=opennext-20260912-7";
 
 // Page copy is explicit in both supported languages. The existing localization
 // layer continues to handle all transaction data, controls and workflow content.

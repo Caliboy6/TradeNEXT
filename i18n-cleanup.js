@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-final.js?v=opennext-20260913-1";
+import * as runtime from "./i18n-final.js?v=opennext-20260913-2";
 
 const canonicalPairs = [
   ["原厂 AI 容量市场", "Native AI Capacity Market"],

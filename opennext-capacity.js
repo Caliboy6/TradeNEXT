@@ -46,6 +46,7 @@ export function validateCapacityState(candidate) {
   const id = value => text(value) && !ids.has(value) && Boolean(ids.add(value));
   for (const f of candidate.families) {
     if (!id(f.id) || ![f.name,f.region,f.supplier].every(text) || !finite(f.createdAt,1,1e14) || !finite(f.expiresAt,f.createdAt,1e14) || typeof f.usageAlert !== 'boolean' || typeof f.billingReminder !== 'boolean' || !Array.isArray(f.models) || !f.models.length || f.models.length > 30) return false;
+    if (f.sourceKey !== undefined && !text(f.sourceKey)) return false;
     for (const m of f.models) {
       if (!id(m.id) || !text(m.model) || !finite(m.purchased,1,1e13) || !finite(m.inputUsed,0,m.purchased) || !finite(m.outputUsed,0,m.purchased-m.inputUsed) || !finite(m.rate,0,1e6)) return false;
       if ('inputPurchased' in m && (!finite(m.inputPurchased,0,m.purchased) || !finite(m.outputPurchased,0,m.purchased) || m.inputPurchased+m.outputPurchased!==m.purchased || !finite(m.inputRate,0,1e6) || !finite(m.outputRate,0,1e6))) return false;
@@ -99,6 +100,9 @@ export function addDemoAllocation(detail) {
   const rate=Number(detail.rate); const quantity=Number(detail.quantity);
   if (!finite(rate,0,1e6) || !finite(quantity,1,detail.kind==='tokens'?1e13:1e5) || !Number.isInteger(quantity)) return {ok:false,error:'Enter a valid quantity and unit price.'};
   if (detail.kind==='tokens') {
+    const sourceKey=detail.sourceKey ? clean(detail.sourceKey,'') : undefined;
+    const existing=sourceKey && s.families.find(f=>f.sourceKey===sourceKey);
+    if (existing) return {ok:true,id:existing.id,route:'tokens'};
     if (s.families.length>=80) return {ok:false,error:'The demo allocation limit has been reached.'};
     const days=detail.days===undefined?30:Number(detail.days);
     if (!finite(days,1,366)) return {ok:false,error:'Choose a token allocation term between 1 and 366 days.'};
@@ -109,7 +113,7 @@ export function addDemoAllocation(detail) {
       Object.assign(allocation,{inputPurchased:input,outputPurchased:output,inputRate,outputRate,rate:(input*inputRate+output*outputRate)/quantity});
     }
     const id=newId('tok');allocation.id=`${id}-model`;
-    s.families.unshift({id,name:model,region,supplier,createdAt:now,expiresAt:now+days*DAY,usageAlert:true,billingReminder:true,models:[allocation]});
+    s.families.unshift({id,...(sourceKey?{sourceKey}:{}),name:model,region,supplier,createdAt:now,expiresAt:now+days*DAY,usageAlert:true,billingReminder:true,models:[allocation]});
     save(); return {ok:true,id,route:'tokens'};
   }
   const hours=Number(detail.hours);
@@ -154,12 +158,12 @@ function profilePage() {
   const expiring=s.gpus.filter(g=>{const c=calculateReservation(g);return c.status==='Running'&&c.remainingHours<24;});
   const activeTokens=s.families.filter(f=>f.expiresAt>Date.now());
   return `<section class="on-capacity" data-capacity-page="profile">${head('MY OPENNEXT / PROFILE','Your workspace, at a glance.','Keep an eye on capacity, usage and the next decision.',link('Browse capacity','gpus',true))}
-    <div class="cap-identity"><span class="cap-avatar" aria-hidden="true">DW</span><div><strong>Demo Workspace</strong><span>Procurement team · Workspace owner</span></div><div class="cap-identity-meta"><span>workspace@example.com</span><button type="button" data-route="account">Manage account ${arrow}</button></div></div>
+    <div class="cap-identity"><span class="cap-avatar" aria-hidden="true">EW</span><div><strong>Example workspace</strong><span>Procurement team · Workspace owner</span></div><div class="cap-identity-meta"><span>member@example.com</span><button type="button" data-route="account">Manage account ${arrow}</button></div></div>
     <div class="cap-stats">${stat('Running GPUs',number(summary.activeGPUs),`${summary.activeReservations} active reservations`)}${stat('Available tokens',tokens(summary.tokenRemaining),`${activeTokens.length} unexpired capacity pools`)}${stat('Reserved time remaining',number(summary.gpuHoursRemaining)+'<small> GPU·hr</small>','Across running and scheduled reservations')}${stat('Capacity purchased',money(summary.committedTotal), 'Prepaid sample purchases, including renewals')}</div>
     <div class="cap-profile-grid"><section class="cap-block"><div class="cap-section-head"><div><p class="cap-eyebrow">COMPUTE</p><h2>Active reservations</h2></div><button type="button" class="cap-text-link" data-route="my-gpus">View all ${arrow}</button></div><div class="cap-running-list">${running.length?running.map(g=>{const c=calculateReservation(g);return `<article><div class="cap-hardware-mark" aria-hidden="true"><i></i><i></i><i></i></div><div><strong>${g.quantity} × ${esc(g.model)}</strong><span>${esc(g.region)} · ${esc(g.supplier)}</span></div><div>${badge('Running')}<small>${number(c.remainingHours)} hours remaining</small></div></article>`;}).join(''):'<p class="cap-empty">No running reservations. Browse the GPU market to source capacity.</p>'}</div></section>
     <section class="cap-block"><div class="cap-section-head"><div><p class="cap-eyebrow">UP NEXT</p><h2>Needs your attention</h2></div><span class="cap-counter">${expiring.length+1}</span></div><div class="cap-attention-list">${expiring.map(g=>`<article><span class="cap-attention-marker" aria-hidden="true">↗</span><div><strong>${esc(g.model)} term ends soon</strong><p>${g.quantity} GPUs · ${date(calculateReservation(g).endsAt)}</p>${action('Review renewal','renew',g.id,'cap-text-link')}</div></article>`).join('')}<article><span class="cap-attention-marker" aria-hidden="true">◷</span><div><strong>Keep procurement moving</strong><p>Review supplier replies and compare the terms before confirming an order.</p><button type="button" class="cap-text-link" data-route="rfq">Review my RFQs ${arrow}</button></div></article></div></section></div>
     <section class="cap-block"><div class="cap-section-head"><div><p class="cap-eyebrow">CONSUMPTION</p><h2>Your token capacity</h2></div><button type="button" class="cap-text-link" data-route="tokens">Manage tokens ${arrow}</button></div><div class="cap-token-overview">${s.families.slice(0,3).map(f=>{const t=calculateTokenFamily(f);const pct=Math.round(t.used/t.purchased*100);return `<article><div><strong>${esc(f.name)}</strong><span>${pct}% used</span></div><div class="cap-meter" role="meter" aria-label="${esc(f.name)} token usage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%"></span></div><p>${tokens(t.remaining)} of ${tokens(t.purchased)} tokens remaining</p></article>`;}).join('')}</div></section>
-    <div class="cap-profile-grid"><section class="cap-block"><div class="cap-section-head"><div><p class="cap-eyebrow">ACTIVITY</p><h2>Recent capacity purchases</h2></div><button type="button" class="cap-text-link" data-route="billing">View fees ${arrow}</button></div><ol class="cap-activity">${getCapacityLedgerRecords().slice(0,4).map(r=>`<li><span class="cap-activity-dot" aria-hidden="true"></span><div><strong>${esc(r.description)}</strong><span>${date(r.date)} · Sample payment recorded</span></div><b>${money(r.amount)}</b></li>`).join('')}</ol></section>
+    <div class="cap-profile-grid"><section class="cap-block"><div class="cap-section-head"><div><p class="cap-eyebrow">ACTIVITY</p><h2>Recent capacity purchases</h2></div><button type="button" class="cap-text-link" data-route="billing">View billing ${arrow}</button></div><ol class="cap-activity">${getCapacityLedgerRecords().slice(0,4).map(r=>`<li><span class="cap-activity-dot" aria-hidden="true"></span><div><strong>${esc(r.description)}</strong><span>${date(r.date)} · Sample payment recorded</span></div><b>${money(r.amount)}</b></li>`).join('')}</ol></section>
     <section class="cap-block cap-next"><p class="cap-eyebrow">WORKSPACE SHORTCUTS</p><h2>Everything around the trade.</h2><p>Your assets, supplier conversations and records belong in one place.</p><div>${link('My supplies','supply')}${link('Messages','messages')}${link('Invoices & contracts','billing')}${link('Security & access','account')}</div></section></div>${notice()}</section>`;
 }
 

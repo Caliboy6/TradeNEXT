@@ -21,3 +21,11 @@ test('reviewed renewal updates holdings and billing once and rejects stale confi
   assert.equal(addDemoAllocation({kind:'gpu',quantity:-1,rate:2,hours:24}).ok,false);
   for(const page of ['profile','tokens','my-gpus'])assert.doesNotMatch(renderCapacityPage(page),/[\u3400-\u9fff]/);
 });
+
+test('reopening the same sample quote does not duplicate a token allocation',()=>{
+  const order={kind:'tokens',sourceKey:'RFQ-DEMO:Example supplier',model:'Sample model',quantity:12000000,rate:4.1};
+  const first=addDemoAllocation(order);
+  const again=addDemoAllocation(order);
+  assert.equal(first.ok,true);assert.equal(again.id,first.id);
+  assert.equal(getCapacityLedgerRecords().filter(r=>r.allocationId===first.id).length,1);
+});

@@ -1,8 +1,8 @@
-import { state } from './demo-core.js?v=opennext-20260913-1';
-import { demandTape } from './procurement-data.js?v=opennext-20260913-1';
-import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260913-1';
-import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260913-1';
-import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260913-1';
+import { state } from './demo-core.js?v=opennext-20260913-2';
+import { demandTape } from './procurement-data.js?v=opennext-20260913-2';
+import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260913-2';
+import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260913-2';
+import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260913-2';
 
 const sections=[['profile','Profile'],['tokens','My Tokens'],['my-gpus','My GPUs'],['supply','My Supplies'],['rfq','My RFQs'],['messages','Messages'],['billing','Billing'],['account','Account']];
 const personal=new Set(sections.map(([id])=>id));
@@ -54,7 +54,7 @@ export function initializePortal(){
   // Existing stable navigation calls this render function and owns history.
   initializeCapacity({navigate:go,notify,openDialog,closeDialog});
   initializeAccount({navigate:go,notify});
-  window.OpenNEXTAddAllocation=detail=>addDemoAllocation(detail);
+  window.OpenNEXTAddAllocation=detail=>{ const result=addDemoAllocation(detail); if (!result.ok) { notify(result.error); return null; } return result; };
   window.OpenNEXTCreateRfq=form=>{
     if(!form)return null;
     const values=Object.fromEntries(new FormData(form));

@@ -1,5 +1,5 @@
-import { state } from "./demo-core.js?v=opennext-20260912-7";
-import { renderOverview, renderModels, renderGpus, renderScheduler, renderRfq, renderData } from "./phase1-pages.js?v=opennext-20260912-7";
+import { state } from "./demo-core.js?v=opennext-20260913-1";
+import { renderOverview, renderModels, renderGpus, renderScheduler, renderRfq, renderData } from "./phase1-pages.js?v=opennext-20260913-1";
 
 const renderers = {
   overview: renderOverview,
@@ -26,9 +26,9 @@ export function navigatePhase(route = "overview", options = {}) {
 }
 
 function contextMarkup(route) {
-  if (route === "scheduler") return '<section class="phase-context is-labs"><div><span class="badge badge-blue">Optional Preview</span><strong>智能调度是 Phase 1 的锦上添花</strong><p>在已采购容量上模拟任务拆解与模型 + 芯片路线，不是首页流量入口，也不会默认接管生产流量。</p></div></section>';
-  if (route === "gpus") return '<section class="phase-context"><div><span class="badge badge-gray">Phase 2</span><strong>GPU Capacity is the second market</strong><p>标准卡时保留发现与预约演示；大集群、长期和专网需求进入 RFQ。</p></div></section>';
-  if (route === "data") return '<section class="phase-context"><div><span class="badge badge-gray">Phase 3 Preview</span><strong>Market Data follows verified transactions</strong><p>Native benchmark 只纳入合格且已结算的可验证交易；OTC 与 Managed / Hosted 保持独立口径。</p></div></section>';
+  if (route === "scheduler") return `<section class="phase-context is-labs"><div><span class="badge badge-blue">Optional Preview</span><strong>AI orchestration is an optional Phase 1 enhancement</strong><p>Simulates task decomposition and model + chip routes on purchased capacity. It is not the homepage acquisition path and does not control production traffic by default.</p></div></section>`;
+  if (route === "gpus") return `<section class="phase-context"><div><span class="badge badge-gray">Phase 2</span><strong>GPU Capacity is the second market</strong><p>Standard accelerator-hours retain discovery and reservation; large clusters, long-term commitments and private-network requirements go through RFQ.</p></div></section>`;
+  if (route === "data") return `<section class="phase-context"><div><span class="badge badge-gray">Phase 3 Preview</span><strong>Market Data follows verified transactions</strong><p>The Native benchmark includes only qualified, settled and verifiable transactions; OTC and Managed / Hosted supply remain separate.</p></div></section>`;
   return "";
 }
 

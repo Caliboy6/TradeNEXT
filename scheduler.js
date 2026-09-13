@@ -1,4 +1,4 @@
-import { routeCatalog } from "./data.js?v=opennext-20260912-7";
+import { routeCatalog } from "./data.js?v=opennext-20260913-1";
 
 const CLOSED_FAMILY_PATTERN = /(claude|anthropic|gpt|openai|gemini|kimi|moonshot|glm)/i;
 const OPAQUE_HARDWARE_PATTERN = /(provider[- ]managed|opaque|undisclosed|not disclosed)/i;
@@ -8,89 +8,89 @@ const STRATEGY_NAMES = new Set(["balanced", "cost", "latency"]);
 export const STRATEGIES = Object.freeze({
   balanced: {
     id: "balanced",
-    label: "效果 / 成本 / 延迟平衡",
+    label: "Balanced quality / cost / latency",
     weights: { quality: 0.36, cost: 0.27, latency: 0.27, reliability: 0.1 },
   },
   cost: {
     id: "cost",
-    label: "最低成本",
+    label: "Lowest cost",
     weights: { quality: 0.22, cost: 0.57, latency: 0.13, reliability: 0.08 },
   },
   latency: {
     id: "latency",
-    label: "最低延迟",
+    label: "Lowest latency",
     weights: { quality: 0.24, cost: 0.14, latency: 0.54, reliability: 0.08 },
   },
 });
 
 const TEMPLATE_LIBRARY = {
   research: {
-    label: "深度研究与报告",
+    label: "Deep research and reporting",
     steps: [
-      step("理解目标与约束", "将目标、受众、范围和交付标准结构化。", "planning", 1600, 500, [], { minQuality: 84 }),
-      step("制定检索计划", "生成查询、证据标准与研究路径。", "reasoning", 2200, 750, [0], { minQuality: 86 }),
-      step("并行提取证据", "从多个来源提取事实、数字和可引用证据。", "extraction", 3600, 850, [1], { calls: 4, concurrency: 4, latencyPriority: 1.2 }),
-      step("交叉核验事实", "识别冲突证据并检查关键事实。", "verification", 3000, 700, [1], { calls: 3, concurrency: 3, minQuality: 86, qualityPriority: 1.2 }),
-      step("综合推理", "把证据组合为结论、权衡和建议。", "reasoning", 5800, 1700, [2, 3], { minQuality: 90, qualityPriority: 1.35 }),
-      step("生成正式报告", "根据受众和格式生成完整成果。", "generation", 4800, 2600, [4], { minQuality: 87 }),
-      step("最终质量检查", "检查完整性、逻辑、引用和风险表述。", "verification", 3200, 650, [5], { minQuality: 88, qualityPriority: 1.25 }),
+      step("Understand goals and constraints", "Structure the objective, audience, scope and delivery criteria.", "planning", 1600, 500, [], { minQuality: 84 }),
+      step("Build a research plan", "Generate queries, evidence standards and a research path.", "reasoning", 2200, 750, [0], { minQuality: 86 }),
+      step("Extract evidence in parallel", "Extract facts, figures and citable evidence from multiple sources.", "extraction", 3600, 850, [1], { calls: 4, concurrency: 4, latencyPriority: 1.2 }),
+      step("Cross-check facts", "Identify conflicting evidence and verify critical facts.", "verification", 3000, 700, [1], { calls: 3, concurrency: 3, minQuality: 86, qualityPriority: 1.2 }),
+      step("Synthesize findings", "Combine evidence into conclusions, trade-offs and recommendations.", "reasoning", 5800, 1700, [2, 3], { minQuality: 90, qualityPriority: 1.35 }),
+      step("Generate the final report", "Produce the complete deliverable for the intended audience and format.", "generation", 4800, 2600, [4], { minQuality: 87 }),
+      step("Final quality check", "Check completeness, logic, citations and risk language.", "verification", 3200, 650, [5], { minQuality: 88, qualityPriority: 1.25 }),
     ],
   },
   software: {
-    label: "软件开发 / Agent 任务",
+    label: "Software development / agent task",
     steps: [
-      step("解析需求", "抽取验收标准、约束和非功能目标。", "planning", 2200, 700, [], { minQuality: 86 }),
-      step("扫描代码与依赖", "定位相关模块、接口和潜在影响范围。", "long-context", 5200, 650, [0], { calls: 2, concurrency: 2 }),
-      step("生成实施方案", "拆分改动并选择最小风险的实现路径。", "reasoning", 4200, 1200, [1], { minQuality: 89, qualityPriority: 1.2 }),
-      step("实现代码", "完成核心代码与必要的集成改动。", "coding", 5800, 2600, [2], { minQuality: 91, qualityPriority: 1.35 }),
-      step("生成并运行测试", "覆盖主路径、边界情况与回归风险。", "coding", 3800, 1500, [3], { calls: 2, concurrency: 2, minQuality: 87 }),
-      step("代码审查与修复", "检查正确性、安全性、性能和可维护性。", "verification", 5000, 1100, [4], { minQuality: 90, qualityPriority: 1.3 }),
-      step("汇总交付", "整理变更、验证结果和后续建议。", "summarization", 2300, 700, [5], { latencyPriority: 1.15 }),
+      step("Parse requirements", "Extract acceptance criteria, constraints and non-functional goals.", "planning", 2200, 700, [], { minQuality: 86 }),
+      step("Scan code and dependencies", "Locate relevant modules, interfaces and potential impact areas.", "long-context", 5200, 650, [0], { calls: 2, concurrency: 2 }),
+      step("Create an implementation plan", "Break down the changes and choose the lowest-risk implementation path.", "reasoning", 4200, 1200, [1], { minQuality: 89, qualityPriority: 1.2 }),
+      step("Implement the code", "Complete the core code and required integration changes.", "coding", 5800, 2600, [2], { minQuality: 91, qualityPriority: 1.35 }),
+      step("Generate and run tests", "Cover primary paths, edge cases and regression risks.", "coding", 3800, 1500, [3], { calls: 2, concurrency: 2, minQuality: 87 }),
+      step("Review and fix the code", "Review correctness, security, performance and maintainability.", "verification", 5000, 1100, [4], { minQuality: 90, qualityPriority: 1.3 }),
+      step("Prepare the handoff", "Summarize changes, verification results and next steps.", "summarization", 2300, 700, [5], { latencyPriority: 1.15 }),
     ],
   },
   rag: {
-    label: "知识库 / RAG 查询",
+    label: "Knowledge base / RAG query",
     steps: [
-      step("理解查询意图", "识别实体、时间范围和回答标准。", "classification", 1300, 350, [], { latencyPriority: 1.3 }),
-      step("拆分检索查询", "生成可并行执行的检索子查询。", "planning", 1800, 500, [0]),
-      step("并行召回与初筛", "从知识源召回候选段落并快速过滤。", "retrieval", 2600, 450, [1], { calls: 6, concurrency: 6, latencyPriority: 1.55, preferredAccelerators: ["cerebras"] }),
-      step("重排与证据提取", "选择最相关证据并保留出处。", "extraction", 4200, 750, [2], { calls: 3, concurrency: 3 }),
-      step("基于证据合成", "只依据已选证据生成答案。", "reasoning", 5200, 1600, [3], { minQuality: 89, qualityPriority: 1.3 }),
-      step("引用与事实校验", "检查回答是否被证据支持并修正引用。", "verification", 3200, 650, [4], { minQuality: 88 }),
+      step("Understand query intent", "Identify entities, time range and answer criteria.", "classification", 1300, 350, [], { latencyPriority: 1.3 }),
+      step("Decompose retrieval queries", "Generate retrieval subqueries that can run in parallel.", "planning", 1800, 500, [0]),
+      step("Retrieve and filter in parallel", "Retrieve candidate passages from knowledge sources and filter them quickly.", "retrieval", 2600, 450, [1], { calls: 6, concurrency: 6, latencyPriority: 1.55, preferredAccelerators: ["cerebras"] }),
+      step("Rerank and extract evidence", "Select the most relevant evidence while preserving its source.", "extraction", 4200, 750, [2], { calls: 3, concurrency: 3 }),
+      step("Synthesize from evidence", "Generate the answer using only the selected evidence.", "reasoning", 5200, 1600, [3], { minQuality: 89, qualityPriority: 1.3 }),
+      step("Validate citations and facts", "Check that the answer is supported by evidence and correct the citations.", "verification", 3200, 650, [4], { minQuality: 88 }),
     ],
   },
   multimodal: {
-    label: "多模态内容生产",
+    label: "Multimodal content production",
     steps: [
-      step("解析创意简报", "提取品牌、受众、渠道和内容限制。", "planning", 1900, 550, [], { minQuality: 84 }),
-      step("理解视觉素材", "分析图片、版式或视频关键帧。", "vision", 2500, 700, [0], { capabilities: ["vision"], minQuality: 86 }),
-      step("并行生成创意方向", "快速探索多个主题、标题与叙事角度。", "generation", 2400, 1000, [0], { calls: 4, concurrency: 4, latencyPriority: 1.35, preferredAccelerators: ["cerebras"] }),
-      step("生成核心文案", "形成主文案、CTA 与不同渠道变体。", "generation", 4200, 1900, [1, 2], { minQuality: 88, qualityPriority: 1.2 }),
-      step("制定资产方案", "描述视觉资产、尺寸与制作要求。", "reasoning", 3500, 1200, [1, 2], { minQuality: 87 }),
-      step("品牌与安全检查", "检查事实、品牌一致性和安全风险。", "verification", 3600, 700, [3, 4], { minQuality: 89 }),
-      step("打包最终交付", "生成可直接使用的渠道化成果包。", "summarization", 3000, 1100, [5]),
+      step("Parse the creative brief", "Extract brand, audience, channel and content constraints.", "planning", 1900, 550, [], { minQuality: 84 }),
+      step("Understand visual assets", "Analyze images, layouts or key video frames.", "vision", 2500, 700, [0], { capabilities: ["vision"], minQuality: 86 }),
+      step("Generate creative directions in parallel", "Quickly explore multiple themes, headlines and narrative angles.", "generation", 2400, 1000, [0], { calls: 4, concurrency: 4, latencyPriority: 1.35, preferredAccelerators: ["cerebras"] }),
+      step("Generate core copy", "Create primary copy, CTAs and channel-specific variants.", "generation", 4200, 1900, [1, 2], { minQuality: 88, qualityPriority: 1.2 }),
+      step("Plan creative assets", "Define visual assets, dimensions and production requirements.", "reasoning", 3500, 1200, [1, 2], { minQuality: 87 }),
+      step("Brand and safety check", "Check facts, brand consistency and safety risks.", "verification", 3600, 700, [3, 4], { minQuality: 89 }),
+      step("Package final deliverables", "Generate a channel-ready package that can be used immediately.", "summarization", 3000, 1100, [5]),
     ],
   },
   support: {
-    label: "企业客服处理",
+    label: "Enterprise customer support",
     steps: [
-      step("识别意图与优先级", "判断问题类型、紧急程度与语言。", "classification", 1200, 280, [], { latencyPriority: 1.65, preferredAccelerators: ["cerebras"] }),
-      step("检索账户与知识库", "查找政策、历史工单与相关知识。", "retrieval", 2200, 420, [0], { calls: 3, concurrency: 3, latencyPriority: 1.35 }),
-      step("提取解决依据", "提取适用条款、操作步骤和限制。", "extraction", 2800, 600, [1]),
-      step("生成解决方案", "形成可执行且符合语气要求的回复。", "generation", 3200, 950, [2], { minQuality: 87 }),
-      step("合规与风险检查", "识别敏感信息、承诺和升级条件。", "verification", 2400, 450, [3], { minQuality: 88 }),
-      step("个性化最终回复", "结合上下文输出最终回复和下一步。", "generation", 2600, 800, [4], { minQuality: 86 }),
+      step("Identify intent and priority", "Determine issue type, urgency and language.", "classification", 1200, 280, [], { latencyPriority: 1.65, preferredAccelerators: ["cerebras"] }),
+      step("Retrieve account and knowledge-base context", "Find policies, prior tickets and relevant knowledge.", "retrieval", 2200, 420, [0], { calls: 3, concurrency: 3, latencyPriority: 1.35 }),
+      step("Extract resolution evidence", "Extract applicable terms, procedures and constraints.", "extraction", 2800, 600, [1]),
+      step("Generate resolution", "Produce an actionable response in the required tone.", "generation", 3200, 950, [2], { minQuality: 87 }),
+      step("Compliance and risk review", "Identify sensitive information, commitments and escalation conditions.", "verification", 2400, 450, [3], { minQuality: 88 }),
+      step("Personalize final response", "Use context to produce the final response and next steps.", "generation", 2600, 800, [4], { minQuality: 86 }),
     ],
   },
   general: {
-    label: "通用复杂任务",
+    label: "General complex task",
     steps: [
-      step("理解任务", "提取目标、上下文、硬约束和验收标准。", "planning", 1800, 550, [], { minQuality: 84 }),
-      step("拆分执行计划", "将任务拆为可验证、可并行的工作单元。", "reasoning", 2600, 800, [0], { minQuality: 87 }),
-      step("快速处理标准步骤", "批量完成分类、提取或格式转换等标准工作。", "classification", 2800, 500, [1], { calls: 5, concurrency: 5, latencyPriority: 1.6, preferredAccelerators: ["cerebras"] }),
-      step("执行深度推理", "处理需要更强推理能力的核心问题。", "reasoning", 5200, 1600, [1], { minQuality: 90, qualityPriority: 1.4 }),
-      step("汇总多路结果", "合并快速处理与深度推理的输出。", "generation", 4300, 1500, [2, 3], { minQuality: 87 }),
-      step("校验并交付", "验证完整性、一致性和风险后生成最终成果。", "verification", 3200, 700, [4], { minQuality: 88 }),
+      step("Understand the task", "Extract goals, context, hard constraints and acceptance criteria.", "planning", 1800, 550, [], { minQuality: 84 }),
+      step("Decompose the execution plan", "Split the task into verifiable, parallelizable work units.", "reasoning", 2600, 800, [0], { minQuality: 87 }),
+      step("Process standard steps quickly", "Batch standard work such as classification, extraction and format conversion.", "classification", 2800, 500, [1], { calls: 5, concurrency: 5, latencyPriority: 1.6, preferredAccelerators: ["cerebras"] }),
+      step("Perform deep reasoning", "Handle core questions that require stronger reasoning.", "reasoning", 5200, 1600, [1], { minQuality: 90, qualityPriority: 1.4 }),
+      step("Synthesize parallel results", "Combine outputs from fast processing and deep reasoning.", "generation", 4300, 1500, [2, 3], { minQuality: 87 }),
+      step("Validate and deliver", "Validate completeness, consistency and risk before producing the final deliverable.", "verification", 3200, 700, [4], { minQuality: 88 }),
     ],
   },
 };
@@ -379,8 +379,8 @@ function routeSummary(route) {
     availability: route.availability,
     sla: route.sla,
     disclosure: providerManaged
-      ? "底层芯片由模型服务商管理且不披露；OpenNEXT 仅选择可验证的服务交付路线。"
-      : "该路线允许选择并展示已验证的模型与加速硬件组合。",
+      ? "The underlying chip is provider-managed and undisclosed; OpenNEXT selects only a verifiable service-delivery route."
+      : "This route allows a verified model and accelerator combination to be selected and displayed.",
   };
 }
 
@@ -388,12 +388,12 @@ function selectionReason(stepDefinition, route, strategy) {
   const providerManaged = isProviderManagedRoute(route);
   const accelerator = String(route.hardware || route.acceleratorClass || "");
   if (!providerManaged && /cerebras/i.test(accelerator) && stepDefinition.latencyPriority > 1) {
-    return "该子任务可并行且对延迟敏感，选择 Cerebras 交付路线以缩短执行时间。";
+    return "This subtask is parallelizable and latency-sensitive, so a Cerebras delivery route is selected to reduce execution time.";
   }
   if (providerManaged) {
-    return `${route.modelFamily || route.model} 采用服务商托管交付；底层芯片不可选择，按${STRATEGIES[strategy].label}评估价格、质量和 SLA。`;
+    return `${route.modelFamily || route.model} uses provider-managed hardware. The ${STRATEGIES[strategy].label.toLowerCase()} strategy evaluates the available service routes by price, quality and SLA.`;
   }
-  return `在满足质量门槛后，该“模型 + ${route.hardware || route.acceleratorClass}”组合的${STRATEGIES[strategy].label}得分最高。`;
+  return `This model and ${route.hardware || route.acceleratorClass} combination meets the quality floor and ranks highest under the ${STRATEGIES[strategy].label.toLowerCase()} strategy.`;
 }
 
 function buildAssignment(stepDefinition, route, strategy, catalog, metadata = {}) {
@@ -563,7 +563,7 @@ function buildBaseline(steps, catalog) {
   const raw = calculateRawMetrics(baselineSteps);
   return {
     label: "All-frontier baseline",
-    definition: "每个子任务均使用目录中质量最高的合规 frontier 路线；仅用于本次 Demo 的相对比较。",
+    definition: "Each subtask uses the highest-quality compliant frontier route in the catalog, solely for relative comparison in this demo.",
     totalCostUSD: round(raw.totalCostUSD, 4),
     criticalPathLatencyMs: raw.criticalPath.totalMs,
     qualityScore: round(raw.qualityScore, 1),
@@ -584,9 +584,9 @@ function buildMetrics(steps, catalog, input) {
   const budgetMet = input.budgetUSD == null || raw.totalCostUSD <= input.budgetUSD + 0.00005;
   const deadlineMet = input.deadlineMs == null || raw.criticalPath.totalMs <= input.deadlineMs;
   const warnings = [];
-  if (!budgetMet) warnings.push("当前目录中没有同时满足质量门槛与预算的路线组合。");
-  if (!deadlineMet) warnings.push("当前目录中没有同时满足质量门槛与时限的路线组合。");
-  if (!qualityFloorsMet) warnings.push("至少一个步骤未达到预设质量门槛，请人工确认路线。");
+  if (!budgetMet) warnings.push("No route combination in the current catalog satisfies both the quality floor and budget.");
+  if (!deadlineMet) warnings.push("No route combination in the current catalog satisfies both the quality floor and deadline.");
+  if (!qualityFloorsMet) warnings.push("At least one step falls below the quality floor; review the route manually.");
 
   return {
     totalCostUSD: round(raw.totalCostUSD, 4),

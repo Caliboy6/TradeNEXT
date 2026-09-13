@@ -1,5 +1,5 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260912-7';
-import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260912-7';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260913-1';
+import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260913-1';
 
 const publicContent = document.querySelector('#publicContent');
 const workspace = document.querySelector('#app');
@@ -42,7 +42,7 @@ function showWorkspaceStartup() {
   publicContent.hidden = false;
   document.body.classList.add('is-public');
   document.documentElement.classList.remove('i18n-loading');
-  publicContent.innerHTML = `<div class="public-startup public-container"><header>${logoMarkup()}<button type="button" class="on-button on-button-text" data-public-action="home">${copy('Back to homepage', '返回首页')}</button></header><section role="status"><p class="on-eyebrow">OPENNEXT WORKSPACE</p><h1>${startupFailed ? copy('Let’s reconnect.', '重新连接工作台。') : copy('Opening your workspace.', '正在打开工作台。')}</h1><p>${startupFailed ? copy('The workspace could not finish loading. Your session is safe. Retry the connection or return to the homepage.', '工作台未能完成加载，登录状态仍会保留。你可以重试连接，或返回首页。') : copy('The homepage is ready. We are connecting the procurement workspace; this may take a moment on a slow connection.', '首页已就绪，正在连接采购工作台。网络较慢时可能需要一点时间。')}</p><div><button type="button" class="on-button on-button-primary" data-public-action="retry">${copy('Retry connection', '重试连接')}</button><button type="button" class="on-button on-button-outline" data-public-action="home">${copy('Back to homepage', '返回首页')}</button></div></section></div>`;
+  publicContent.innerHTML = `<div class="public-startup public-container"><header>${logoMarkup()}<button type="button" class="on-button on-button-text" data-public-action="signin">Return to sign in</button></header><section role="status"><p class="on-eyebrow">OPENNEXT WORKSPACE</p><h1>${startupFailed ? copy('Let’s reconnect.', '重新连接工作台。') : copy('Opening your workspace.', '正在打开工作台。')}</h1><p>${startupFailed ? copy('The workspace could not finish loading. Your session is safe. Retry the connection or return to sign in.', '工作台未能完成加载，登录状态仍会保留。你可以重试连接，或返回首页。') : copy('The homepage is ready. We are connecting the procurement workspace; this may take a moment on a slow connection.', '首页已就绪，正在连接采购工作台。网络较慢时可能需要一点时间。')}</p><div><button type="button" class="on-button on-button-primary" data-public-action="retry">${copy('Retry connection', '重试连接')}</button><button type="button" class="on-button on-button-outline" data-public-action="signin">Return to sign in</button></div></section></div>`;
 }
 
 export function initializePublicShell(initialRoute) {
@@ -69,7 +69,7 @@ function parseRoute(raw) {
   const [path, query] = String(raw || 'home').replace(/^#/, '').split('?');
   const params = new URLSearchParams(query || '');
   if (params.has('next')) pending = safeDestination(params.get('next'));
-  return path === 'signin' ? 'login' : path === 'overview' || path === 'native' ? 'models' : path;
+  return path === 'my-opennext' ? 'profile' : path === 'fees' ? 'billing' : path === 'signin' ? 'login' : path === 'overview' || path === 'native' ? 'models' : path;
 }
 
 export function navigatePublic(raw = 'home', options = {}) {
@@ -278,7 +278,7 @@ export function initializePublic(initialRoute) {
   if (pendingGpuMode) window.OpenNEXTSetGpuMode?.(pendingGpuMode);
   navigatePublic(current || initialRoute || 'home', { replace: true });
   // These files deliberately override legacy styles injected during startup.
-  for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style']) {
+  for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style', 'opennext-capacity-style', 'opennext-account-style', 'opennext-portal-style']) {
     const style = document.getElementById(id);
     if (style) document.head.append(style);
   }

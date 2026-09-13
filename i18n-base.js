@@ -589,6 +589,7 @@ export function getLocale() {
 }
 
 export function setLocale(nextLocale, options = {}) {
+  nextLocale = "en";
   if (!SUPPORTED_LOCALES.has(nextLocale)) return locale;
   const changed = locale !== nextLocale;
   locale = nextLocale;

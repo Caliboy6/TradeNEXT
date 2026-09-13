@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-decision.js?v=opennext-20260912-7";
+import * as runtime from "./i18n-decision.js?v=opennext-20260913-1";
 
 const pairs = [
   ["发布原厂容量 RFQ", "Post a Native Capacity RFQ"],

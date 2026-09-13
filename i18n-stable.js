@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-procurement.js?v=opennext-20260912-7";
+import * as runtime from "./i18n-procurement.js?v=opennext-20260913-1";
 
 const SUPPORTED_LOCALES = new Set(["en", "zh-CN"]);
 const observerOptions = {
@@ -42,9 +42,9 @@ function withoutObserver(callback) {
   finally { resumeObserver(); }
 }
 
-export function getLocale() { return runtime.getLocale(); }
+export function getLocale() { return "en"; }
 export function getI18nDiagnostics() { return runtime.getI18nDiagnostics(); }
-export function translateText(...args) { return runtime.translateText(...args); }
+export function translateText(value, _locale = "en", options = {}) { return runtime.translateText(value, "en", options); }
 
 export function localizeDocument(root = document) {
   const element = root?.nodeType === Node.TEXT_NODE ? root.parentElement : root;

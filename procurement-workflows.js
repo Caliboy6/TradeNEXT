@@ -1,5 +1,5 @@
 
-import { escapeHtml } from "./demo-core.js?v=opennext-20260912-7";
+import { escapeHtml } from "./demo-core.js?v=opennext-20260913-1";
 import {
   demandTape,
   quoteComparison,
@@ -8,7 +8,7 @@ import {
   procurementState,
   currentBuyerReputation,
   getSupplierReputation,
-} from "./procurement-data.js?v=opennext-20260912-7";
+} from "./procurement-data.js?v=opennext-20260913-1";
 
 const modal = document.querySelector("#modal-host");
 const toast = document.querySelector("#toast-host");
@@ -16,6 +16,17 @@ let toastTimer;
 let supplierFlow = { rfqId: "", step: 0, startStep: 0, mode: "response", supplyType: "model" };
 let buyerFlow = { rfqId: "RFQ-8421", supplier: quoteComparison[0].supplier, step: 0 };
 let gpuFlow = null;
+const activatedQuotes = new Map();
+const DEMO_TOKEN_BUNDLE = { inputTokens: 10000000, outputTokens: 2000000 };
+
+function localDateInput(date) {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
+function nextReservationStart() {
+  return new Date(Math.ceil((Date.now() + 3600000) / 3600000) * 3600000);
+}
 
 const threads = new Map([
   ["Aurora Authorized Channel", [
@@ -24,7 +35,7 @@ const threads = new Map([
     { side: "them", time: "09:21", text: "33.3K TPS is committed. We can expose the quota telemetry during acceptance." },
   ]],
   ["Northstar Compute", [
-    { side: "them", time: "08:42", text: "The 32-GPU H100 block is available from 21 Aug, 09:00 SGT." },
+    { side: "them", time: "08:42", text: "The 32-GPU H100 block is available in the next reservation window. Open the calendar to confirm the start and protected bookings." },
     { side: "me", time: "08:48", text: "Can the reservation be extended if the following protected booking remains unchanged?" },
   ]],
   ["OpenNEXT Capacity Desk", [
@@ -72,7 +83,7 @@ function supplyTypeName(type) {
 }
 
 function capacityForm(type) {
-  if (type === "accelerator") return `<form class="flow-form"><label><span>Accelerator</span><select class="select"><option>H100 SXM</option><option>H200</option><option>B200</option><option>L40S</option></select></label><label><span>Available units</span><input class="input" type="number" value="32"></label><label><span>Topology</span><input class="input" value="8-GPU node · NVLink"></label><label><span>Tenancy</span><select class="select"><option>Dedicated</option><option>Shared</option></select></label><label><span>Location</span><select class="select"><option>Singapore</option><option>US East</option><option>Frankfurt</option></select></label><label><span>Available from</span><input class="input" type="datetime-local" value="2026-08-26T09:00"></label><label><span>Available term</span><input class="input" value="30–90 days"></label><label><span>Indicative hourly rate</span><input class="input" value="$2.34 / accelerator·h"></label><label class="span-2"><span>Network, storage and calendar notes</span><textarea class="textarea" rows="3">400G InfiniBand, 2TB NVMe per node, protected calendar blocks disclosed before reservation.</textarea></label></form>`;
+  if (type === "accelerator") return `<form class="flow-form"><label><span>Accelerator</span><select class="select"><option>H100 SXM</option><option>H200</option><option>B200</option><option>L40S</option></select></label><label><span>Available units</span><input class="input" type="number" value="32"></label><label><span>Topology</span><input class="input" value="8-GPU node · NVLink"></label><label><span>Tenancy</span><select class="select"><option>Dedicated</option><option>Shared</option></select></label><label><span>Location</span><select class="select"><option>Singapore</option><option>US East</option><option>Frankfurt</option></select></label><label><span>Available from</span><input class="input" type="datetime-local" value="${localDateInput(nextReservationStart())}"></label><label><span>Available term</span><input class="input" value="30–90 days"></label><label><span>Indicative hourly rate</span><input class="input" value="$2.34 / accelerator·h"></label><label class="span-2"><span>Network, storage and calendar notes</span><textarea class="textarea" rows="3">400G InfiniBand, 2TB NVMe per node, protected calendar blocks disclosed before reservation.</textarea></label></form>`;
   if (type === "hardware") return `<form class="flow-form"><label><span>GPU SKU</span><select class="select"><option>H100 PCIe 80GB</option><option>H100 SXM5 80GB</option><option>H200 SXM 141GB</option><option>B200 SXM 180GB</option></select></label><label><span>Form factor</span><select class="select"><option>PCIe card</option><option>SXM module</option><option>HGX baseboard</option><option>Complete system</option></select></label><label><span>Condition</span><select class="select"><option>New</option><option>OEM surplus</option><option>Refurbished</option><option>Used · tested</option></select></label><label><span>Available quantity</span><input class="input" type="number" value="24"></label><label><span>Whole GPU asking price</span><input class="input" value="$27,800 / GPU"></label><label><span>Minimum order</span><input class="input" type="number" value="2"></label><label><span>Inventory location</span><select class="select"><option>US East</option><option>Singapore</option><option>Frankfurt</option></select></label><label><span>Delivery lead time</span><input class="input" value="7–10 days"></label><label><span>Warranty</span><input class="input" value="3-year OEM"></label><label><span>Inspection evidence</span><input class="input" value="Serial list + burn-in report"></label><label class="span-2"><span>Title, export and logistics notes</span><textarea class="textarea" rows="3">Seller holds title to listed inventory. Final quote confirms export scope, Incoterm, taxes, insurance and buyer acceptance criteria.</textarea></label></form>`;
   return `<form class="flow-form"><label><span>Model and version</span><select class="select"><option>Claude Sonnet</option><option>GPT Enterprise</option><option>Gemini Pro</option><option>DeepSeek</option></select></label><label><span>Delivery mode</span><select class="select"><option>Native Direct</option><option>Native Allocated</option><option>Partner-delivered access</option></select></label><label><span>Available allocation</span><input class="input" value="$120,000 OEV"></label><label><span>Committed TPS</span><input class="input" value="33.3K TPS"></label><label><span>Request rate limit</span><input class="input" value="1,200 RPM"></label><label><span>Region</span><select class="select"><option>US</option><option>Singapore</option><option>Europe</option></select></label><label><span>Available term</span><input class="input" value="30 days"></label><label class="span-2"><span>Isolation and delivery</span><textarea class="textarea" rows="3">Ring-fenced project allocation with quota telemetry and named buyer access.</textarea></label></form>`;
 }
@@ -94,7 +105,7 @@ function supplierStepBody() {
   const step = supplierFlow.step;
   const typeName = supplyTypeName(supplierFlow.supplyType);
   if (step === 0) return `${progress(["Eligibility", "KYB", "Rights", "Capacity", "Test", "Approved"], 0)}${supplierFlow.rfqId ? rfqSummary(item) : ""}${buyerTrust()}<div class="eligibility-checklist"><label><input type="checkbox" checked><span><strong>Eligible business entity</strong><small>The supplier can contract and receive or make business payments.</small></span></label><label><input type="checkbox" checked><span><strong>Authorized representative</strong><small>The respondent is authorized to bind the supplying entity.</small></span></label><label><input type="checkbox" checked><span><strong>Right to supply</strong><small>Ownership, allocation or delivery rights can be evidenced for the selected lane.</small></span></label></div><div class="workflow-callout"><span>1</span><div><strong>Completed once per supplier entity</strong><p>Eligibility, KYB and Rights form a reusable Supplier Review. Each new supply or RFQ response still submits fresh Capacity for OpenNEXT Test and Approval.</p></div></div>`;
-  if (step === 1) return `${progress(["Eligibility", "KYB", "Rights", "Capacity", "Test", "Approved"], 1)}<form class="flow-form"><label><span>Legal entity</span><input class="input" value="OpenNEXT Demo Supplier Pte. Ltd."></label><label><span>Registration number</span><input class="input" value="202612345N"></label><label><span>Authorized respondent</span><input class="input" value="Alex Chen"></label><label><span>Business email</span><input class="input" value="alex@capacity-demo.example"></label><label class="span-2 check-row"><input type="checkbox" checked> I confirm that the submitted entity and ownership information is current.</label></form>`;
+  if (step === 1) return `${progress(["Eligibility", "KYB", "Rights", "Capacity", "Test", "Approved"], 1)}<form class="flow-form"><label><span>Legal entity</span><input class="input" value="OpenNEXT Demo Supplier Pte. Ltd."></label><label><span>Registration number</span><input class="input" value="DEMO-ENTITY-001"></label><label><span>Authorized respondent</span><input class="input" value="Supplier Representative"></label><label><span>Business email</span><input class="input" value="supplier@capacity-demo.example"></label><label class="span-2 check-row"><input type="checkbox" checked> I confirm that the submitted entity and ownership information is current.</label></form>`;
   if (step === 2) return `${progress(["Eligibility", "KYB", "Rights", "Capacity", "Test", "Approved"], 2)}<form class="flow-form"><label><span>Authorization class</span><select class="select"><option>Upstream-authorized resale</option><option>Authorized enterprise allocation</option><option>Partner-delivered access</option><option>Technically verified third-party delivery</option><option>Non-authorized Private OTC</option></select></label><label><span>Rights holder</span><input class="input" value="OpenNEXT Demo Supplier Pte. Ltd."></label><label><span>Evidence reference</span><input class="input" value="AGREEMENT-2026-08-118"></label><label><span>Rights expiry</span><input class="input" type="date" value="2026-12-31"></label><label class="span-2"><span>Revocation and transfer limits</span><textarea class="textarea" rows="3">Allocation is revocable only for breach or upstream contract termination. Buyer receives project-level access; raw credentials are not transferred.</textarea></label></form>`;
   if (step === 3) return `${progress(["Eligibility", "KYB", "Rights", "Capacity", "Test", "Approved"], 3)}<div class="reused-review-note"><span>✓</span><div><strong>${procurementState.supplierReviewStatus === "approved" ? "Supplier Review reused · ON-QA-2048" : `Capacity declaration · ${typeName}`}</strong><p>${procurementState.supplierReviewStatus === "approved" ? "Eligibility, KYB and Rights remain current. Only this supply's capacity and commercial terms are new." : "This capacity declaration will be attached to the completed Supplier Review."}</p></div></div>${capacityForm(supplierFlow.supplyType)}`;
   if (step === 4) return `${progress(["Eligibility", "KYB", "Rights", "Capacity", "Test", "Approved"], 4)}${supplyTest(supplierFlow.supplyType)}`;
@@ -144,7 +155,7 @@ function showHardwareDetail(id) {
 
 function showHardwareRfq(id) {
   const item = gpuHardwareListings.find((row) => row.id === id) || gpuHardwareListings[0];
-  const body = `<div class="reservation-product"><div><span class="badge badge-green">Whole-GPU purchase</span><h3>${escapeHtml(item.accelerator)}</h3><p>${escapeHtml(item.condition)} · ${escapeHtml(item.supplier)} · ${escapeHtml(item.region)}</p></div><strong>$${item.unitPriceUsd.toLocaleString("en-US")}<small> / GPU asking price</small></strong></div><form class="flow-form"><label><span>Quantity</span><input class="input" type="number" min="${item.minOrder}" max="${item.quantity}" value="${item.minOrder}"></label><label><span>Target unit price</span><input class="input" value="$${item.unitPriceUsd.toLocaleString("en-US")}"></label><label><span>Accepted condition</span><input class="input" value="${escapeHtml(item.condition)}"></label><label><span>Delivery location</span><input class="input" value="Singapore"></label><label><span>Required delivery</span><input class="input" type="date" value="2026-09-15"></label><label><span>Payment preference</span><select class="select"><option>Escrow · inspection release</option><option>Letter of credit</option><option>Negotiable</option></select></label><label class="span-2"><span>Acceptance criteria</span><textarea class="textarea" rows="3">Serial match, visual inspection, burn-in report and benchmark within stated tolerance.</textarea></label></form>`;
+  const body = `<div class="reservation-product"><div><span class="badge badge-green">Whole-GPU purchase</span><h3>${escapeHtml(item.accelerator)}</h3><p>${escapeHtml(item.condition)} · ${escapeHtml(item.supplier)} · ${escapeHtml(item.region)}</p></div><strong>$${item.unitPriceUsd.toLocaleString("en-US")}<small> / GPU asking price</small></strong></div><form class="flow-form"><label><span>Quantity</span><input class="input" type="number" min="${item.minOrder}" max="${item.quantity}" value="${item.minOrder}"></label><label><span>Target unit price</span><input class="input" value="$${item.unitPriceUsd.toLocaleString("en-US")}"></label><label><span>Accepted condition</span><input class="input" value="${escapeHtml(item.condition)}"></label><label><span>Delivery location</span><input class="input" value="Singapore"></label><label><span>Required delivery</span><input class="input" type="date" value="${new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)}"></label><label><span>Payment preference</span><select class="select"><option>Escrow · inspection release</option><option>Letter of credit</option><option>Negotiable</option></select></label><label class="span-2"><span>Acceptance criteria</span><textarea class="textarea" rows="3">Serial match, visual inspection, burn-in report and benchmark within stated tolerance.</textarea></label></form>`;
   const footer = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="${escapeHtml(item.supplier)}" data-context="${escapeHtml(item.accelerator)}">Message seller</button><button class="secondary-button compact" type="button" data-flow-action="close-flow">Cancel</button><button class="primary-button compact" type="button" data-flow-action="submit-hardware-rfq" data-hardware-id="${escapeHtml(item.id)}">Submit private RFQ</button>`;
   showModal("Hardware RFQ", `${item.accelerator} · whole-GPU purchase`, body, footer, "workflow-modal");
 }
@@ -168,19 +179,26 @@ function buyerStepBody() {
   const quote = quoteComparison.find((row) => row.supplier === buyerFlow.supplier) || quoteComparison[0];
   const step = buyerFlow.step;
   if (step === 0) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 0)}${rfqSummary(item)}<div class="quote-review"><div><span>Selected supplier</span><strong>${escapeHtml(quote.supplier)}</strong></div><div><span>Seller discount</span><strong>${quote.rate.toFixed(3)}× · ${quote.total}</strong></div><div><span>Token price</span><strong>$${quote.inputPer1MUsd.toFixed(3)} <span>Input</span> / $${quote.outputPer1MUsd.toFixed(3)} <span>Output</span> · 1M Token</strong></div><div><span>Available allocation</span><strong>${quote.capacity}</strong></div><div><span>Committed TPS</span><strong>${Math.round(quote.tps).toLocaleString("en-US")} TPS</strong></div><div><span>Delivery / SLA</span><strong>${quote.delivery} · ${quote.sla}</strong></div></div><div class="supplier-score-inline"><span>Supplier reputation</span><strong>${getSupplierReputation(quote.supplier).overall.toFixed(2)} / 5</strong><small>Verified completed transactions</small></div>`;
-  if (step === 1) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 1)}<form class="flow-form"><label><span>Allocation to lock</span><input class="input" value="${quote.capacity}"></label><label><span>Commercial total</span><input class="input" value="${quote.total}"></label><label><span>Service start</span><input class="input" type="datetime-local" value="2026-08-22T09:00"></label><label><span>Service term</span><input class="input" value="30 days"></label><label class="span-2 check-row"><input type="checkbox" checked> I accept the quote validity, delivery, revocation and refund boundaries.</label></form><div class="workflow-callout"><span>✓</span><div><strong>Allocation hold available</strong><p>The supplier will hold the quoted capacity for 45 minutes while acceptance testing is completed.</p></div></div>`;
+  if (step === 1) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 1)}<form class="flow-form"><label><span>Allocation to lock</span><input class="input" value="${quote.capacity}"></label><label><span>Commercial total</span><input class="input" value="${quote.total}"></label><label><span>Service start</span><input class="input" type="datetime-local" value="${localDateInput(nextReservationStart())}"></label><label><span>Service term</span><input class="input" value="30 days"></label><label class="span-2 check-row"><input type="checkbox" checked> I accept the quote validity, delivery, revocation and refund boundaries.</label></form><div class="workflow-callout"><span>✓</span><div><strong>Allocation hold available</strong><p>The supplier will hold the quoted capacity for 45 minutes while acceptance testing is completed.</p></div></div>`;
   if (step === 2) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 2)}<div class="test-console"><div><span class="test-status-dot"></span><div><strong>Buyer acceptance test passed</strong><p>Acceptance run ON-TEST-8831</p></div></div><dl><div><dt>Authentication</dt><dd>Passed</dd></div><div><dt>Committed TPS</dt><dd>33.8K</dd></div><div><dt>P95 latency</dt><dd>1.47s</dd></div><div><dt>Metering</dt><dd>Passed</dd></div><div><dt>Region</dt><dd>US</dd></div><div><dt>Failover boundary</dt><dd>Recorded</dd></div></dl></div>`;
   if (step === 3) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 3)}<form class="flow-form"><label><span>Contract entity</span><input class="input" value="Demo Workspace Holdings Pte. Ltd."></label><label><span>Settlement method</span><select class="select"><option>Escrow · USD wire</option><option>Workspace balance</option></select></label><label><span>Billing contact</span><input class="input" value="finance@demo-workspace.example"></label><label><span>Purchase order</span><input class="input" value="PO-2026-0819"></label><label class="span-2 check-row"><input type="checkbox" checked> Contract, data processing terms and settlement instruction reviewed.</label></form>`;
-  if (step === 4) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 4)}<div class="activation-panel"><div><span>1</span><strong>Allocation created</strong><small>Project ON-CAP-1938</small></div><div><span>2</span><strong>Buyer access assigned</strong><small>Two workspace administrators</small></div><div><span>3</span><strong>Metering connected</strong><small>OEV and TPS telemetry active</small></div><div><span>4</span><strong>Support channel opened</strong><small>Supplier response SLA enabled</small></div></div><label class="check-row"><input type="checkbox" checked> I confirm that access and metering are working as agreed.</label>`;
-  return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 5)}<div class="workflow-success"><span>✓</span><h3>Capacity activated</h3><p>The transaction now has a complete price, allocation, term, delivery and fulfilment record.</p><div><span>Order</span><strong>ON-ORDER-29496</strong></div><div><span>Allocation</span><strong>${quote.capacity}</strong></div><div><span>Service term</span><strong>22 Aug – 21 Sep 2026</strong></div><div><span>Review eligibility</span><strong>After service term ends</strong></div></div>`;
+  if (step === 4) return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 4)}<div class="activation-panel"><div><span>1</span><strong>Allocation created</strong><small>Project ON-CAP-1938</small></div><div><span>2</span><strong>Buyer access assigned</strong><small>Two workspace administrators</small></div><div><span>3</span><strong>Metering connected</strong><small>Token usage and TPS telemetry active</small></div><div><span>4</span><strong>Support channel opened</strong><small>Supplier response SLA enabled</small></div></div><div class="workflow-callout is-neutral"><span>i</span><div><strong>Sample token bundle</strong><p>This demo activation adds 10M input and 2M output tokens to My Token, priced at the selected supplier's token rates. It is a separate sample bundle, not a conversion of the RFQ's OEV budget.</p></div></div><label class="check-row"><input id="activationConfirmed" type="checkbox" checked> I confirm that access and metering are working as agreed.</label>`;
+  return `${progress(["Quote", "Lock", "Test", "Contract", "Activate", "Receipt"], 5)}<div class="workflow-success"><span>✓</span><h3>Capacity activated</h3><p>The sample token bundle is available in My Token with separate input/output rates, usage tracking and a 30-day term.</p><div><span>Order</span><strong>${escapeHtml(activatedQuotes.get(`${buyerFlow.rfqId}:${buyerFlow.supplier}`) || "Sample allocation")}</strong></div><div><span>Sample token allocation</span><strong>10M input + 2M output tokens</strong></div><div><span>Service term</span><strong>30 days from activation</strong></div><div><span>Review eligibility</span><strong>After service term ends</strong></div></div>`;
 }
 
 function showBuyerFlow(rfqId, supplier = quoteComparison[0].supplier, step = 0) {
+  const request = demandTape.find((row) => row.id === rfqId);
+  // The sample quote room contains Claude Sonnet offers only. Other requests
+  // must not activate an unrelated model or convert a hardware RFQ to tokens.
+  if (request && (request.type !== "Native Model" || !/claude/i.test(request.model) || request.id !== "RFQ-8421")) {
+    const isGpu = /gpu|hardware/i.test(request.type);
+    return showModal("Request workflow", `${request.id} · ${request.type}`, `${rfqSummary(request)}<div class="workflow-callout is-neutral"><span>i</span><div><strong>Continue with matching suppliers</strong><p>${isGpu ? "Your GPU request remains in the matching workflow. Browse available rental capacity to create a calendar reservation." : "This request is awaiting model-specific commercial terms. Continue the conversation with the capacity desk, or open the sample Claude quote room to explore activation."}</p></div></div>`, `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="OpenNEXT Capacity Desk" data-context="${escapeHtml(request.id)}">Message capacity desk</button><button class="primary-button compact" type="button" data-route="${isGpu ? "gpus" : "rfq"}">${isGpu ? "Browse GPU capacity" : "View My RFQs"}</button>`);
+  }
   buyerFlow = { rfqId: rfqId || "RFQ-8421", supplier, step };
   const back = step > 0 ? `<button class="secondary-button compact" type="button" data-flow-action="buyer-back">Back</button>` : `<button class="secondary-button compact" type="button" data-flow-action="close-flow">Close</button>`;
   const labels = ["Lock commercial terms", "Run acceptance test", "Continue to contract", "Authorize activation", "Confirm access", "Done"];
   const message = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="${escapeHtml(supplier)}" data-context="${escapeHtml(rfqId)}">Message supplier</button>`;
-  const next = step < 5 ? `<button class="primary-button compact" type="button" data-flow-action="buyer-next">${labels[step]}</button>` : `<button class="primary-button compact" type="button" data-route="rfq">Return to My RFQs</button>`;
+  const next = step < 5 ? `<button class="primary-button compact" type="button" data-flow-action="buyer-next">${labels[step]}</button>` : `<button class="primary-button compact" type="button" data-route="tokens">View My Token</button>`;
   showModal("RFQ execution", `${rfqId} · ${supplier}`, buyerStepBody(), `${back}${message}${next}`, "workflow-modal");
 }
 
@@ -194,59 +212,89 @@ function showChat(supplier = "Aurora Authorized Channel", context = "") {
   requestAnimationFrame(() => modal.querySelector(".message-list")?.scrollTo({ top: 99999 }));
 }
 
+export function calculateGpuReservation({ startValue, durationValue, quantityValue, extensionValue, units, rate, earliestStart, protectedStart }) {
+  const start = new Date(startValue);
+  const duration = Number(durationValue);
+  const quantity = Number(quantityValue);
+  const extension = Number(extensionValue);
+  const validStart = Number.isFinite(start.getTime()) && start >= earliestStart;
+  const validDuration = durationValue !== "" && Number.isInteger(duration) && duration >= 1 && duration <= 720;
+  const validQuantity = quantityValue !== "" && Number.isInteger(quantity) && quantity >= 1 && quantity <= units;
+  const validExtension = extensionValue !== "" && Number.isInteger(extension) && extension >= 0 && extension <= 168;
+  const invalid = !validStart || !validDuration || !validQuantity || !validExtension;
+  const end = new Date(start.getTime() + duration * 3600000);
+  const extensionEnd = new Date(end.getTime() + extension * 3600000);
+  const baseConflict = !invalid && end > protectedStart;
+  const extensionConflict = !invalid && !baseConflict && extensionEnd > protectedStart;
+  const total = quantity * duration * rate;
+  const fmt = (value) => new Intl.DateTimeFormat("en-US", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hour12: false }).format(value);
+  return { start, end, duration, quantity, extension, invalid, baseConflict, extensionConflict, total, fmt };
+}
+
 function updateGpuSummary() {
-  if (!gpuFlow) return;
+  if (!gpuFlow || gpuFlow.confirmedId) return;
   const startInput = modal.querySelector("#gpuStart");
   const durationInput = modal.querySelector("#gpuDuration");
   const quantityInput = modal.querySelector("#gpuQuantity");
   const extensionInput = modal.querySelector("#gpuExtension");
-  if (!startInput || !durationInput || !quantityInput) return;
-  const start = new Date(startInput.value);
-  const duration = Math.max(1, Number(durationInput.value) || 1);
-  const quantity = Math.max(1, Number(quantityInput.value) || 1);
-  const extension = Math.max(0, Number(extensionInput?.value) || 0);
-  const end = new Date(start.getTime() + duration * 3600000);
-  const extensionEnd = new Date(end.getTime() + extension * 3600000);
-  const protectedStart = new Date("2026-08-23T09:00:00+08:00");
-  const baseConflict = end > protectedStart;
-  const extensionConflict = !baseConflict && extensionEnd > protectedStart;
-  const fmt = (value) => new Intl.DateTimeFormat("en-SG", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Singapore" }).format(value) + " SGT";
-  const total = quantity * duration * gpuFlow.item.pricePerHour;
+  if (!startInput || !durationInput || !quantityInput || !extensionInput) return;
+  const calculation = calculateGpuReservation({
+    startValue: startInput.value, durationValue: durationInput.value,
+    quantityValue: quantityInput.value, extensionValue: extensionInput.value,
+    units: gpuFlow.item.units, rate: gpuFlow.item.pricePerHour,
+    earliestStart: gpuFlow.earliestStart, protectedStart: gpuFlow.protectedStart,
+  });
+  const { end, invalid, baseConflict, extensionConflict, total, fmt } = calculation;
   const summary = modal.querySelector("[data-gpu-summary]");
-  if (summary) summary.innerHTML = `<div><span>Reservation end</span><strong>${fmt(end)}</strong></div><div><span>Estimated total</span><strong>$${total.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong></div><div><span>Protected next booking</span><strong>23 Aug, 09:00 SGT</strong></div><div><span>Extension window</span><strong>${Math.max(0, Math.floor((protectedStart - end) / 3600000))} hours</strong></div>`;
+  if (summary) summary.innerHTML = `<div><span>Reservation end · local time</span><strong>${invalid ? "Check reservation details" : fmt(end)}</strong></div><div><span>Estimated total</span><strong>${invalid ? "—" : `$${total.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}</strong></div><div><span>Protected next booking · local time</span><strong>${fmt(gpuFlow.protectedStart)}</strong></div><div><span>Extension window</span><strong>${invalid ? "—" : `${Math.max(0, Math.floor((gpuFlow.protectedStart - end) / 3600000))} hours`}</strong></div>`;
   const warning = modal.querySelector("[data-gpu-conflict]");
   if (warning) {
-    warning.className = `booking-conflict ${baseConflict || extensionConflict ? "has-conflict" : "is-clear"}`;
-    warning.innerHTML = baseConflict ? `<strong>Reservation conflict</strong><span>The requested usage overlaps the protected booking on 23 Aug at 09:00 SGT. Shorten the term or choose a different start.</span>` : extensionConflict ? `<strong>Extension would conflict</strong><span>The base reservation is available, but the requested extension would overlap the next booking.</span>` : `<strong>Calendar clear</strong><span>The reservation and requested extension fit before the next protected booking.</span>`;
+    warning.className = `booking-conflict ${invalid || baseConflict || extensionConflict ? "has-conflict" : "is-clear"}`;
+    warning.innerHTML = invalid
+      ? `<strong>Check reservation details</strong><span>Choose an available start time, 1–720 whole hours, 1–${gpuFlow.item.units} accelerators, and 0–168 extension hours.</span>`
+      : baseConflict
+      ? `<strong>Reservation conflict</strong><span>The requested usage overlaps the protected booking at ${fmt(gpuFlow.protectedStart)}. Shorten the term or choose a different start.</span>`
+      : extensionConflict
+      ? `<strong>Extension would conflict</strong><span>Reduce the extension before confirming. The requested extension overlaps the next protected booking.</span>`
+      : `<strong>Calendar clear</strong><span>The reservation and requested extension fit before the next protected booking.</span>`;
   }
-  gpuFlow.calculation = { start, end, duration, quantity, extension, baseConflict, total, fmt };
+  const confirm = modal.querySelector('[data-flow-action="confirm-gpu-reservation"]');
+  if (confirm) confirm.disabled = invalid || baseConflict || extensionConflict;
+  gpuFlow.calculation = calculation;
 }
 
 function showGpuReservation(id) {
   const item = gpuSupplyListings.find((row) => row.id === id) || gpuSupplyListings[0];
-  gpuFlow = { item, calculation: null };
-  const body = `<div class="reservation-product"><div><span class="badge badge-green">Calendar checked</span><h3>${escapeHtml(item.accelerator)}</h3><p>${escapeHtml(item.supplier)} · ${escapeHtml(item.region)} · ${escapeHtml(item.topology)}</p></div><strong>$${item.pricePerHour.toFixed(2)}<small> / accelerator·h</small></strong></div><form class="flow-form reservation-form"><label><span>Start time</span><input id="gpuStart" class="input gpu-reservation-input" type="datetime-local" value="2026-08-21T09:00"></label><label><span>Duration in hours</span><input id="gpuDuration" class="input gpu-reservation-input" type="number" min="1" max="720" value="24"></label><label><span>Accelerator quantity</span><input id="gpuQuantity" class="input gpu-reservation-input" type="number" min="1" max="${item.units}" value="${Math.min(8, item.units)}"></label><label><span>Possible extension in hours</span><input id="gpuExtension" class="input gpu-reservation-input" type="number" min="0" max="168" value="12"></label></form><div class="reservation-summary" data-gpu-summary></div><div class="booking-conflict" data-gpu-conflict></div><div class="calendar-strip"><div><span>21 Aug</span><i class="is-requested">Requested use</i></div><div><span>22 Aug</span><i class="is-extension">Extension window</i></div><div><span>23 Aug</span><i class="is-protected">Protected booking</i></div></div>`;
+  const earliestStart = nextReservationStart();
+  const protectedStart = new Date(earliestStart.getTime() + 48 * 3600000);
+  gpuFlow = { item, earliestStart, protectedStart, calculation: null, confirmedId: "" };
+  const shortDate = (hours) => new Date(earliestStart.getTime() + hours * 3600000).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const body = `<div class="reservation-product"><div><span class="badge badge-green">Calendar checked</span><h3>${escapeHtml(item.accelerator)}</h3><p>${escapeHtml(item.supplier)} · ${escapeHtml(item.region)} · ${escapeHtml(item.topology)}</p></div><strong>$${item.pricePerHour.toFixed(2)}<small> / accelerator·h</small></strong></div><form class="flow-form reservation-form"><label><span>Start time · your local time</span><input id="gpuStart" aria-label="Reservation start time" class="input gpu-reservation-input" type="datetime-local" required min="${localDateInput(earliestStart)}" value="${localDateInput(earliestStart)}"></label><label><span>Duration in hours</span><input id="gpuDuration" aria-label="Reservation duration in hours" class="input gpu-reservation-input" type="number" required min="1" max="720" step="1" value="24"></label><label><span>Accelerator quantity</span><input id="gpuQuantity" aria-label="Accelerator quantity" class="input gpu-reservation-input" type="number" required min="1" max="${item.units}" step="1" value="${Math.min(8, item.units)}"></label><label><span>Possible extension in hours</span><input id="gpuExtension" aria-label="Extension hours" class="input gpu-reservation-input" type="number" required min="0" max="168" step="1" value="12"></label></form><div class="reservation-summary" data-gpu-summary aria-live="polite"></div><div class="booking-conflict" data-gpu-conflict role="status"></div><div class="calendar-strip"><div><span>${shortDate(0)}</span><i class="is-requested">Requested use</i></div><div><span>${shortDate(24)}</span><i class="is-extension">Extension window</i></div><div><span>${shortDate(48)}</span><i class="is-protected">Protected booking</i></div></div>`;
   const footer = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="${escapeHtml(item.supplier)}" data-context="${escapeHtml(item.accelerator)}">Message operator</button><button class="secondary-button compact" type="button" data-flow-action="close-flow">Cancel</button><button class="primary-button compact" type="button" data-flow-action="confirm-gpu-reservation">Confirm reservation</button>`;
   showModal("Instant GPU reservation", `${item.accelerator} · ${item.supplier}`, body, footer, "workflow-modal");
   updateGpuSummary();
 }
 
 function confirmGpuReservation() {
+  if (!gpuFlow || gpuFlow.confirmedId) return;
   updateGpuSummary();
-  if (!gpuFlow || gpuFlow.calculation.baseConflict) return showToast("Resolve the calendar conflict", "Adjust the start time or duration before confirming");
+  if (!gpuFlow.calculation || gpuFlow.calculation.invalid || gpuFlow.calculation.baseConflict || gpuFlow.calculation.extensionConflict) return showToast("Review reservation details", "Resolve the highlighted fields or calendar conflict before confirming");
   const { item, calculation } = gpuFlow;
-  const body = `<div class="workflow-success"><span>✓</span><h3>GPU reservation confirmed</h3><p>The calendar block, usage term and quantity are recorded together to prevent overbooking.</p><div><span>Reservation ID</span><strong>ON-GPU-7718</strong></div><div><span>Start</span><strong>${calculation.fmt(calculation.start)}</strong></div><div><span>End</span><strong>${calculation.fmt(calculation.end)}</strong></div><div><span>Quantity</span><strong>${calculation.quantity} × ${escapeHtml(item.accelerator)}</strong></div><div><span>Total</span><strong>$${calculation.total.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong></div><div><span>Extension availability</span><strong>${calculation.extension ? `Requested up to ${calculation.extension} hours` : "Not requested"}</strong></div></div>`;
-  const footer = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="${escapeHtml(item.supplier)}" data-context="ON-GPU-7718">Message operator</button><button class="primary-button compact" type="button" data-flow-action="close-flow">Done</button>`;
+  const allocation = window.OpenNEXTAddAllocation?.({ kind: "gpu", model: item.accelerator, quantity: calculation.quantity, hours: calculation.duration, region: item.region, supplier: item.supplier, rate: item.pricePerHour, startAt: calculation.start.toISOString(), endAt: calculation.end.toISOString() });
+  if (window.OpenNEXTAddAllocation && !allocation) return showToast("Reservation not saved", "Please retry after refreshing the workspace");
+  gpuFlow.confirmedId = allocation?.id || `ON-GPU-${Date.now().toString().slice(-8)}`;
+  const body = `<div class="workflow-success"><span>✓</span><h3>GPU reservation confirmed</h3><p>Your reserved accelerator-hours are available in My GPU. The service starts at the time shown below.</p><div><span>Reservation ID</span><strong>${escapeHtml(gpuFlow.confirmedId)}</strong></div><div><span>Start · local time</span><strong>${calculation.fmt(calculation.start)}</strong></div><div><span>End · local time</span><strong>${calculation.fmt(calculation.end)}</strong></div><div><span>Quantity</span><strong>${calculation.quantity} × ${escapeHtml(item.accelerator)}</strong></div><div><span>Total</span><strong>$${calculation.total.toLocaleString("en-US", { maximumFractionDigits: 2 })}</strong></div><div><span>Extension availability</span><strong>${calculation.extension ? `Up to ${calculation.extension} hours · not purchased` : "Not requested"}</strong></div></div>`;
+  const footer = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="${escapeHtml(item.supplier)}" data-context="${escapeHtml(gpuFlow.confirmedId)}">Message operator</button><button class="primary-button compact" type="button" data-route="my-gpus">View My GPU</button>`;
   showModal("Reservation receipt", "Calendar and commercial terms recorded", body, footer, "workflow-modal");
 }
 
 function showAccountMenu() {
-  modal.innerHTML = `<div class="account-menu-scrim" data-flow-action="close-flow"><section class="account-popover" data-modal-panel><header><div class="avatar">DL</div><div><strong>David Lee</strong><span>Demo Workspace</span></div></header><button type="button" data-flow-action="account-profile"><span>◎</span><div><strong>Profile</strong><small>Personal details and contact</small></div></button><button type="button" data-flow-action="account-settings"><span>⚙</span><div><strong>Workspace settings</strong><small>Notifications, region and approvals</small></div></button><button type="button" data-route="docs"><span>?</span><div><strong>Help & documentation</strong><small>Operating guides and methodology</small></div></button><button class="is-danger" type="button" data-flow-action="logout"><span>↪</span><div><strong>Sign out</strong><small>End this workspace session</small></div></button></section></div>`;
+  modal.innerHTML = `<div class="account-menu-scrim" data-flow-action="close-flow"><section class="account-popover" data-modal-panel><header><div class="avatar">WM</div><div><strong>Workspace Member</strong><span>Demo Workspace</span></div></header><button type="button" data-route="profile"><span>◎</span><div><strong>Profile</strong><small>Compute activity and workspace overview</small></div></button><button type="button" data-route="account"><span>⚙</span><div><strong>Account</strong><small>Security, access history and settings</small></div></button><button type="button" data-route="docs"><span>?</span><div><strong>Help & documentation</strong><small>Operating guides and methodology</small></div></button><button class="is-danger" type="button" data-flow-action="logout"><span>↪</span><div><strong>Sign out</strong><small>End this workspace session</small></div></button></section></div>`;
   localize(modal);
 }
 
 function showProfile() {
-  showModal("Profile", "Personal and business contact details", `<form class="flow-form"><label><span>Full name</span><input class="input" value="David Lee"></label><label><span>Job title</span><input class="input" value="Procurement Lead"></label><label><span>Business email</span><input class="input" value="david@demo-workspace.example"></label><label><span>Phone</span><input class="input" value="+65 6000 2188"></label><label class="span-2"><span>Organization</span><input class="input" value="Demo Workspace Holdings Pte. Ltd."></label></form>`, `<button class="secondary-button compact" type="button" data-flow-action="close-flow">Cancel</button><button class="primary-button compact" type="button" data-flow-action="save-profile">Save profile</button>`);
+  showModal("Profile", "Personal and business contact details", `<form class="flow-form"><label><span>Full name</span><input class="input" value="Workspace Member"></label><label><span>Job title</span><input class="input" value="Procurement Lead"></label><label><span>Business email</span><input class="input" value="member@demo-workspace.example"></label><label><span>Phone</span><input class="input" placeholder="Add a business phone" value=""></label><label class="span-2"><span>Organization</span><input class="input" value="Demo Workspace Holdings Pte. Ltd."></label></form>`, `<button class="secondary-button compact" type="button" data-flow-action="close-flow">Cancel</button><button class="primary-button compact" type="button" data-flow-action="save-profile">Save profile</button>`);
 }
 
 function showSettings() {
@@ -263,8 +311,11 @@ function showSignedOut() {
 
 
 function showRfqCreated() {
-  const body = `<div class="workflow-success"><span>✓</span><h3>Private RFQ created</h3><p>The requirement is structured and ready for qualified supplier matching.</p><div><span>RFQ ID</span><strong>RFQ-8430</strong></div><div><span>Status</span><strong>Supplier matching</strong></div><div><span>Response deadline</span><strong>22 Aug · 18:00 SGT</strong></div><div><span>Visibility</span><strong>Invited suppliers only</strong></div></div>`;
-  const footer = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="OpenNEXT Capacity Desk" data-context="RFQ-8430">Message capacity desk</button><button class="primary-button compact" type="button" data-route="rfq">Open My RFQs</button>`;
+  const record = window.OpenNEXTCreateRfq?.(document.getElementById("unifiedRfqForm"));
+  if (window.OpenNEXTCreateRfq && !record) return;
+  const rfqId = record?.id || `RFQ-${Date.now().toString().slice(-8)}`;
+  const body = `<div class="workflow-success"><span>✓</span><h3>Private RFQ created</h3><p>The requirement is structured and ready for qualified supplier matching.</p><div><span>RFQ ID</span><strong>${escapeHtml(rfqId)}</strong></div><div><span>Status</span><strong>Supplier matching</strong></div><div><span>Response deadline</span><strong>Review in My RFQs</strong></div><div><span>Visibility</span><strong>Invited suppliers only</strong></div></div>`;
+  const footer = `<button class="secondary-button compact" type="button" data-flow-action="open-chat" data-supplier="OpenNEXT Capacity Desk" data-context="${escapeHtml(rfqId)}">Message capacity desk</button><button class="primary-button compact" type="button" data-route="rfq">Open My RFQs</button>`;
   showModal("RFQ submitted", "Private matching has started", body, footer, "workflow-modal");
 }
 
@@ -294,6 +345,20 @@ function handleAction(action, element) {
   if (action === "start-buyer-flow") return showBuyerFlow(element.dataset.rfqId, quoteComparison[0].supplier, 0);
   if (action === "review-quote-full") return showBuyerFlow("RFQ-8421", element.dataset.supplier || quoteComparison[0].supplier, 0);
   if (action === "buyer-next") {
+    if (buyerFlow.step === 4) {
+      if (!modal.querySelector("#activationConfirmed")?.checked) return showToast("Confirm access first", "Check that access and metering work before activating the sample bundle");
+      const key = `${buyerFlow.rfqId}:${buyerFlow.supplier}`;
+      if (!activatedQuotes.has(key)) {
+        const item = demandTape.find((row) => row.id === buyerFlow.rfqId) || demandTape[0];
+        const quote = quoteComparison.find((row) => row.supplier === buyerFlow.supplier) || quoteComparison[0];
+        const { inputTokens, outputTokens } = DEMO_TOKEN_BUNDLE;
+        const quantity = inputTokens + outputTokens;
+        const rate = (inputTokens * quote.inputPer1MUsd + outputTokens * quote.outputPer1MUsd) / quantity;
+        const allocation = window.OpenNEXTAddAllocation?.({ kind: "tokens", model: item.model, quantity, inputTokens, outputTokens, inputRate: quote.inputPer1MUsd, outputRate: quote.outputPer1MUsd, rate, supplier: buyerFlow.supplier, region: item.region, days: 30 });
+        if (window.OpenNEXTAddAllocation && !allocation) return showToast("Allocation not saved", "Please retry after refreshing the workspace");
+        activatedQuotes.set(key, allocation?.id || `ON-TOKEN-${Date.now().toString().slice(-8)}`);
+      }
+    }
     if (buyerFlow.step === 1) showToast("Allocation locked", "The supplier hold is active for acceptance testing");
     if (buyerFlow.step === 2) showToast("Acceptance test passed", "The result is attached to the transaction record");
     return showBuyerFlow(buyerFlow.rfqId, buyerFlow.supplier, Math.min(5, buyerFlow.step + 1));

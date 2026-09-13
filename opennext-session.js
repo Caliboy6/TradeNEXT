@@ -1,5 +1,5 @@
 // A tab-scoped demo session. This is not production authentication.
-export const workspaceRoutes = new Set(['models', 'gpus', 'rfq', 'supply', 'data', 'docs', 'scheduler']);
+export const workspaceRoutes = new Set(['models', 'gpus', 'rfq', 'supply', 'data', 'docs', 'scheduler', 'profile', 'tokens', 'my-gpus', 'messages', 'billing', 'account']);
 export const DEMO_CODE = '123456';
 const KEY = 'opennext.demo-session.v1';
 export function safeDestination(value) {

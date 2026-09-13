@@ -7,14 +7,14 @@ import {
   rfqExamples,
   indexSeries,
   marketStats
-} from "./data.js?v=opennext-20260912-7";
+} from "./data.js?v=opennext-20260913-1";
 import {
   createSchedule,
   overrideRoute,
   recalculatePlan,
   simulateFallback,
   getEligibleRoutes
-} from "./scheduler.js?v=opennext-20260912-7";
+} from "./scheduler.js?v=opennext-20260913-1";
 
 export {
   demoMeta,
@@ -34,20 +34,20 @@ export {
 
 export const presets = {
   support: {
-    label: "客服分析",
-    text: "处理 2 万条客服记录：先进行隐私脱敏与语言识别，再完成主题分类、情绪识别和高风险投诉检测，最后生成中英双语的管理层报告，并对关键结论做事实校验。"
+    label: "Customer support analysis",
+    text: "Process 20,000 support records: redact sensitive data and identify language, then classify topics, detect sentiment and high-risk complaints, generate an executive report in English and Chinese, and fact-check key conclusions."
   },
   research: {
-    label: "行业研究",
-    text: "研究全球 AI 推理容量市场：检索近期资料，提取各地区 GPU 价格与模型容量价格，识别供需变化，计算趋势并生成带证据引用的投资委员会报告。"
+    label: "Industry research",
+    text: "Research the global AI inference capacity market: retrieve recent sources, extract regional GPU and Model Capacity prices, identify supply-demand shifts, calculate trends and produce an evidence-backed investment committee report."
   },
   software: {
-    label: "代码迁移",
-    text: "分析一个大型 Python 服务，生成依赖图，识别安全风险，将核心模块迁移到 TypeScript，运行测试并输出逐模块审查报告与上线计划。"
+    label: "Code migration",
+    text: "Analyze a large Python service, generate a dependency graph, identify security risks, migrate core modules to TypeScript, run tests and produce a module-by-module review and launch plan."
   },
   multimodal: {
-    label: "多模态审核",
-    text: "批量处理 5,000 条包含图片、语音和文本的商品内容，做内容安全分类、OCR、语音转写、重复检测和高风险复核，最后输出可审计的审核结果。"
+    label: "Multimodal review",
+    text: "Process 5,000 listings containing images, audio and text; perform safety classification, OCR, transcription, duplicate detection and high-risk review; then produce auditable results."
   }
 };
 
@@ -212,7 +212,7 @@ export function gpuCard(gpu, index) {
   return `<article class="gpu-card"><div class="gpu-card-head"><h3>${escapeHtml(g.name)}<span>${escapeHtml(g.vendor)} · ${escapeHtml(g.region)}</span></h3><span class="badge ${g.verified ? "badge-green" : "badge-amber"}">${g.verified ? "Exchange-grade" : "RFQ only"}</span></div>
     <div class="gpu-price">${displayPrice ? money.format(displayPrice) : "Token-based"}<small>${displayPrice ? " / accelerator·h" : " capacity"}</small></div>
     <div class="gpu-specs"><div class="gpu-spec"><span>Availability</span><strong>${g.available} units</strong></div><div class="gpu-spec"><span>Ready</span><strong>${escapeHtml(g.start)}</strong></div><div class="gpu-spec"><span>Topology</span><strong>${escapeHtml(g.topology)}</strong></div><div class="gpu-spec"><span>SLA</span><strong>${g.sla.toFixed(2)}%</strong></div></div>
-    <div class="availability-bar" aria-label="未来 14 天可用性">${availabilityCells(gpu,index)}</div><div class="gpu-card-actions"><span class="badge badge-gray">${escapeHtml(g.term)}</span><div class="button-row"><button class="ghost-button compact" type="button" data-action="gpu-detail" data-gpu-id="${escapeHtml(g.id)}">详情</button><button class="primary-button compact" type="button" data-action="reserve-gpu" data-gpu-id="${escapeHtml(g.id)}">预留</button></div></div></article>`;
+    <div class="availability-bar" aria-label="Next 14 days availability">${availabilityCells(gpu,index)}</div><div class="gpu-card-actions"><span class="badge badge-gray">${escapeHtml(g.term)}</span><div class="button-row"><button class="ghost-button compact" type="button" data-action="gpu-detail" data-gpu-id="${escapeHtml(g.id)}">Details</button><button class="primary-button compact" type="button" data-action="reserve-gpu" data-gpu-id="${escapeHtml(g.id)}">Reserve</button></div></div></article>`;
 }
 
 export function lineChart(seriesA, seriesB = null, suffix = "×") {

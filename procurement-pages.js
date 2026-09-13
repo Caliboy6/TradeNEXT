@@ -11,8 +11,8 @@ import {
   modelView,
   gpuView,
   lineChart,
-} from "./demo-core.js?v=opennext-20260912-7";
-import { renderScheduler as renderBaseScheduler } from "./demo-pages.js?v=opennext-20260912-7";
+} from "./demo-core.js?v=opennext-20260913-1";
+import { renderScheduler as renderBaseScheduler } from "./demo-pages.js?v=opennext-20260913-1";
 import {
   procurementMeta,
   provenanceCatalog,
@@ -32,7 +32,7 @@ import {
   getSupplierReputation,
   getProvenance,
   isNativeType,
-} from "./procurement-data.js?v=opennext-20260912-7";
+} from "./procurement-data.js?v=opennext-20260913-1";
 
 // Page copy is explicit in both supported languages. The existing localization
 // layer continues to handle all transaction data, controls and workflow content.
@@ -348,15 +348,15 @@ export function renderDocs() {
     <section class="docs-quick-grid"><button type="button" data-route="models"><span>01</span><strong>Buy Native Capacity</strong><p>Discover provenance, request quotes, compare evidence and confirm allocation.</p></button><button type="button" data-route="supply"><span>02</span><strong>Respond to RFQs</strong><p>Complete qualification, submit a standardized response and track fulfilment.</p></button><button type="button" data-route="gpus"><span>03</span><strong>Reserve GPU Capacity</strong><p>Select quantity, start time and duration while checking calendar conflicts.</p></button><button type="button" data-flow-action="messages"><span>04</span><strong>Messages & negotiation</strong><p>Confirm technical, commercial and delivery details with counterparties.</p></button></section>
     <section class="docs-section"><div><span class="eyebrow">BUYER WORKFLOW</span><h2>From demand to active capacity</h2></div><ol><li><strong>Post a structured RFQ</strong><span>Select Model, GPU, Hosted or Private OTC and define hard requirements.</span></li><li><strong>Compare qualified responses</strong><span>Review authorization class, rate, allocation, delivery, SLA and reputation.</span></li><li><strong>Confirm and test</strong><span>Lock commercial terms, run the capacity test and approve acceptance criteria.</span></li><li><strong>Contract and activate</strong><span>Complete contract, settlement instruction, allocation and access handover.</span></li><li><strong>Record fulfilment</strong><span>Track usage term, support events and mutual review eligibility.</span></li></ol></section>
     <section class="docs-section"><div><span class="eyebrow">SUPPLIER WORKFLOW</span><h2>Qualification and RFQ response</h2></div><ol><li><strong>Organization KYB</strong><span>Provide legal entity, ownership and authorized respondent details.</span></li><li><strong>Rights and provenance</strong><span>State the rights holder, allocation authority, expiry and revocation rules.</span></li><li><strong>Capacity evidence</strong><span>Declare quota, throughput, region, term, topology and isolation.</span></li><li><strong>Controlled test</strong><span>Verify technical delivery without overstating upstream authorization.</span></li><li><strong>Quote and fulfil</strong><span>Submit standardized terms, communicate with the buyer and maintain a fulfilment record.</span></li></ol></section>
-    <section class="docs-faq"><h2>Frequently used controls</h2><details open><summary>How do I continue an RFQ?</summary><p>Open My RFQs and choose Continue. The workflow opens at the current stage with the next required action.</p></details><details><summary>How are GPU conflicts handled?</summary><p>Instant Reserve calculates the requested end time and checks it against protected future reservations before confirmation.</p></details><details><summary>Where can I contact a supplier?</summary><p>Use Message from a market row, quote room or workflow receipt, or open Messages from the sidebar.</p></details><details><summary>What does OpenNEXT review?</summary><p>The qualification record separates rights evidence, technical capacity testing and actual buyer delivery. Technical success never creates authorization.</p></details></section>
+    <section class="docs-faq"><h2>Frequently used controls</h2><details open><summary>How do I continue an RFQ?</summary><p>Open My RFQs and choose Continue. The workflow opens at the current stage with the next required action.</p></details><details><summary>How are GPU conflicts handled?</summary><p>Instant Reserve calculates the requested end time and checks it against protected future reservations before confirmation.</p></details><details><summary>Where can I contact a supplier?</summary><p>Use Message from a market row, quote room or workflow receipt, or open Messages in My OpenNEXT.</p></details><details><summary>What does OpenNEXT review?</summary><p>The qualification record separates rights evidence, technical capacity testing and actual buyer delivery. Technical success never creates authorization.</p></details></section>
   </div>`;
 }
 
 export function renderScheduler() {
   const html = renderBaseScheduler()
     .replace("Smart Orchestrator", ui("WORKSPACE / CAPACITY OPTIMIZER", "工作台 / 容量优化"))
-    .replace("任务级「模型 + 执行芯片」智能调度", ui("A better execution plan.", "为任务选择合适的算力。"))
-    .replace("先拆复杂任务，再逐步匹配已验证容量。硬约束先过滤，随后在预期效果、成本、延迟与可靠性之间优化。", ui("Match each task with capacity that fits your quality, cost and latency targets.", "根据效果、成本与延迟要求，为每一步任务匹配容量。"))
+    .replace("Task-level model + execution-chip orchestration", ui("A better execution plan.", "为任务选择合适的算力。"))
+    .replace("Decompose complex work first, then match verified capacity step by step. Hard constraints are filtered before optimizing expected quality, cost, latency and reliability.", ui("Match each task with capacity that fits your quality, cost and latency targets.", "根据效果、成本与延迟要求，为每一步任务匹配容量。"))
     .replaceAll("✦ ", "");
   return html.replace(/<div class="page scheduler-page">/, `<div class="page scheduler-page"><section class="optional-tool-banner"><span class="badge badge-gray">${ui("SIMULATION", "模拟环境")}</span><div><strong>${ui("Plan before you run.", "执行前，先验证计划。")}</strong><p>${ui("Explore task routes, fallback and estimated usage on demo capacity. No production traffic is sent.", "使用演示容量查看任务路线、回退与预计用量，不会调用生产服务。")}</p></div></section>`);
 }

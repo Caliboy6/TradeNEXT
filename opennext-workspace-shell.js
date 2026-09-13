@@ -1,4 +1,4 @@
-import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260912-7';
+import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260913-1';
 
 export function initializeWorkspaceShell() {
   const app = document.querySelector('#app');
@@ -44,7 +44,7 @@ export function initializeWorkspaceShell() {
   window.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
     // Let a dialog consume Escape before dismissing the panel beneath it.
-    if (document.querySelector('#modal-host [role="dialog"],#drawer-host [role="dialog"]')) return;
+    if (document.querySelector('#modal-host [role="dialog"],#drawer-host [role="dialog"],dialog[open]')) return;
     closeMenus();
     if (mobile.matches && panel.classList.contains('is-open')) { closeMobileAgent(); toggle.focus(); }
   }, true);

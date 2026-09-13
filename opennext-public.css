@@ -239,3 +239,153 @@
 @media(max-width:800px){.auth-page .public-auth-main{display:flex;padding-top:38px;padding-bottom:35px;gap:33px}.auth-page .public-auth-panel{align-self:center;max-width:560px;padding-top:29px}.auth-page .public-auth-story{align-self:center;max-width:560px;width:100%}.auth-page .public-auth-story h1{font-size:56px}.auth-page .public-auth-intro{font-size:16px}.public-account-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.public-ticker-caption{padding:10px 17px 10px 24px}.public-ticker-caption strong{font-size:9px}.public-ticker-caption>span{font-size:9px}.public-gpu-ticker{min-height:55px}.public-ticker-control{width:45px}.public-ticker-item{gap:10px;padding:0 18px}.auth-page .public-provider-wallet{font-size:11px;gap:8px}.public-consent{font-size:12px}.auth-page .public-auth-secondary h3{font-size:23px}}
 @media(max-width:480px){.public-gpu-ticker{min-height:51px}.public-ticker-caption{padding:8px 11px 8px 20px;max-width:142px;gap:3px}.public-ticker-caption strong{font-size:9px;letter-spacing:1.15px}.public-ticker-caption>span{font-size:8px}.public-ticker-window{mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}.public-ticker-control{width:37px}.public-ticker-item{font-size:13px;gap:10px;padding:0 15px}.public-ticker-model{font-size:12px}.public-ticker-change{font-size:11px}.public-ticker-track{animation-duration:42s}.auth-page .public-auth-main{gap:25px;padding-top:30px}.auth-page .public-auth-story h1{font-size:46px;letter-spacing:-2.4px}.auth-page .public-auth-intro{font-size:14px}.auth-page .public-auth-panel h2{font-size:30px}.auth-page .public-auth-description{font-size:14px}.auth-page .public-auth-form{margin-top:26px}.public-account-fields{grid-template-columns:1fr;gap:17px}.auth-page .public-account-fields input{height:49px;font-size:16px;padding:0 14px}.public-consent{gap:10px;padding:13px 12px;font-size:11px;margin-top:18px}.auth-page .public-consent input[type=checkbox]{margin-top:1px}.public-auth-divider{margin-top:21px;margin-bottom:13px;gap:12px}.public-provider-row{min-height:51px}.auth-page .public-provider{gap:7px;padding:12px 6px;font-size:12px}.auth-page .public-provider svg{width:17px;height:17px}.auth-page .public-provider-wallet{flex-direction:column;gap:7px;font-size:10px;padding:10px 3px}.public-wallet-row{min-height:62px}.public-provider-hint{font-size:10px}.auth-page .public-auth-secondary{margin-top:23px;padding-top:21px;gap:10px}.auth-page .public-auth-secondary h3{font-size:22px}.auth-page .public-auth-secondary .public-auth-link{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.public-ticker-track{animation:none;transform:none;will-change:auto}.public-ticker-group[aria-hidden=true]{display:none}.public-ticker-window{overflow-x:auto;scrollbar-width:thin;scrollbar-color:#59624d #111310;mask-image:none}.public-ticker-control,.public-ticker-toggle{display:none}}
+
+/* Editorial chapters: a consistent opening, generous breathing room, and a
+   quiet change of paper tone make each part distinct without abrupt panels. */
+.public-page .public-hero{min-height:660px;padding-top:66px}
+.public-page .public-hero-visual{bottom:26px}
+.public-page .public-section{padding-top:76px;padding-bottom:82px;scroll-margin-top:24px}
+.public-section-heading{max-width:790px;margin-bottom:38px}
+.public-section-heading>.on-eyebrow{margin-bottom:21px}
+.public-page .public-section-heading h2{font-size:46px;line-height:1.12;margin-bottom:0;letter-spacing:-1.9px}
+.public-page .public-section-description{font-size:16px;max-width:670px;margin-top:17px!important;line-height:1.65}
+.public-market-section{border-top:1px solid #bdc1b7}
+.public-page .public-market-row{padding:29px 0;border-color:#d9dcd4}
+.public-page .public-market-row:last-child{padding-bottom:0}
+.public-page .public-market-row h3{font-family:var(--on-serif);font-size:25px;letter-spacing:-.6px;font-weight:400}
+.public-page .public-market-row p{font-size:15px;line-height:1.55}
+.public-listings-band{background:linear-gradient(180deg,#fff 0,#f5f6f2 86px,#f5f6f2 calc(100% - 86px),#fff 100%);position:relative}
+.public-page .public-listings-section{border-top:1px solid #d1d5ca;padding-top:82px;padding-bottom:88px}
+.public-listings-section .public-section-heading{margin-bottom:37px}
+.public-page .public-preview-label{display:flex;align-items:center;gap:12px;margin-top:0;margin-bottom:12px;color:#6b7164;font-size:12px}
+.public-preview-label::before{content:"";display:block;width:5px;height:5px;border:1px solid #747b6c;border-radius:50%}
+.public-listing-preview{background:rgba(255,255,255,.5)}
+.public-page .public-listing-tab{font-size:14px;min-height:49px}
+.public-page .public-listing-table td{padding-top:20px;padding-bottom:20px}
+.public-page .public-listing-table th{padding-top:15px;padding-bottom:15px}
+.public-page .public-posting-steps{margin-top:34px}
+.public-page .public-posting-steps li{padding-top:3px;padding-bottom:3px}
+.public-page .public-posting-steps p{margin-top:9px;font-size:14px}
+.public-page .public-preview-actions{justify-content:flex-start;margin-top:33px;gap:28px}
+.public-page .public-procurement-section{border-top:1px solid #d1d5ca;padding-top:77px;padding-bottom:94px}
+.public-page .public-process{margin-top:47px;gap:0}
+.public-page .public-process li{position:relative;border-left:0;border-top:1px solid #bfc5b7;padding:25px 32px 0 0}
+.public-page .public-process li::before{position:absolute;content:"";width:7px;height:7px;top:-4px;left:0;border:1px solid #727b66;background:#fff;border-radius:50%}
+.public-page .public-process li:last-child{border-top-color:transparent;padding-right:0}
+.public-page .public-process-number{color:#747c69;letter-spacing:.06em;font-size:12px}
+.public-page .public-process h3{font-family:var(--on-serif);font-size:25px;letter-spacing:-.65px;font-weight:400;margin:12px 0 10px}
+.public-page .public-process p{font-size:15px;line-height:1.6;max-width:230px}
+.public-page .public-supplier-band{background:linear-gradient(180deg,#fff,#f3f4ef 80px,#f3f4ef calc(100% - 70px),#fff);scroll-margin-top:24px}
+.public-page .public-supplier-inner{border-top:1px solid #d1d5ca;padding-top:83px;padding-bottom:91px;grid-template-columns:1.2fr 1fr 1fr;align-items:start}
+.public-supplier-heading .on-eyebrow{margin-bottom:22px}
+.public-page .public-supplier-heading h2{font-size:41px;line-height:1.12;letter-spacing:-1.6px;padding-right:22px}
+.public-page .public-supplier-column{padding:5px 0 5px 38px;min-height:155px}
+.public-page .public-supplier-column .on-eyebrow{font-size:11px;margin-bottom:19px;letter-spacing:1.5px;color:#767e6a}
+.public-page .public-supplier-column p:not(.on-eyebrow){font-size:16px;line-height:1.6}
+.public-page .public-supplier-column .on-button{margin-top:24px}
+.public-page .public-supplier-column small{font-size:12px;line-height:1.55}
+.public-page .public-closing{border-top:1px solid #d1d5ca;display:flex;align-items:center;justify-content:space-between;gap:32px;padding-top:77px;padding-bottom:82px}
+.public-page .public-closing .on-eyebrow{font-size:12px;letter-spacing:1.65px;margin-bottom:22px;margin-top:0}
+.public-page .public-closing h2{font-size:46px;letter-spacing:-1.9px}
+.public-page .public-closing p:not(.on-eyebrow){font-size:16px;margin-top:17px;line-height:1.6}
+.public-page .public-closing>.on-button{margin-top:0;min-height:47px;padding:12px 22px}
+.public-page .public-footer{padding-top:30px;padding-bottom:31px}
+
+/* Original engineering drawings, with small packets moving on their lines. */
+.public-flow-figure{margin:0}
+.public-flow-art{position:relative;isolation:isolate}
+.public-flow-art>img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
+.public-flow-overlay{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.public-flow-packet{fill:none;stroke:#151713;stroke-width:10;stroke-linecap:round;stroke-dasharray:.001 999.999;stroke-dashoffset:1000;animation:public-capacity-flow var(--flow-duration,12s) linear var(--flow-delay,0s) infinite}
+@keyframes public-capacity-flow{to{stroke-dashoffset:0}}
+.public-flow-caption{display:flex;align-items:center;justify-content:space-between;gap:20px;color:#737b69;font-size:11px;letter-spacing:.02em;margin-top:8px;min-height:32px}
+.public-flow-toggle{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.public-flow-control{display:inline-flex;align-items:center;gap:8px;cursor:pointer;pointer-events:auto;white-space:nowrap;min-height:32px;color:#525b48;padding:3px 0;font-size:11px;line-height:1.5}
+.public-flow-control:hover{color:#111310;text-decoration:underline;text-underline-offset:3px}
+.public-flow-pause{font-size:12px;line-height:1;letter-spacing:1px}
+.public-flow-play{font-size:15px;line-height:1}
+.public-flow-play,.public-flow-paused-label{display:none}
+.public-flow-toggle:checked~.public-flow-art .public-flow-packet{animation-play-state:paused}
+.public-flow-toggle:checked~.public-flow-caption .public-flow-pause,.public-flow-toggle:checked~.public-flow-caption .public-flow-running-label{display:none}
+.public-flow-toggle:checked~.public-flow-caption .public-flow-play,.public-flow-toggle:checked~.public-flow-caption .public-flow-paused-label{display:inline}
+.public-flow-toggle:focus-visible~.public-flow-caption .public-flow-control{outline:2px solid #151713;outline-offset:4px}
+.public-hero-visual .public-flow-caption{padding-left:14%;padding-right:52px}
+.auth-page .public-auth-visual{margin-top:24px}
+.auth-page .public-auth-visual .public-flow-caption{padding-left:12px;padding-right:13px}
+.auth-page .public-auth-caption{display:none}
+
+@media(max-width:1100px){
+  .public-page .public-hero{min-height:620px;padding-top:58px}
+  .public-page .public-section{padding-top:65px;padding-bottom:72px}
+  .public-page .public-section-heading h2,.public-page .public-closing h2{font-size:40px}
+  .public-page .public-market-row{grid-template-columns:35px 1.1fr 1.5fr auto;gap:15px}
+  .public-page .public-market-row h3{font-size:23px}
+  .public-page .public-market-row p{font-size:14px}
+  .public-page .public-supplier-inner{padding-top:72px;padding-bottom:76px}
+  .public-page .public-supplier-heading h2{font-size:35px}
+  .public-page .public-supplier-column{padding-left:26px}
+  .public-page .public-supplier-column p:not(.on-eyebrow){font-size:14px}
+  .public-hero-visual .public-flow-caption{padding-right:36px}
+}
+@media(max-width:800px){
+  .public-page .public-hero{min-height:635px;padding-top:49px}
+  .public-page .public-section{padding-top:55px;padding-bottom:61px}
+  .public-section-heading{margin-bottom:29px}
+  .public-section-heading>.on-eyebrow{margin-bottom:17px}
+  .public-page .public-section-heading h2,.public-page .public-closing h2{font-size:37px}
+  .public-page .public-market-row{grid-template-columns:30px minmax(0,1fr) auto;gap:15px;padding:24px 0}
+  .public-page .public-market-row p{grid-column:2/4;font-size:14px}
+  .public-page .public-process{row-gap:36px}
+  .public-page .public-process li{padding:22px 23px 0 0}
+  .public-page .public-process li:nth-child(2){border-top-color:transparent}
+  .public-page .public-supplier-inner{grid-template-columns:1fr 1fr;row-gap:32px;padding-top:57px;padding-bottom:60px}
+  .public-supplier-heading{grid-column:1/-1}
+  .public-page .public-supplier-heading h2{font-size:37px}
+  .public-page .public-supplier-column:nth-child(2){padding-left:0}
+  .public-page .public-closing{padding-top:56px;padding-bottom:62px;align-items:flex-start;flex-direction:column;gap:27px}
+  .public-page .public-closing .on-eyebrow{margin-bottom:17px}
+  .public-hero-visual .public-flow-caption{padding-left:5%;padding-right:20px}
+  .auth-page .public-auth-visual{position:relative;width:100%;margin:18px 0 0;opacity:1;right:auto;bottom:auto}
+}
+@media(max-width:480px){
+  .public-page .public-hero{min-height:660px;padding-top:39px}
+  .public-page .public-hero-visual{bottom:18px}
+  .public-page .public-section{padding-top:45px;padding-bottom:51px}
+  .public-page .public-section-heading h2,.public-page .public-closing h2{font-size:33px;letter-spacing:-1.4px}
+  .public-page .public-section-description{font-size:15px;line-height:1.6;margin-top:15px!important}
+  .public-page .public-market-row{grid-template-columns:25px minmax(0,1fr);gap:11px;padding:25px 0}
+  .public-page .public-market-row h3{font-size:24px}
+  .public-page .public-market-row p{grid-column:2;font-size:14px}
+  .public-page .public-market-row .on-button{grid-column:2;grid-row:auto;margin-top:4px}
+  .public-listings-section .public-section-heading{margin-bottom:30px}
+  .public-page .public-listing-preview{gap:0 16px}
+  .public-page .public-listing-tab{font-size:12px;padding-right:0;min-height:44px}
+  .public-page .public-listing-table td{padding-top:17px;padding-bottom:17px}
+  .public-page .public-posting-steps{grid-template-columns:1fr;margin-top:27px;gap:17px}
+  .public-page .public-posting-steps li{border:0;padding:0;display:flex;align-items:baseline;gap:15px}
+  .public-page .public-posting-steps li>span{width:18px;flex:none;font-size:12px;color:#747d68}
+  .public-page .public-posting-steps p{margin-top:0;font-size:14px}
+  .public-page .public-preview-actions{margin-top:27px;gap:19px}
+  .public-page .public-process{margin-top:36px;row-gap:30px}
+  .public-page .public-process h3{font-size:24px}
+  .public-page .public-process p{font-size:14px}
+  .public-page .public-process li{padding-right:19px}
+  .public-page .public-supplier-inner{padding-top:47px;padding-bottom:53px;row-gap:31px}
+  .public-page .public-supplier-heading h2{font-size:33px;letter-spacing:-1.4px}
+  .public-supplier-heading .on-eyebrow{margin-bottom:17px}
+  .public-page .public-supplier-column{padding-left:21px}
+  .public-page .public-supplier-column .on-eyebrow{font-size:11px;letter-spacing:1.1px;margin-bottom:15px}
+  .public-page .public-supplier-column .on-button{margin-top:18px}
+  .public-page .public-closing{padding-top:45px;padding-bottom:51px}
+  .public-page .public-closing p:not(.on-eyebrow){font-size:15px;margin-top:14px}
+  .public-hero-visual .public-flow-caption{justify-content:flex-end;padding-right:18px}
+  .public-hero-visual .public-flow-caption>span:first-child{display:none}
+  .public-flow-caption{font-size:10px;gap:12px}
+  .public-flow-control{font-size:11px}
+  .auth-page .public-auth-visual .public-flow-caption{padding:0}
+  .public-register-page .public-auth-story .public-auth-visual{display:block}
+}
+@media(prefers-reduced-motion:reduce){
+  .public-flow-packet{animation:none;display:none}
+  .public-flow-toggle,.public-flow-control{display:none}
+}

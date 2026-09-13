@@ -1,5 +1,5 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260913-2';
-import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260913-2';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260913-3';
+import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260913-3';
 
 const publicContent = document.querySelector('#publicContent');
 const workspace = document.querySelector('#app');
@@ -128,7 +128,7 @@ function requireConsent() {
   const checkbox = document.getElementById('public-terms');
   draft.terms = checkbox ? checkbox.checked === true : draft.terms;
   if (draft.terms) { draft.error = ''; return true; }
-  draft.error = 'Please review and accept the demo policies to continue.';
+  draft.error = 'Please review and accept the policies to continue.';
   const error = document.getElementById('public-auth-error');
   if (error) { error.textContent = draft.error; error.hidden = false; }
   checkbox?.focus?.();
@@ -150,7 +150,7 @@ function showProvider(provider) {
   if (!providers[provider]) return;
   pendingProvider = provider;
   const name = providers[provider];
-  document.getElementById('modal-host').innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog" role="dialog" aria-modal="true" aria-label="${name} demo sign-in"><header class="modal-head"><h2>${name} demo sign-in</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><p>Preview the workspace as a ${name} user. No external account or wallet will be connected, and no password or signature is requested.</p></div><footer class="modal-footer"><button class="secondary-button" type="button" data-public-action="close-info">Cancel</button><button class="primary-button" type="button" data-public-action="confirm-provider">Continue in demo</button></footer></section></div>`;
+  document.getElementById('modal-host').innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog" role="dialog" aria-modal="true" aria-label="${name} sign-in preview"><header class="modal-head"><h2>${name} sign-in preview</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><p>Preview the workspace as a ${name} user. No external account or wallet will be connected, and no password or signature is requested.</p></div><footer class="modal-footer"><button class="secondary-button" type="button" data-public-action="close-info">Cancel</button><button class="primary-button" type="button" data-public-action="confirm-provider">Enter preview</button></footer></section></div>`;
   document.body.classList.add('overlay-open');
   document.querySelector('.public-info-dialog .close-button')?.focus();
 }

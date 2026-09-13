@@ -291,12 +291,25 @@
 .public-page .public-closing>.on-button{margin-top:0;min-height:47px;padding:12px 22px}
 .public-page .public-footer{padding-top:30px;padding-bottom:31px}
 
-/* Original engineering drawings, with small packets moving on their lines. */
+/* One vector path supplies both the visible route and its moving packets. */
 .public-flow-figure{margin:0}
 .public-flow-art{position:relative;isolation:isolate}
-.public-flow-art>img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
-.public-flow-overlay{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.public-flow-packet{fill:none;stroke:#151713;stroke-width:10;stroke-linecap:round;stroke-dasharray:.001 999.999;stroke-dashoffset:1000;animation:public-capacity-flow var(--flow-duration,12s) linear var(--flow-delay,0s) infinite}
+.public-flow-drawing{display:block;width:100%;height:auto;overflow:visible;pointer-events:none}
+.public-flow-drawing path,.public-flow-drawing ellipse,.public-flow-drawing rect,.public-flow-drawing use{fill:none;stroke-linejoin:round}
+.public-flow-ground{stroke:#d6d9d1;stroke-width:1;opacity:.62}
+.public-flow-plane{fill:#fff!important;stroke:#83897e;stroke-width:1.6}
+.public-flow-detail{stroke:#a5ac9e;stroke-width:1}
+.public-flow-face,.public-flow-base{stroke:#7d8577;stroke-width:1.35}
+.public-flow-line{stroke:#555d4e;stroke-width:1.65}
+.public-flow-packet{stroke:#151713;stroke-width:9;stroke-linecap:round;stroke-dasharray:.001 999.999;stroke-dashoffset:1000;animation:public-capacity-flow var(--flow-duration,18s) linear var(--flow-delay,0s) infinite}
+.public-flow-node-grid{stroke:#d8dcd3;stroke-width:1}
+.public-flow-node>rect{fill:#fff;stroke:#676f5f;stroke-width:1.8}
+.public-flow-node .public-flow-node-core{fill:#20251a;stroke:none}
+.public-flow-globe-outline{stroke:#747c6c;stroke-width:2}
+.public-flow-graticule{stroke:#c6cbc0;stroke-width:1.1}
+.public-flow-coast{stroke:#a7afa0;stroke-width:1.5;opacity:.85}
+.public-flow-exchange>path{fill:#fff;stroke:#242a1e;stroke-width:2}
+.public-flow-exchange .public-flow-exchange-inner{stroke:#69715f;stroke-width:1.3}
 @keyframes public-capacity-flow{to{stroke-dashoffset:0}}
 .public-flow-caption{display:flex;align-items:center;justify-content:space-between;gap:20px;color:#737b69;font-size:11px;letter-spacing:.02em;margin-top:8px;min-height:32px}
 .public-flow-toggle{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}

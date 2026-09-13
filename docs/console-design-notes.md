@@ -28,4 +28,4 @@ Token usage is shown per model and allocation, with remaining entitlement and ex
 
 New requests are saved in the demo session. Completed sample purchases appear in the owned-resource views. Invoice and contract previews are illustrative records. Credential and MFA controls demonstrate a workflow without granting real access. Third-party sign-in is still a demo flow, and the GitHub Pages application is not a production authentication boundary.
 
-The public artwork uses lightweight vector flow overlays over the existing drawings. Motion can be paused and respects reduced-motion preferences. The homepage remains prerendered so its initial display does not depend on workspace modules loading.
+The public artwork is now entirely vector-based. Visible connections and their moving packets reference the same path; there are no static dots baked into a background image. Motion can be paused and respects reduced-motion preferences. The homepage remains prerendered so its initial display does not depend on workspace modules loading.

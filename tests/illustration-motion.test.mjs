@@ -1,0 +1,30 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {renderLanding, renderLogin} from '../opennext-public-pages.js';
+
+test('every illustration packet follows its visible vector route without static raster dots', () => {
+  for (const markup of [renderLanding(), renderLogin()]) {
+    const artwork = markup.match(/<svg class="public-flow-drawing"[\s\S]*?<\/svg>/)?.[0];
+    assert.ok(artwork, 'the illustration is rendered as one scalable coordinate system');
+    assert.doesNotMatch(artwork, /<(?:image|img|circle)\b/, 'no baked-in or stationary circular packet remains');
+    const routes = new Map([...artwork.matchAll(/<path id="([^"]+)" d="([^"]+)" pathLength="1000"/g)].map(match => [match[1], match[2]]));
+    const lines = [...artwork.matchAll(/<use class="public-flow-line" href="#([^"]+)"/g)].map(match => match[1]);
+    const packets = [...artwork.matchAll(/<use class="public-flow-packet" href="#([^"]+)" style="--flow-duration:([\d.]+)s;--flow-delay:([\d.-]+)s"/g)];
+    assert.ok(routes.size >= 3);
+    assert.ok(packets.length >= routes.size);
+    for (const [id] of routes) {
+      assert.ok(lines.includes(id), 'the motion route has an exactly matching visible line');
+      assert.ok(packets.some(packet => packet[1] === id), 'each route carries moving capacity');
+    }
+    for (const [, id, duration, delay] of packets) {
+      assert.ok(routes.has(id));
+      assert.ok(Number(duration) > 0);
+      assert.ok(Number(delay) < 0, 'every packet is already in motion at first paint');
+    }
+  }
+  const css = readFileSync(new URL('../opennext-public.css', import.meta.url), 'utf8');
+  assert.match(css, /animation:public-capacity-flow[^}]*linear[^}]*infinite/);
+  assert.match(css, /\.public-flow-toggle:checked~\.public-flow-art \.public-flow-packet\{animation-play-state:paused\}/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\s*\.public-flow-packet\{animation:none;display:none\}/);
+});

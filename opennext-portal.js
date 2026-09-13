@@ -1,8 +1,8 @@
-import { state } from './demo-core.js?v=opennext-20260913-2';
-import { demandTape } from './procurement-data.js?v=opennext-20260913-2';
-import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260913-2';
-import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260913-2';
-import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260913-2';
+import { state } from './demo-core.js?v=opennext-20260913-3';
+import { demandTape } from './procurement-data.js?v=opennext-20260913-3';
+import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260913-3';
+import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260913-3';
+import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260913-3';
 
 const sections=[['profile','Profile'],['tokens','My Tokens'],['my-gpus','My GPUs'],['supply','My Supplies'],['rfq','My RFQs'],['messages','Messages'],['billing','Billing'],['account','Account']];
 const personal=new Set(sections.map(([id])=>id));
@@ -13,7 +13,7 @@ let selectedThread='OpenNEXT Capacity Desk', context='', toastTimer, legacyRende
 const go=route=>window.__openNextProcurementNavigate?.(route);
 function notify(message) {
   const host=document.getElementById('toast-host');clearTimeout(toastTimer);
-  host.innerHTML=`<div class="toast" role="status"><div class="toast-icon">✓</div><div><strong>${escape(message)}</strong><span>Demo workspace</span></div><button type="button" data-portal-action="close-toast" aria-label="Dismiss notification">×</button></div>`;
+  host.innerHTML=`<div class="toast" role="status"><div class="toast-icon">✓</div><div><strong>${escape(message)}</strong></div><button type="button" data-portal-action="close-toast" aria-label="Dismiss notification">×</button></div>`;
   toastTimer=setTimeout(()=>host.replaceChildren(),4500);
 }
 function closeDialog(){document.getElementById('modal-host').replaceChildren();document.body.classList.remove('overlay-open');}
@@ -22,11 +22,11 @@ function openDialog({title,body}) {
   document.getElementById('modal-host').innerHTML=`<div class="modal-backdrop" data-portal-action="close-dialog"><section class="modal on-portal-dialog" role="dialog" aria-modal="true" aria-label="${escape(title)}"><header class="modal-head"><h2>${escape(title)}</h2><button type="button" class="close-button" data-portal-action="close-dialog" aria-label="Close">×</button></header><div class="modal-body">${body}</div></section></div>`;
   document.body.classList.add('overlay-open');
 }
-function nav(route){return `<div class="on-personal-head"><span>MY OPENNEXT</span><span>Example workspace <i>·</i> Demo data</span></div><nav class="on-personal-nav" aria-label="My OpenNEXT sections">${sections.map(([id,label])=>`<button type="button" data-route="${id}" ${route===id?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`;}
+function nav(route){return `<nav class="on-personal-nav" aria-label="My OpenNEXT sections">${sections.map(([id,label])=>`<button type="button" data-route="${id}" ${route===id?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`;}
 function messagesPage(){
   const names=[...new Set(['OpenNEXT Capacity Desk','Meridian Compute','Aurora Authorized Channel',...Object.keys(records.threads)])];
   const thread=records.thread(selectedThread);
-  return `<section class="on-messages"><header class="on-messages-title"><div><p class="eyebrow">MY OPENNEXT / MESSAGES</p><h1>Your conversations.</h1><p>Keep requirements, quotes and delivery updates with each counterparty.</p></div><span class="badge">Demo conversations</span></header><div class="on-message-workspace"><nav class="on-thread-list" aria-label="Conversations">${names.map(name=>`<button type="button" data-portal-action="thread" data-thread="${escape(name)}" ${selectedThread===name?'aria-current="true"':''}><span>${escape(name)}</span><small>${name==='OpenNEXT Capacity Desk'?'Procurement support':'Supplier conversation'}</small></button>`).join('')}</nav><div class="on-thread"><header><strong>${escape(selectedThread)}</strong><span>${context?escape(context):'Private procurement thread'}</span></header><div class="on-thread-log" role="log" aria-label="Conversation messages">${thread.map(message=>`<article class="on-message ${message.side==='me'?'is-mine':''}"><div><strong>${message.side==='me'?'You':escape(selectedThread)}</strong><span>${escape(message.time)}</span></div><p>${escape(message.text)}</p></article>`).join('')}</div><form id="portalMessageForm"><label for="portalMessage">Message</label><textarea id="portalMessage" name="message" rows="3" maxlength="2000" required placeholder="Ask about capacity, delivery or commercial terms…"></textarea><div><small>Messages stay in this demo. Nothing is sent to a supplier.</small><button class="primary-button" type="submit">Send demo message →</button></div></form></div></div></section>`;
+  return `<section class="on-messages"><header class="on-messages-title"><div><p class="eyebrow">MY OPENNEXT / MESSAGES</p><h1>Your conversations.</h1><p>Keep requirements, quotes and delivery updates with each counterparty.</p></div></header><div class="on-message-workspace"><nav class="on-thread-list" aria-label="Conversations">${names.map(name=>`<button type="button" data-portal-action="thread" data-thread="${escape(name)}" ${selectedThread===name?'aria-current="true"':''}><span>${escape(name)}</span><small>${name==='OpenNEXT Capacity Desk'?'Procurement support':'Supplier conversation'}</small></button>`).join('')}</nav><div class="on-thread"><header><strong>${escape(selectedThread)}</strong><span>${context?escape(context):'Private procurement thread'}</span></header><div class="on-thread-log" role="log" aria-label="Conversation messages">${thread.map(message=>`<article class="on-message ${message.side==='me'?'is-mine':''}"><div><strong>${message.side==='me'?'You':escape(selectedThread)}</strong><span>${escape(message.time === 'Demo thread' ? 'Conversation opened' : message.time === 'Demo reply' ? 'Automated reply' : message.time)}</span></div><p>${escape(message.text)}</p></article>`).join('')}</div><form id="portalMessageForm"><label for="portalMessage">Message</label><textarea id="portalMessage" name="message" rows="3" maxlength="2000" required placeholder="Ask about capacity, delivery or commercial terms…"></textarea><div><button class="primary-button" type="submit">Send message →</button></div></form></div></div></section>`;
 }
 function updateNavigation(route){
   document.querySelectorAll('.workspace-top-nav [data-nav]').forEach(item=>{const active=item.dataset.nav===(personal.has(route)?'profile':route);item.classList.toggle('is-active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current');});
@@ -75,6 +75,7 @@ export function initializePortal(){
     if(action.classList.contains('modal-backdrop')&&event.target!==action)return;
     event.preventDefault();event.stopImmediatePropagation();
     if(action.dataset.portalAction==='close-dialog')closeDialog();
+    if(action.dataset.portalAction==='about-preview')openDialog({title:'About this preview',body:'<p>Explore OpenNEXT with illustrative market listings and workspace records. Orders, payments, credentials and supplier messages are simulated.</p><p>Changes stay in this browser. No real accounts are connected or infrastructure provisioned.</p>'});
     if(action.dataset.portalAction==='close-toast')document.getElementById('toast-host').replaceChildren();
     if(action.dataset.portalAction==='thread'){selectedThread=action.dataset.thread;context='';render('messages');}
   },true);

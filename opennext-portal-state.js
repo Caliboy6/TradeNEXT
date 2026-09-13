@@ -28,12 +28,12 @@ export function createWorkspaceStore(storage) {
     thread(name) {
       const key=clean(name,100)||'OpenNEXT Capacity Desk';
       if (['__proto__','constructor','prototype'].includes(key)) return [];
-      if (!Object.hasOwn(data.threads,key)) data.threads[key]=[{side:'them',time:'Demo thread',text:'Welcome to your private procurement conversation. Confirm capacity, delivery terms and quote details here.'}];
+      if (!Object.hasOwn(data.threads,key)) data.threads[key]=[{side:'them',time:'Conversation opened',text:'Welcome to your private procurement conversation. Confirm capacity, delivery terms and quote details here.'}];
       return data.threads[key];
     },
     send(name,text) {
       const message=clean(text,2000);if(!message)return false;
-      const thread=this.thread(name);thread.push({side:'me',time:'Just now',text:message},{side:'them',time:'Demo reply',text:'Your message has been added to this demo conversation. A supplier would confirm availability and commercial terms here before you approve a purchase.'});
+      const thread=this.thread(name);thread.push({side:'me',time:'Just now',text:message},{side:'them',time:'Automated reply',text:'Your message has been saved. Review availability, delivery and commercial terms before confirming a purchase.'});
       if(thread.length>100)thread.splice(0,thread.length-100);save();return true;
     }
   };

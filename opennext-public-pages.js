@@ -15,8 +15,8 @@ const copy = {
     procurement: '03 / PROCUREMENT', procurementTitle: 'From requirement to delivery.', process: [['Define', 'Specify your workload and budget.'], ['Compare', 'Review supplier quotes side by side.'], ['Agree', 'Confirm capacity and commercial terms.'], ['Track', 'Keep delivery and records together.']],
     band: 'Built for buyers.<br>Open to suppliers.', buyer: 'One place to source capacity<br>and coordinate procurement.', buyerAction: 'Post a requirement', supplier: 'List your supply and respond<br>to qualified requests.', supplierAction: 'List your supply', supplierNote: 'Sign in to publish or respond.',
     closing: 'Tell us what you need.', closingDescription: 'Start with a workload, a region, and a timeline.', closingAction: 'Sign in to post RFQ', privacy: 'Privacy', contact: 'Contact', footer: 'OpenNEXT · AI Capacity Market',
-    workspace: 'OPENNEXT WORKSPACE', authTitle: 'Your market.<br>Your workspace.', authDescription: 'Compare supply, publish requirements, and manage quotes in one place.', loginTitle: 'Sign in to OpenNEXT', loginDescription: 'Continue to your procurement workspace.', emailLabel: 'Work email', emailPlaceholder: 'you@company.com', continueEmail: 'Continue with email', emailHint: 'This demo uses an on-screen sign-in code.', demo: 'Explore demo workspace', newAccount: 'New to OpenNEXT?', createAccount: 'Create an account',
-    codeTitle: 'Enter your sign-in code', codeDescription: 'Continue with', codeLabel: 'Six-digit code', codePlaceholder: '123456', verify: 'Enter workspace', codeHint: 'Demo code: 123456. No email has been sent.', changeEmail: 'Use a different email', registerTitle: 'Create your workspace', registerDescription: 'A shared place for your next capacity purchase.', name: 'Full name', namePlaceholder: 'Your full name', company: 'Company', companyPlaceholder: 'Company name', registerButton: 'Create demo account', registerHint: 'Demo account data stays in this browser.', haveAccount: 'Already have an account?', secure: 'Model capacity. GPU compute. One workspace.'
+    workspace: 'OPENNEXT WORKSPACE', authTitle: 'Your market.<br>Your workspace.', authDescription: 'Compare supply, publish requirements, and manage quotes in one place.', loginTitle: 'Sign in to OpenNEXT', loginDescription: 'Continue to your procurement workspace.', emailLabel: 'Work email', emailPlaceholder: 'you@company.com', continueEmail: 'Continue with email', emailHint: 'This demo uses an on-screen sign-in code.', demo: 'Explore workspace', newAccount: 'New to OpenNEXT?', createAccount: 'Create an account',
+    codeTitle: 'Enter your sign-in code', codeDescription: 'Continue with', codeLabel: 'Six-digit code', codePlaceholder: '123456', verify: 'Enter workspace', codeHint: 'Demo code: 123456. No email has been sent.', changeEmail: 'Use a different email', registerTitle: 'Create your workspace', registerDescription: 'A shared place for your next capacity purchase.', name: 'Full name', namePlaceholder: 'Your full name', company: 'Company', companyPlaceholder: 'Company name', registerButton: 'Create account', registerHint: 'Your preview workspace stays in this browser.', haveAccount: 'Already have an account?', secure: 'Model capacity. GPU compute. One workspace.'
   }
 };
 
@@ -41,28 +41,62 @@ function listings(c) {
 function gpuTicker() {
   const prices = [ ['H100', '2.72', '+3.42%'], ['H200', '3.89', '+2.10%'], ['A100', '1.26', '−1.56%'], ['L40S', '0.84', '+0.72%'], ['B200', '5.65', '+4.18%'], ['RTX 4090', '0.48', '−0.84%'] ];
   const items = prices.map(([model, price, change]) => `<div class="public-ticker-item"><span class="public-ticker-model">${model}</span><strong>$${price}</strong><span class="public-ticker-change ${change.startsWith('+') ? 'is-up' : 'is-down'}">${change}</span></div>`).join('');
-  return `<section class="public-gpu-ticker" aria-label="GPU rental price preview"><input class="public-ticker-toggle" type="checkbox" id="public-ticker-paused" aria-label="Pause GPU price ticker"><div class="public-ticker-caption"><strong>GPU MARKET</strong><span>Demo prices · $/GPU-hour</span></div><div class="public-ticker-window" tabindex="0" aria-label="Sample GPU rental prices"><div class="public-ticker-track"><div class="public-ticker-group">${items}</div><div class="public-ticker-group" aria-hidden="true">${items}</div></div></div><label class="public-ticker-control" for="public-ticker-paused"><span class="public-ticker-pause" aria-hidden="true">Ⅱ</span><span class="public-ticker-play" aria-hidden="true">▷</span><span class="public-ticker-control-label">Pause prices</span></label></section>`;
+  return `<section class="public-gpu-ticker" aria-label="GPU rental price preview"><input class="public-ticker-toggle" type="checkbox" id="public-ticker-paused" aria-label="Pause GPU price ticker"><div class="public-ticker-caption"><strong>GPU MARKET</strong><span>Indicative · $/GPU-hour</span></div><div class="public-ticker-window" tabindex="0" aria-label="Sample GPU rental prices"><div class="public-ticker-track"><div class="public-ticker-group">${items}</div><div class="public-ticker-group" aria-hidden="true">${items}</div></div></div><label class="public-ticker-control" for="public-ticker-paused"><span class="public-ticker-pause" aria-hidden="true">Ⅱ</span><span class="public-ticker-play" aria-hidden="true">▷</span><span class="public-ticker-control-label">Pause prices</span></label></section>`;
 }
 
-// The path coordinates follow the original illustrations in their 1860 × 846
-// coordinate system. A short round-capped dash is a moving packet of capacity;
-// keeping the motion in CSS makes the prerendered page work before JavaScript.
+// The line and each moving packet reuse one path definition. The artwork is
+// entirely vector, so no rasterized endpoint dots remain underneath the motion.
+function capacityPlane(x, y, ux, uy, vx, vy, depth) {
+  const point = (u, v, z = 0) => `${x + ux * u + vx * v} ${y + uy * u + vy * v + z}`;
+  const outline = `M${point(0, 0)} L${point(1, 0)} L${point(1, 1)} L${point(0, 1)} Z`;
+  const roof = Array.from({length: 11}, (_, i) => {
+    const v = (i + 1) / 12;
+    return `M${point(0, v)} L${point(1, v)}`;
+  }).join(' ');
+  const panels = Array.from({length: 31}, (_, i) => {
+    const u = i / 30;
+    return `M${point(u, 0)} L${point(u, 0, depth)}`;
+  }).join(' ');
+  const side = Array.from({length: 17}, (_, i) => {
+    const v = i / 16;
+    return `M${point(1, v)} L${point(1, v, depth)}`;
+  }).join(' ');
+  const louvers = [0.25, 0.5, 0.75].map(z => `M${point(0, 0, depth * z)} L${point(1, 0, depth * z)}`).join(' ');
+  return `<g class="public-flow-building"><path class="public-flow-plane" d="${outline}"/><path class="public-flow-detail" d="${roof}"/><path class="public-flow-face" d="M${point(0, 0)} L${point(0, 0, depth)} L${point(1, 0, depth)} L${point(1, 1, depth)} L${point(1, 1)} M${point(1, 0)} L${point(1, 0, depth)}"/><path class="public-flow-detail" d="${panels} ${side} ${louvers}"/><path class="public-flow-base" d="M${point(-0.015, -0.015, depth + 10)} L${point(1.015, -0.015, depth + 10)} L${point(1.015, 1.015, depth + 10)}"/></g>`;
+}
+
+function capacityNetworkArtwork() {
+  const floor = 'M70 646 L1780 338 M70 719 L1780 411 M70 792 L1780 484 M406 805 L1780 557 M780 812 L1780 630';
+  return `<g class="public-flow-ground"><path d="${floor}"/></g>${capacityPlane(985, 413, 475, 64, 172, -48, 28)}${capacityPlane(630, 476, 520, 82, 193, -53, 31)}${capacityPlane(210, 605, 440, 134, 383, -123, 39)}`;
+}
+
+function capacityGlobalArtwork() {
+  const nodes = [[265, 272], [190, 443], [355, 621]].map(([x, y], i) => `<g class="public-flow-node"><rect x="${x - 38}" y="${y - 38}" width="76" height="76" rx="8"/><rect class="public-flow-node-core" x="${x - 14}" y="${y - 14}" width="28" height="28" rx="2"/><path class="public-flow-detail" d="M${x - 18} ${y - 47} v9 M${x} ${y - 47} v9 M${x + 18} ${y - 47} v9 M${x - 18} ${y + 38} v9 M${x} ${y + 38} v9 M${x + 18} ${y + 38} v9"/></g>`).join('');
+  return `<g class="public-flow-node-grid"><path d="M92 190H496 M92 360H496 M92 531H496 M92 702H496 M116 139V744 M265 139V744 M415 139V744"/></g><g class="public-flow-globe"><ellipse class="public-flow-globe-outline" cx="1404" cy="420" rx="357" ry="357"/><g class="public-flow-graticule"><ellipse cx="1404" cy="420" rx="225" ry="357"/><ellipse cx="1404" cy="420" rx="87" ry="357"/><ellipse cx="1404" cy="420" rx="357" ry="104"/><ellipse cx="1404" cy="420" rx="357" ry="246"/><path d="M1047 420H1761 M1404 63V777"/></g><g class="public-flow-coast"><path d="M1176 171 L1210 145 1227 119 1264 113 1282 125 1304 116 1324 130 1310 154 1285 167 1280 185 1300 201 1294 226 1271 239 1251 274 1221 287 1215 313 1234 337 1238 359 1264 373 1274 396 1250 392 1236 378 1218 375 1201 351 1184 342 1176 314 1159 297 1147 269 1164 250 1160 228 1178 206 Z M1285 429 L1313 437 1336 452 1362 460 1378 486 1365 517 1343 535 1340 568 1324 592 1315 624 1297 650 1285 641 1281 609 1265 582 1262 550 1250 535 1246 502 1237 482 1252 453 Z M1536 184 L1560 180 1577 168 1599 183 1616 182 1645 199 1650 223 1673 242 1678 261 1700 285 1709 312 1680 306 1664 323 1654 353 1630 351 1615 371 1598 355 1588 332 1567 315 1554 293 1537 291 1518 278 1530 259 1513 245 1520 224 Z M1553 361 L1581 365 1595 383 1617 392 1632 421 1628 451 1612 477 1601 510 1580 531 1569 523 1560 491 1545 472 1538 441 1523 423 1529 398 Z M1678 539 L1697 525 1717 530 1733 549 1721 566 1697 571 1681 561 Z"/></g></g>${nodes}<g class="public-flow-exchange"><path d="M758 401 L777 420 758 439 739 420 Z"/><path class="public-flow-exchange-inner" d="M751 420H765 M758 413V427"/></g>`;
+}
+
 function capacityIllustration(kind) {
   const network = kind === 'network';
   const id = `public-${kind}-motion`;
   const paths = network ? [
-    ['M387 579 C418 429 630 381 822 289 L822 459', 12, -3],
-    ['M848 439 C902 292 1091 137 1228 90 C1459 -10 1668 13 1818 121', 16, -6],
-    ['M1272 396 L1272 215 C1078 116 936 134 822 289', 11, -8],
-    ['M1228 394 L1228 90', 8, -2]
+    ['M388 553 C424 406 675 375 822 287 C1001 210 1168 292 1243 450', 15, -3],
+    ['M486 526 C535 380 735 393 822 287 C935 122 1050 131 1228 194 C1388 244 1501 365 1564 464', 18, -7],
+    ['M849 435 C927 228 1111 124 1227 90 C1451 7 1668 10 1810 119', 20, -11],
+    ['M939 644 C1021 404 1160 274 1321 216 C1517 145 1706 148 1760 403', 19, -13],
+    ['M822 451 L822 287', 7, -2],
+    ['M1227 383 L1227 90', 9, -5],
+    ['M1272 390 L1272 215', 7, -4]
   ] : [
-    ['M340 334 C536 300 564 440 748 450 L793 450 C929 407 977 151 1255 232', 13, -2],
-    ['M340 542 C540 557 582 449 748 450 L793 450 C1098 477 1370 301 1675 369', 15, -7],
-    ['M469 629 C593 614 600 457 748 450 L793 450 C953 470 1093 615 1307 569', 12, -9]
+    ['M303 272 C506 264 525 420 758 420 C944 420 1015 186 1242 219', 17, -3],
+    ['M228 443 C446 443 548 420 758 420 C1041 420 1340 310 1660 373', 20, -9],
+    ['M393 621 C551 621 568 420 758 420 C956 420 1053 600 1321 559', 18, -14]
   ];
+  const routes = paths.map(([d], i) => `<path id="${id}-route-${i}" d="${d}" pathLength="1000"/>`).join('');
+  const lines = paths.map((_, i) => `<use class="public-flow-line" href="#${id}-route-${i}"/>`).join('');
+  const packets = paths.map(([, duration, delay], i) => [0, 0.5].map(phase => `<use class="public-flow-packet" href="#${id}-route-${i}" style="--flow-duration:${duration}s;--flow-delay:${delay - duration * phase}s"/>`).join('')).join('');
   const caption = network ? 'From supply to workload.' : 'Local nodes. Global reach.';
   const label = network ? 'Capacity flowing between connected compute locations' : 'Compute nodes connecting through OpenNEXT to global destinations';
-  return `<figure class="public-flow-figure ${network ? 'public-hero-visual' : 'public-auth-visual'}" aria-label="${label}"><input class="public-flow-toggle" type="checkbox" id="${id}" aria-label="Pause capacity flow animation"><div class="public-flow-art"><img src="assets/${network ? 'compute-network' : 'global-matching'}.png" alt="" width="1860" height="846"${network ? ' fetchpriority="high"' : ''}><svg class="public-flow-overlay" viewBox="0 0 1860 846" aria-hidden="true" focusable="false">${paths.map(([d, duration, delay]) => `<path class="public-flow-packet" d="${d}" pathLength="1000" style="--flow-duration:${duration}s;--flow-delay:${delay}s"/>`).join('')}</svg></div><figcaption class="public-flow-caption"><span>${caption}</span><label class="public-flow-control" for="${id}"><span class="public-flow-pause" aria-hidden="true">Ⅱ</span><span class="public-flow-play" aria-hidden="true">▷</span><span class="public-flow-running-label">Pause motion</span><span class="public-flow-paused-label">Resume motion</span></label></figcaption></figure>`;
+  return `<figure class="public-flow-figure ${network ? 'public-hero-visual' : 'public-auth-visual'}" aria-label="${label}"><input class="public-flow-toggle" type="checkbox" id="${id}" aria-label="Pause capacity flow animation"><div class="public-flow-art"><svg class="public-flow-drawing" viewBox="0 0 1860 846" aria-hidden="true" focusable="false"><defs>${routes}</defs>${network ? capacityNetworkArtwork() : capacityGlobalArtwork()}<g class="public-flow-routes">${lines}</g><g class="public-flow-packets">${packets}</g></svg></div><figcaption class="public-flow-caption"><span>${caption}</span><label class="public-flow-control" for="${id}"><span class="public-flow-pause" aria-hidden="true">Ⅱ</span><span class="public-flow-play" aria-hidden="true">▷</span><span class="public-flow-running-label">Pause motion</span><span class="public-flow-paused-label">Resume motion</span></label></figcaption></figure>`;
 }
 
 export function renderLanding(locale = 'en') {
@@ -96,7 +130,7 @@ function providerButton(provider, label, compact = false) {
 }
 
 function providers() {
-  return `<div class="public-auth-divider"><span>or continue with</span></div><div class="public-provider-row" role="group" aria-label="Sign-in providers">${providerButton('google', 'Google')}${providerButton('github', 'GitHub')}${providerButton('lark', 'Lark')}</div><div class="public-provider-row public-wallet-row" role="group" aria-label="Wallet sign-in">${providerButton('walletconnect', 'WalletConnect', true)}${providerButton('binance', 'Binance Wallet', true)}${providerButton('metamask', 'MetaMask', true)}</div><p class="public-provider-hint">Demo sign-in only. No external account or wallet is connected.</p>`;
+  return `<div class="public-auth-divider"><span>or continue with</span></div><div class="public-provider-row" role="group" aria-label="Sign-in providers">${providerButton('google', 'Google')}${providerButton('github', 'GitHub')}${providerButton('lark', 'Lark')}</div><div class="public-provider-row public-wallet-row" role="group" aria-label="Wallet sign-in">${providerButton('walletconnect', 'WalletConnect', true)}${providerButton('binance', 'Binance Wallet', true)}${providerButton('metamask', 'MetaMask', true)}</div>`;
 }
 
 function consent(options, error) {
@@ -117,7 +151,7 @@ export function renderLogin(locale = 'en', options = {}) {
   } else if (mode === 'email') {
     form = `<h2>${c.loginTitle}</h2><p class="public-auth-description">${c.loginDescription}</p><form class="public-auth-form" data-auth-form="email"><label for="public-email">${c.emailLabel}</label><input id="public-email" name="email" type="email" autocomplete="email" placeholder="${c.emailPlaceholder}" value="${email}" required><button class="on-button on-button-primary" type="submit">${c.continueEmail}</button><p class="public-auth-hint">${c.emailHint}</p>${consent(options, error)}</form>${providers()}<button class="public-auth-link public-account-fallback" type="button" data-public-action="signin">Use account and password</button><button class="on-button on-button-outline public-demo-button" type="button" data-public-action="demo">${c.demo}${arrow}</button><div class="public-auth-secondary"><h3>${c.newAccount}</h3><button class="public-auth-link" type="button" data-public-action="register">${c.createAccount}</button></div>`;
   } else {
-    form = `<h2>${c.loginTitle}</h2><p class="public-auth-description">${c.loginDescription}</p><form class="public-auth-form public-account-form" data-auth-form="account"><div class="public-account-fields"><div><label for="public-email">Account</label><input id="public-email" name="email" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Username or email" value="${email}" required aria-describedby="public-account-hint"></div><div><label for="public-password">Password</label><input id="public-password" name="password" type="password" autocomplete="off" placeholder="Demo password" required aria-describedby="public-account-hint"></div></div><div class="public-password-actions"><button class="public-auth-link" type="button" data-public-action="email-code">Use an email code</button><button class="public-auth-link" type="button" data-public-action="forgot-password">Forgot password?</button></div><p class="public-auth-hint" id="public-account-hint">Use any demo account and password. Do not enter real credentials.</p><button class="on-button on-button-primary" type="submit">Sign in${arrow}</button>${consent(options, error)}</form>${providers()}<button class="on-button on-button-outline public-demo-button" type="button" data-public-action="demo">${c.demo}${arrow}</button><div class="public-auth-secondary"><h3>${c.newAccount}</h3><button class="public-auth-link" type="button" data-public-action="register">${c.createAccount}</button></div>`;
+    form = `<h2>${c.loginTitle}</h2><p class="public-auth-description">${c.loginDescription}</p><form class="public-auth-form public-account-form" data-auth-form="account"><div class="public-account-fields"><div><label for="public-email">Account</label><input id="public-email" name="email" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Username or email" value="${email}" required aria-describedby="public-account-hint"></div><div><label for="public-password">Password</label><input id="public-password" name="password" type="password" autocomplete="off" placeholder="Password" required aria-describedby="public-account-hint"></div></div><div class="public-password-actions"><button class="public-auth-link" type="button" data-public-action="email-code">Use an email code</button><button class="public-auth-link" type="button" data-public-action="forgot-password">Forgot password?</button></div><p class="public-auth-hint" id="public-account-hint">Interactive preview. Use sample credentials only.</p><button class="on-button on-button-primary" type="submit">Sign in${arrow}</button>${consent(options, error)}</form>${providers()}<button class="on-button on-button-outline public-demo-button" type="button" data-public-action="demo">${c.demo}${arrow}</button><div class="public-auth-secondary"><h3>${c.newAccount}</h3><button class="public-auth-link" type="button" data-public-action="register">${c.createAccount}</button></div>`;
   }
   return `<div class="auth-page${mode === 'register' ? ' public-register-page' : ''}" lang="${locale}"><div class="public-auth-shell"><header class="public-auth-header">${brandLink()}</header><main class="public-auth-main"><section class="public-auth-story"><p class="on-eyebrow">${c.workspace}</p><h1>${c.authTitle}</h1><p class="public-auth-intro">${c.authDescription}</p>${capacityIllustration('global')}<p class="public-auth-caption">${c.secure}</p></section><section class="public-auth-panel">${form}</section></main>${footer(c, true)}</div></div>`;
 }

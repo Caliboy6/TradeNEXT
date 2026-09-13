@@ -76,12 +76,12 @@ test('provider sign-in requires consent and a separate demo confirmation', async
   const app = await import('../opennext-public.js?startup-test=3');
   app.initializePublicShell('login');
   click({ publicAction: 'provider', provider: 'google' });
-  assert.match(elements.get('public-auth-error').textContent, /accept the demo policies/);
+  assert.match(elements.get('public-auth-error').textContent, /accept the policies/);
   assert.equal(elements.get('modal-host').innerHTML, '');
   assert.equal(location.hash, '#login?next=models');
   elements.get('public-terms').checked = true;
   click({ publicAction: 'provider', provider: 'google' });
-  assert.match(elements.get('modal-host').innerHTML, /Google demo sign-in/);
+  assert.match(elements.get('modal-host').innerHTML, /Google sign-in preview/);
   assert.equal(location.hash, '#login?next=models');
   click({ publicAction: 'confirm-provider' });
   assert.equal(location.hash, '#models');

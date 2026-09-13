@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { renderAccountPage, accountCsv } from '../opennext-account.js';
-import { getCapacityLedgerRecords } from '../opennext-capacity.js?v=opennext-20260913-2';
+import { getCapacityLedgerRecords } from '../opennext-capacity.js?v=opennext-20260913-3';
 
 test('billing uses shared capacity purchases with valid dates and pagination', () => {
   const page = renderAccountPage('billing');
@@ -17,7 +17,7 @@ test('account offers explicit demo security controls and sign-out', () => {
   const page = renderAccountPage('account');
   assert.match(page, /Two-factor authentication/);
   assert.match(page, /data-flow-action="logout"/);
-  assert.match(page, /do not secure this public demo/);
+  assert.doesNotMatch(page, /Demo account|Current demo session/);
   assert.doesNotMatch(page, /[\u3400-\u9fff]/);
 });
 

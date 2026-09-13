@@ -9,7 +9,7 @@ import {
   escapeHtml,
   modelView,
   sparkline,
-} from "./demo-core.js?v=opennext-20260913-2";
+} from "./demo-core.js?v=opennext-20260913-3";
 import {
   phase1Meta,
   provenanceCatalog,
@@ -19,12 +19,12 @@ import {
   phaseState,
   getProvenance,
   isNativeType,
-} from "./phase1-data.js?v=opennext-20260913-2";
+} from "./phase1-data.js?v=opennext-20260913-3";
 import {
   renderGpus as renderBaseGpus,
   renderScheduler as renderBaseScheduler,
   renderData as renderBaseData,
-} from "./demo-pages.js?v=opennext-20260913-2";
+} from "./demo-pages.js?v=opennext-20260913-3";
 
 const nativeTypes = new Set(["native_direct", "native_allocated", "enterprise_partner"]);
 
@@ -60,7 +60,7 @@ function modelProvenanceCard(raw, filter = "native") {
   return `<article class="provenance-market-card" style="--model-accent:${model.accent}">
     <div class="market-card-top">
       <div class="model-identity"><div class="model-orb">${escapeHtml(model.family.slice(0, 1))}</div><div><strong>${escapeHtml(model.name)}</strong><span>${escapeHtml(model.family)} capacity market</span></div></div>
-      <span class="badge badge-gray">DEMO</span>
+
     </div>
     <div class="provenance-lead">${provenanceBadge(provenance)}<span class="role-pill">${escapeHtml(provenance.role)}</span></div>
     <div class="buyer-receives"><span>Buyer receives</span><strong>${escapeHtml(provenance.deliveryMode || provenance.buyerReceives)}</strong></div>

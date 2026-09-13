@@ -5,7 +5,7 @@ A public website and a separate, signed-in procurement workspace with a shared m
 ## Public website
 
 - Full, prerendered landing page with distinct chapter sections and gradual tonal transitions.
-- GPU price ticker and two engineering illustrations with independently pausable capacity-flow animations. Reduced-motion preferences are respected.
+- GPU price ticker and two engineering illustrations with independently pausable capacity-flow animations. Every moving point follows the same vector path as its visible connection. Reduced-motion preferences are respected.
 - Account, email-code, Google, GitHub, Lark and wallet sign-in demonstrations, with an explicit demo-policy checkbox.
 - All interface copy is English, including validation messages, legacy workflows and returning users' preferences.
 
@@ -28,7 +28,7 @@ My OpenNEXT contains:
 
 ## Demonstration paths
 
-1. Open the landing page and use **Explore capacity**. Accept the demo policy checkbox, then choose **Explore demo workspace**; no credentials are needed.
+1. Open the landing page and use **Explore capacity**. Accept the demo policy checkbox, then choose **Explore workspace**; no credentials are needed.
 2. Open **My OpenNEXT → My Tokens** and expand a model family to inspect usage, entitlement and acquisition rates. Change a reminder preference.
 3. Open **My GPUs → Extend term**, review the cost and confirm the demo extension. Check the updated expiry and matching transaction in **Billing**.
 4. Reserve available inventory in **GPUs**. The receipt links to the new scheduled reservation in **My GPUs**.
@@ -60,5 +60,7 @@ RFQs and messages are tab-scoped. Capacity, reminder and account preferences are
 Model procurement distinguishes **Native Direct**, **Native Allocated**, **Enterprise Partner**, optional **Managed Gateway**, and **Hosted Inference**. Private OTC remains a separate review path and is excluded from public inventory and Native benchmarks. Technical testing does not establish resale authorization. Undisclosed closed-model hardware remains labelled as provider-managed.
 
 The optional **Capacity Optimizer** in More demonstrates task planning, routing and fallback using purchased capacity. It does not handle production traffic.
+
+Public-facing screens keep preview explanations under **More → About this preview**, with relevant limits shown at sign-in and transaction confirmation. Market filters use compact responsive toolbars, and resource sections use thin dividers and subtle header fills.
 
 Both `main` and `gh-pages` hold the deployed source. See [console design notes](docs/console-design-notes.md) for references and design decisions.

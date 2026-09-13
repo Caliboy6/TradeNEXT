@@ -1,4 +1,4 @@
-import { gpuSupplyListings } from './procurement-data.js?v=opennext-20260913-2';
+import { gpuSupplyListings } from './procurement-data.js?v=opennext-20260913-3';
 
 // This assistant is intentionally local and deterministic. All prices and stock
 // below come from the same synthetic catalog displayed in the GPU marketplace.
@@ -59,7 +59,7 @@ function renderMessages() {
 
 function renderProgress() {
   if (agentState.phase < 0) return '';
-  return `<div class="agent-workflow" aria-label="Demo procurement progress">${stages.map((label, i) => `<div class="agent-stage ${i < agentState.phase || agentState.completed ? 'is-complete' : i === agentState.phase && agentState.running ? 'is-current' : ''}"><span>${i < agentState.phase || agentState.completed ? '✓' : String(i + 1).padStart(2, '0')}</span><strong>${label}</strong><small>${i < agentState.phase || agentState.completed ? 'Done' : i === agentState.phase && agentState.running ? 'Running' : 'Pending'}</small></div>`).join('')}${agentState.running ? '<button class="agent-cancel" type="button" data-agent-action="cancel">Stop demo</button>' : ''}</div>`;
+  return `<div class="agent-workflow" aria-label="Procurement progress">${stages.map((label, i) => `<div class="agent-stage ${i < agentState.phase || agentState.completed ? 'is-complete' : i === agentState.phase && agentState.running ? 'is-current' : ''}"><span>${i < agentState.phase || agentState.completed ? '✓' : String(i + 1).padStart(2, '0')}</span><strong>${label}</strong><small>${i < agentState.phase || agentState.completed ? 'Done' : i === agentState.phase && agentState.running ? 'Running' : 'Pending'}</small></div>`).join('')}${agentState.running ? '<button class="agent-cancel" type="button" data-agent-action="cancel">Stop</button>' : ''}</div>`;
 }
 
 function renderResults() {
@@ -69,7 +69,7 @@ function renderResults() {
   const best = matches[0];
   if (!best) return `<div class="agent-result"><span class="agent-kicker">Review required</span><h3>No exact capacity match.</h3><p>${regional.length ? 'The sample listings in this region do not cover the requested quantity.' : 'There is no sample listing for this accelerator in the selected region.'} You can adjust your request or send a private RFQ.</p>${rfqButton(request)}</div>`;
   const underBudget = best.estimatedTotal <= request.budget;
-  return `<div class="agent-result"><span class="agent-kicker">${underBudget ? 'Option ready to review' : 'Budget review required'}</span><h3>${escape(best.supplier)}</h3><p class="agent-result-caption">${escape(best.accelerator)} · ${escape(best.region)}</p><dl class="agent-result-facts"><div><dt>Sample rate</dt><dd>${money(best.pricePerHour, 2)}<small> / GPU·hr</small></dd></div><div><dt>Estimated compute</dt><dd>${money(best.estimatedTotal, 2)}</dd></div><div><dt>Budget ${underBudget ? 'remaining' : 'exceeded'}</dt><dd>${money(Math.abs(request.budget - best.estimatedTotal), 2)}</dd></div><div><dt>Listed capacity</dt><dd>${best.units} GPUs</dd></div></dl><p class="agent-result-note">${escape(best.term)} · ${best.sla}% listed SLA. Scheduling, network compatibility and final terms need supplier confirmation. Estimate excludes additional fees.</p><p class="agent-approval">Your approval comes next.</p>${rfqButton(request)}</div>`;
+  return `<div class="agent-result"><span class="agent-kicker">${underBudget ? 'Option ready to review' : 'Budget review required'}</span><h3>${escape(best.supplier)}</h3><p class="agent-result-caption">${escape(best.accelerator)} · ${escape(best.region)}</p><dl class="agent-result-facts"><div><dt>Indicative rate</dt><dd>${money(best.pricePerHour, 2)}<small> / GPU·hr</small></dd></div><div><dt>Estimated compute</dt><dd>${money(best.estimatedTotal, 2)}</dd></div><div><dt>Budget ${underBudget ? 'remaining' : 'exceeded'}</dt><dd>${money(Math.abs(request.budget - best.estimatedTotal), 2)}</dd></div><div><dt>Listed capacity</dt><dd>${best.units} GPUs</dd></div></dl><p class="agent-result-note">${escape(best.term)} · ${best.sla}% listed SLA. Scheduling, network compatibility and final terms need supplier confirmation. Estimate excludes additional fees.</p><p class="agent-approval">Your approval comes next.</p>${rfqButton(request)}</div>`;
 }
 
 function rfqButton(request) {
@@ -77,14 +77,14 @@ function rfqButton(request) {
 }
 
 export function renderAgentPanel() {
-  return `<div class="agent-heading"><div class="agent-identity"><span class="agent-symbol">${sparkle}</span><div><h2>Master Agent</h2><p>Your procurement partner</p></div></div><span class="agent-demo-badge">Demo</span></div>
+  return `<div class="agent-heading"><div class="agent-identity"><span class="agent-symbol">${sparkle}</span><div><h2>Master Agent</h2><p>Your procurement partner</p></div></div></div>
     <div class="agent-context"><span>Current brief</span><strong id="agentContext">${escape(agentState.request.accelerator)} / ${escape(agentState.request.region)}</strong><span class="agent-context-dot" aria-hidden="true"></span></div>
     <div class="agent-scroll"><div class="agent-intro"><p>Set your goal. I’ll help source capacity, compare terms and prepare your next move.</p><div class="agent-capabilities"><span>Sourcing</span><i></i><span>Comparison</span><i></i><span>Review</span></div></div>
-    <section class="agent-task" aria-label="Recommended demo task"><span class="agent-kicker">Recommended demo</span><h3>Procure 32 H100 GPUs.</h3><p>Singapore · 72 continuous hours</p><dl><div><dt>Compute budget</dt><dd>$6,500<span>.00</span></dd></div><div><dt>Agent limit</dt><dd>$25</dd></div></dl><button type="button" class="agent-primary" data-agent-action="run"${agentState.running ? ' disabled' : ''}>Start procurement demo ${arrow}</button></section>
-    <div class="agent-shortcuts"><button type="button" data-agent-action="market">Analyze the sample market ${arrow}</button><button type="button" data-agent-action="fees">Understand agent fees ${arrow}</button></div>
+    <section class="agent-task" aria-label="Suggested procurement task"><span class="agent-kicker">QUICK START</span><h3>Procure 32 H100 GPUs.</h3><p>Singapore · 72 continuous hours</p><dl><div><dt>Compute budget</dt><dd>$6,500<span>.00</span></dd></div><div><dt>Agent limit</dt><dd>$25</dd></div></dl><button type="button" class="agent-primary" data-agent-action="run"${agentState.running ? ' disabled' : ''}>Explore this request ${arrow}</button></section>
+    <div class="agent-shortcuts"><button type="button" data-agent-action="market">Analyze market ${arrow}</button><button type="button" data-agent-action="fees">Understand agent fees ${arrow}</button></div>
     <div class="agent-conversation-head"><h3>Conversation &amp; execution</h3><button type="button" data-agent-action="reset" aria-label="Clear agent conversation" title="Clear conversation">Reset</button></div>
     <div id="agentConversation" class="agent-conversation" role="log" aria-label="Agent conversation" aria-live="polite" aria-relevant="additions text">${renderMessages()}${renderProgress()}${renderResults()}</div></div>
-    <form class="agent-composer" id="agentPromptForm"><label class="agent-visually-hidden" for="agentPrompt">Describe your GPU procurement goal</label><textarea id="agentPrompt" name="prompt" rows="2" maxlength="600" placeholder="Describe the capacity you need…">${escape(agentState.prompt)}</textarea><div class="agent-composer-footer"><span>Approval before action</span><button type="submit" class="agent-send" aria-label="Send to demo agent"${agentState.running ? ' disabled' : ''}>${arrow}</button></div></form><p class="agent-scope">Demo assistant · sample catalog · no live orders</p>`;
+    <form class="agent-composer" id="agentPromptForm"><label class="agent-visually-hidden" for="agentPrompt">Describe your GPU procurement goal</label><textarea id="agentPrompt" name="prompt" rows="2" maxlength="600" placeholder="Describe the capacity you need…">${escape(agentState.prompt)}</textarea><div class="agent-composer-footer"><span>Approval before action</span><button type="submit" class="agent-send" aria-label="Send to agent"${agentState.running ? ' disabled' : ''}>${arrow}</button></div></form>`;
 }
 
 function refreshConversation() {

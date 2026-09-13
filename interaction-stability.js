@@ -1,4 +1,4 @@
-import { procurementState } from "./procurement-data.js?v=opennext-20260913-3";
+import { procurementState } from "./procurement-data.js?v=opennext-20260913-4";
 
 const main = document.querySelector("#mainContent");
 const drawer = document.querySelector("#drawer-host");
@@ -98,7 +98,7 @@ function updateResultCount(input, count, total) {
     result.dataset.searchCount = "";
     toolbar.append(result);
   }
-  result.textContent = input.value.trim() ? `${count} of ${total} results` : `${total} results`;
+  result.textContent = input.value.trim() ? `${count} of ${total} results` : `${total} ${total === 1 ? "result" : "results"}`;
 }
 
 function filterNativeMarket() {
@@ -212,7 +212,7 @@ export function installInteractionStability() {
 
   const style = document.createElement("link");
   style.rel = "stylesheet";
-  style.href = "./stability.css?v=opennext-20260913-3";
+  style.href = "./stability.css?v=opennext-20260913-4";
   document.head.append(style);
 
   // Registered before the legacy route and search listeners.

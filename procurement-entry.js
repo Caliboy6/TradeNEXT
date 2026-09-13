@@ -1,8 +1,8 @@
-import "./procurement-workflows.js?v=opennext-20260913-3";
-import "./procurement-interactions.js?v=opennext-20260913-3";
-import { navigateProcurement } from "./procurement-router.js?v=opennext-20260913-3";
+import "./procurement-workflows.js?v=opennext-20260913-4";
+import "./procurement-interactions.js?v=opennext-20260913-4";
+import { navigateProcurement } from "./procurement-router.js?v=opennext-20260913-4";
 
-await import("./release.js?v=opennext-20260913-3");
+await import("./release.js?v=opennext-20260913-4");
 
 const requested = location.hash.slice(1);
 navigateProcurement(requested && requested !== "overview" ? requested : "models", { scroll: false });

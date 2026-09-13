@@ -1,4 +1,4 @@
-import { gpuSupplyListings } from './procurement-data.js?v=opennext-20260913-3';
+import { gpuSupplyListings } from './procurement-data.js?v=opennext-20260913-4';
 
 // This assistant is intentionally local and deterministic. All prices and stock
 // below come from the same synthetic catalog displayed in the GPU marketplace.

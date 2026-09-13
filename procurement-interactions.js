@@ -1,5 +1,5 @@
-import { state, providerDepth, escapeHtml } from "./demo-core.js?v=opennext-20260913-3";
-import { rfqTypes, providerProfiles, provenanceCatalog, demandTape, quoteComparison, gpuSupplyListings, procurementState, ratingPolicy, completedTransactions, getSupplierReputation } from "./procurement-data.js?v=opennext-20260913-3";
+import { state, providerDepth, escapeHtml } from "./demo-core.js?v=opennext-20260913-4";
+import { rfqTypes, providerProfiles, provenanceCatalog, demandTape, quoteComparison, gpuSupplyListings, procurementState, ratingPolicy, completedTransactions, getSupplierReputation } from "./procurement-data.js?v=opennext-20260913-4";
 
 const drawer = document.querySelector("#drawer-host");
 const modal = document.querySelector("#modal-host");

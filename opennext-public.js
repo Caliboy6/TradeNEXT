@@ -1,5 +1,5 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260913-3';
-import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260913-3';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260913-4';
+import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260913-4';
 
 const publicContent = document.querySelector('#publicContent');
 const workspace = document.querySelector('#app');

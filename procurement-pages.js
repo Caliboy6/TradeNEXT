@@ -11,8 +11,8 @@ import {
   modelView,
   gpuView,
   lineChart,
-} from "./demo-core.js?v=opennext-20260913-3";
-import { renderScheduler as renderBaseScheduler } from "./demo-pages.js?v=opennext-20260913-3";
+} from "./demo-core.js?v=opennext-20260913-4";
+import { renderScheduler as renderBaseScheduler } from "./demo-pages.js?v=opennext-20260913-4";
 import {
   procurementMeta,
   provenanceCatalog,
@@ -32,7 +32,7 @@ import {
   getSupplierReputation,
   getProvenance,
   isNativeType,
-} from "./procurement-data.js?v=opennext-20260913-3";
+} from "./procurement-data.js?v=opennext-20260913-4";
 
 // Page copy is explicit in both supported languages. The existing localization
 // layer continues to handle all transaction data, controls and workflow content.
@@ -175,7 +175,7 @@ export function renderModels() {
     <div class="procurement-metrics"><div><span>Qualified supply signals</span><strong>${listings.length}</strong><small>Rights evidence or partner mandate reviewed</small></div><div><span>Available allocation signals</span><strong>${compactMoney.format(nativeCapacity)}</strong><small>Indicative · market snapshot</small></div><div><span>Active buyer RFQs</span><strong>${demandTape.length}</strong><small>Model, GPU and Private OTC</small></div><div><span>Median first response</span><strong>14m</strong><small>Last 24h</small></div></div>
     <section class="market-board">
       <div class="market-board-head"><div><span class="eyebrow">QUALIFIED SUPPLY BOARD</span><h2>Available to quote</h2><p>${ui("Indicative supply. Confirm price, capacity and delivery through a private quote.", "当前为指示性供应；价格、容量和交付通过私密报价确认。")}</p></div></div>
-      <div class="market-toolbar procurement-toolbar" role="group" aria-label="Model market filters"><div class="provenance-filter">${filters.map(([id, label]) => `<button class="${procurementState.provenanceFilter === id ? "is-active" : ""}" type="button" data-proc-action="filter-provenance" data-filter="${id}" aria-pressed="${procurementState.provenanceFilter === id}"><span>${label}</span></button>`).join("")}</div><label class="market-search"><span>⌕</span><input aria-label="${ui("Search model capacity", "搜索模型容量")}" id="nativeMarketSearch" value="${escapeHtml(procurementState.modelQuery)}" placeholder="Search Claude, GPT, Gemini…"></label></div>
+      <div class="market-toolbar procurement-toolbar" role="group" aria-label="Model market filters"><div class="provenance-filter">${filters.map(([id, label]) => `<button class="${procurementState.provenanceFilter === id ? "is-active" : ""}" type="button" data-proc-action="filter-provenance" data-filter="${id}" aria-pressed="${procurementState.provenanceFilter === id}"><span>${label}</span></button>`).join("")}</div><label class="market-search"><span>⌕</span><input aria-label="${ui("Search model capacity", "搜索模型容量")}" id="nativeMarketSearch" value="${escapeHtml(procurementState.modelQuery)}" placeholder="Search models…"></label></div>
       <div class="table-wrap supply-board-wrap"><table class="data-table supply-board-table"><thead><tr><th>Model / supplier</th><th>Supply provenance</th><th>Discount / public reference</th><th>Token price<br><small>USD / 1M tokens</small></th><th>Total payable<br><small>$100k OEV</small></th><th>Available allocation</th><th>TPS</th><th>Valid until / delivery</th><th></th></tr></thead><tbody>${listings.map(quoteRow).join("")}</tbody></table></div>
       ${listings.length ? "" : '<div class="empty-market"><strong>No qualified supply matches this filter.</strong><span>Change the provenance filter or post a private RFQ.</span></div>'}
     </section>

@@ -17,7 +17,7 @@ function setCount(input, selector) {
   const filtered = Boolean(input.value.trim()) || visible !== total;
   output.textContent = isChinese()
     ? filtered ? `显示 ${visible} / ${total} 条结果` : `共 ${total} 条结果`
-    : filtered ? `${visible} of ${total} results` : `${total} results`;
+    : filtered ? `${visible} of ${total} results` : `${total} ${total === 1 ? "result" : "results"}`;
 }
 
 function setText(element, text) {

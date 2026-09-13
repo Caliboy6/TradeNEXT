@@ -1365,7 +1365,7 @@ button:disabled { opacity: .45; }
 #app :is(.procurement-market, .gpu-procurement) { container-type: inline-size; container-name: market-controls; }
 #app .market-toolbar.procurement-toolbar {
   display: grid;
-  grid-template-columns: auto minmax(130px, 1fr) minmax(122px, 146px) minmax(124px, 142px) auto;
+  grid-template-columns: auto minmax(112px, 1fr) minmax(106px, 124px) minmax(112px, 128px) auto;
   align-items: center;
   gap: 8px;
   padding: 13px 16px;
@@ -1452,7 +1452,7 @@ button:disabled { opacity: .45; }
 #app .gpu-market-controls .market-search { order: 1; }
 #app .gpu-market-controls .gpu-filter-control { order: 2; }
 #app .gpu-market-controls :is(.gpu-rank-control, .gpu-sort-control) { order: 4; }
-@container market-controls (max-width: 960px) {
+@container market-controls (max-width: 850px) {
   #app .market-toolbar.procurement-toolbar { grid-template-columns: minmax(150px, 1.3fr) minmax(122px, 1fr) minmax(124px, 1fr) auto; gap: 10px; }
   #app .procurement-toolbar .provenance-filter { grid-column: 1 / -1; border-bottom: 1px solid #ececea; padding-bottom: 9px; }
   #app .procurement-toolbar .provenance-filter button { flex: 1; }

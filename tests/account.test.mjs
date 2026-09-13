@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { renderAccountPage, accountCsv } from '../opennext-account.js';
-import { getCapacityLedgerRecords } from '../opennext-capacity.js?v=opennext-20260913-3';
+import { getCapacityLedgerRecords } from '../opennext-capacity.js?v=opennext-20260913-4';
 
 test('billing uses shared capacity purchases with valid dates and pagination', () => {
   const page = renderAccountPage('billing');

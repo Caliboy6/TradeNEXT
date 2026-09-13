@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-runtime.js?v=opennext-20260913-3";
+import * as runtime from "./i18n-runtime.js?v=opennext-20260913-4";
 
 // Final terminology layer: Chinese UI uses Chinese product copy while keeping
 // brands, model names, market acronyms and hardware SKUs in their native form.

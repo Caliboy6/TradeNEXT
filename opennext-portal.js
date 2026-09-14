@@ -1,10 +1,11 @@
-import { state } from './demo-core.js?v=opennext-20260913-4';
-import { demandTape } from './procurement-data.js?v=opennext-20260913-4';
-import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260913-4';
-import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260913-4';
-import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260913-4';
+import { state } from './demo-core.js?v=opennext-20260914-desk-1';
+import { demandTape } from './procurement-data.js?v=opennext-20260914-desk-1';
+import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260914-desk-1';
+import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260914-desk-1';
+import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260914-desk-1';
+import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260914-desk-1';
 
-const sections=[['profile','Profile'],['tokens','My Tokens'],['my-gpus','My GPUs'],['supply','My Supplies'],['rfq','My RFQs'],['messages','Messages'],['billing','Billing'],['account','Account']];
+const sections=[['opendesk','My OpenDesk'],['profile','Profile'],['tokens','My Tokens'],['my-gpus','My GPUs'],['supply','My Supplies'],['rfq','My RFQs'],['messages','Messages'],['billing','Billing'],['account','Account']];
 const personal=new Set(sections.map(([id])=>id));
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storage=(()=>{try{return sessionStorage;}catch{return null;}})();
@@ -29,15 +30,17 @@ function messagesPage(){
   return `<section class="on-messages"><header class="on-messages-title"><div><p class="eyebrow">MY OPENNEXT / MESSAGES</p><h1>Your conversations.</h1><p>Keep requirements, quotes and delivery updates with each counterparty.</p></div></header><div class="on-message-workspace"><nav class="on-thread-list" aria-label="Conversations">${names.map(name=>`<button type="button" data-portal-action="thread" data-thread="${escape(name)}" ${selectedThread===name?'aria-current="true"':''}><span>${escape(name)}</span><small>${name==='OpenNEXT Capacity Desk'?'Procurement support':'Supplier conversation'}</small></button>`).join('')}</nav><div class="on-thread"><header><strong>${escape(selectedThread)}</strong><span>${context?escape(context):'Private procurement thread'}</span></header><div class="on-thread-log" role="log" aria-label="Conversation messages">${thread.map(message=>`<article class="on-message ${message.side==='me'?'is-mine':''}"><div><strong>${message.side==='me'?'You':escape(selectedThread)}</strong><span>${escape(message.time === 'Demo thread' ? 'Conversation opened' : message.time === 'Demo reply' ? 'Automated reply' : message.time)}</span></div><p>${escape(message.text)}</p></article>`).join('')}</div><form id="portalMessageForm"><label for="portalMessage">Message</label><textarea id="portalMessage" name="message" rows="3" maxlength="2000" required placeholder="Ask about capacity, delivery or commercial terms…"></textarea><div><button class="primary-button" type="submit">Send message →</button></div></form></div></div></section>`;
 }
 function updateNavigation(route){
-  document.querySelectorAll('.workspace-top-nav [data-nav]').forEach(item=>{const active=item.dataset.nav===(personal.has(route)?'profile':route);item.classList.toggle('is-active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current');});
+  document.querySelectorAll('.workspace-top-nav [data-nav]').forEach(item=>{const active=item.dataset.nav===(personal.has(route)?'opendesk':route);item.classList.toggle('is-active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current');});
 }
 function render(route){
   closeAccountDialogs();
   const main=document.getElementById('mainContent');
+  main.classList.toggle('is-opendesk',route==='opendesk');
   state.route=route;
   if (personal.has(route)) {
     let content;
-    if(['profile','tokens','my-gpus'].includes(route))content=renderCapacityPage(route);
+    if(route==='opendesk')content=renderOpenDesk();
+    else if(['profile','tokens','my-gpus'].includes(route))content=renderCapacityPage(route);
     else if(['billing','account'].includes(route))content=renderAccountPage(route);
     else if(route==='messages')content=messagesPage();
     else {legacyRender(route);content=main.innerHTML;}
@@ -54,6 +57,16 @@ export function initializePortal(){
   // Existing stable navigation calls this render function and owns history.
   initializeCapacity({navigate:go,notify,openDialog,closeDialog});
   initializeAccount({navigate:go,notify});
+  initializeOpenDesk();
+  window.addEventListener('opennext:reservation',event=>{
+    const detail=event.detail;if(!detail?.id)return;
+    const hours=Number(detail.months||1)*30*24;
+    const quantity=Number(detail.quantity);
+    const result=addDemoAllocation({kind:'gpu',sourceKey:detail.id,model:detail.accelerator||detail.gpu,
+      quantity,region:detail.region,supplier:detail.supplier,hours,startAt:detail.startDate,
+      rate:Number(detail.total??detail.totalPrice)/(quantity*hours)});
+    if(!result.ok) notify('Your reservation is in OpenDesk. Portfolio sync needs review.');
+  });
   window.OpenNEXTAddAllocation=detail=>{ const result=addDemoAllocation(detail); if (!result.ok) { notify(result.error); return null; } return result; };
   window.OpenNEXTCreateRfq=form=>{
     if(!form)return null;

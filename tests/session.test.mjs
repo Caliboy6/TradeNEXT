@@ -18,8 +18,8 @@ test('demo access requires a valid, unexpired session and logout revokes it', ()
   assert.equal(readSession(store), null);
 });
 test('return destinations stay inside known workspace routes', () => {
-  for (const route of ['models','gpus','rfq','supply','data','docs','scheduler']) assert.equal(safeDestination(route),route);
-  for (const route of ['https://example.com','//example.com','javascript:alert(1)','home',null]) assert.equal(safeDestination(route),'models');
+  for (const route of ['opendesk','models','gpus','rfq','supply','data','docs','scheduler']) assert.equal(safeDestination(route),route);
+  for (const route of ['https://example.com','//example.com','javascript:alert(1)','home',null]) assert.equal(safeDestination(route),'opendesk');
 });
 test('disabled browser storage does not break demo entry or signout', () => {
   const blocked = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); }, removeItem() { throw new Error('blocked'); } };

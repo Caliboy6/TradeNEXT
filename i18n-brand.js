@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-cleanup.js?v=opennext-20260913-4";
+import * as runtime from "./i18n-cleanup.js?v=opennext-20260914-desk-1";
 
 // Preserve the supplier's proper name while preventing the generic word
 // “fabric” in topology descriptions from translating the brand itself.

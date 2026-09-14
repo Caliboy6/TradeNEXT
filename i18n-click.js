@@ -1,4 +1,4 @@
-import * as runtime from "./i18n-dispatch.js?v=opennext-20260913-4";
+import * as runtime from "./i18n-dispatch.js?v=opennext-20260914-desk-1";
 
 const api = {
   getLocale: () => runtime.getLocale(),

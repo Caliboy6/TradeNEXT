@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import {createWorkspaceStore} from '../opennext-portal-state.js';
 import {safeDestination,workspaceRoutes} from '../opennext-session.js';
 test('private workspace destinations remain protected known routes',()=>{
-  for(const route of ['profile','tokens','my-gpus','rfq','supply','messages','billing','account']){
+  for(const route of ['opendesk','profile','tokens','my-gpus','rfq','supply','messages','billing','account']){
     assert.ok(workspaceRoutes.has(route));assert.equal(safeDestination(route),route);
   }
-  assert.equal(safeDestination('https://malicious.example'),'models');
+  assert.equal(safeDestination('https://malicious.example'),'opendesk');
 });
 test('RFQs require valid commercial inputs and survive a demo reload',()=>{
   const memory=new Map();const storage={getItem:key=>memory.get(key),setItem:(key,value)=>memory.set(key,value)};

@@ -5,14 +5,14 @@ import {
   compactNumber,
   escapeHtml,
   modelView,
-} from "./demo-core.js?v=opennext-20260913-4";
+} from "./demo-core.js?v=opennext-20260914-desk-1";
 import {
   phaseState,
   provenanceCatalog,
   getProvenance,
   isNativeType,
-} from "./phase1-data.js?v=opennext-20260913-4";
-import { renderModels } from "./phase1-pages.js?v=opennext-20260913-4";
+} from "./phase1-data.js?v=opennext-20260914-desk-1";
+import { renderModels } from "./phase1-pages.js?v=opennext-20260914-desk-1";
 
 const drawerHost = document.querySelector("#drawer-host");
 const modalHost = document.querySelector("#modal-host");

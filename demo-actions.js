@@ -17,8 +17,8 @@ import {
   overrideRoute,
   formatCost,
   formatLatency,
-} from "./demo-core.js?v=opennext-20260913-4";
-import { renderOverview, renderModels, renderGpus, renderScheduler, renderRfq, renderData } from "./demo-pages.js?v=opennext-20260913-4";
+} from "./demo-core.js?v=opennext-20260914-desk-1";
+import { renderOverview, renderModels, renderGpus, renderScheduler, renderRfq, renderData } from "./demo-pages.js?v=opennext-20260914-desk-1";
 
 const pageRenderers = { overview: renderOverview, models: renderModels, gpus: renderGpus, scheduler: renderScheduler, rfq: renderRfq, data: renderData };
 const main = document.querySelector("#mainContent");

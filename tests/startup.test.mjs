@@ -42,7 +42,7 @@ test('public UI and deep-link sign-in work before procurement scripts arrive; fa
   assert.match(elements.get('publicContent').innerHTML, /Sign in to OpenNEXT/);
   elements.get('public-terms').checked = true;
   click({ publicAction: 'demo' });
-  assert.equal(location.hash, '#gpus');
+  assert.equal(location.hash, '#opendesk');
   assert.match(elements.get('publicContent').innerHTML, /Opening your workspace/);
   assert.equal(elements.get('app').hidden, true);
   app.reportWorkspaceFailure();
@@ -52,7 +52,7 @@ test('public UI and deep-link sign-in work before procurement scripts arrive; fa
   assert.match(elements.get('publicContent').innerHTML, /AI capacity/);
 });
 
-test('startup completion preserves the latest user destination and GPU mode', async () => {
+test('startup completion opens OpenDesk while preserving legacy GPU mode', async () => {
   const { elements, click } = setup();
   const app = await import('../opennext-public.js?startup-test=2');
   app.initializePublicShell('home');
@@ -65,7 +65,7 @@ test('startup completion preserves the latest user destination and GPU mode', as
   window.OpenNEXTSetGpuMode = mode => { gpuMode = mode; };
   location.hash = '#models'; // Legacy initialization may briefly normalize its own route.
   app.initializePublic('home');
-  assert.equal(visited, 'gpus');
+  assert.equal(visited, 'opendesk');
   assert.equal(gpuMode, 'hardware');
   assert.equal(elements.get('app').hidden, false);
   assert.equal(elements.get('publicContent').hidden, true);
@@ -78,12 +78,12 @@ test('provider sign-in requires consent and a separate demo confirmation', async
   click({ publicAction: 'provider', provider: 'google' });
   assert.match(elements.get('public-auth-error').textContent, /accept the policies/);
   assert.equal(elements.get('modal-host').innerHTML, '');
-  assert.equal(location.hash, '#login?next=models');
+  assert.equal(location.hash, '#login?next=opendesk');
   elements.get('public-terms').checked = true;
   click({ publicAction: 'provider', provider: 'google' });
   assert.match(elements.get('modal-host').innerHTML, /Google sign-in preview/);
-  assert.equal(location.hash, '#login?next=models');
+  assert.equal(location.hash, '#login?next=opendesk');
   click({ publicAction: 'confirm-provider' });
-  assert.equal(location.hash, '#models');
+  assert.equal(location.hash, '#opendesk');
   assert.match(elements.get('publicContent').innerHTML, /Opening your workspace/);
 });

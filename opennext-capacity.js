@@ -116,13 +116,16 @@ export function addDemoAllocation(detail) {
     s.families.unshift({id,...(sourceKey?{sourceKey}:{}),name:model,region,supplier,createdAt:now,expiresAt:now+days*DAY,usageAlert:true,billingReminder:true,models:[allocation]});
     save(); return {ok:true,id,route:'tokens'};
   }
+  const sourceKey=detail.sourceKey ? clean(detail.sourceKey,'') : undefined;
+  const existing=sourceKey && s.gpus.find(g=>g.sourceKey===sourceKey);
+  if(existing) return {ok:true,id:existing.id,route:'my-gpus'};
   const hours=Number(detail.hours);
   if (!finite(hours,1,8760)) return {ok:false,error:'A GPU reservation needs a duration between 1 and 8,760 hours.'};
   if (s.gpus.length>=80) return {ok:false,error:'The demo reservation limit has been reached.'};
   const startsAt=detail.startAt===undefined?now:typeof detail.startAt==='number'?detail.startAt:Date.parse(detail.startAt);
   if (!finite(startsAt,now-366*DAY,now+366*DAY)) return {ok:false,error:'Choose a valid reservation start within one year.'};
   const id=newId('gpu');
-  s.gpus.unshift({id,model,quantity,region,supplier,rate,startsAt,hours,initialHours:hours,renewalReminder:true,createdAt:now});
+  s.gpus.unshift({id,...(sourceKey?{sourceKey}:{}),model,quantity,region,supplier,rate,startsAt,hours,initialHours:hours,renewalReminder:true,createdAt:now});
   save(); return {ok:true,id,route:'my-gpus'};
 }
 

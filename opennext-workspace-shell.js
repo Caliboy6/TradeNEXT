@@ -1,4 +1,4 @@
-import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260913-4';
+import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260914-desk-1';
 
 export function initializeWorkspaceShell() {
   const app = document.querySelector('#app');
@@ -8,6 +8,29 @@ export function initializeWorkspaceShell() {
   const mobile = matchMedia('(max-width:1000px)');
   panel.innerHTML = renderAgentPanel();
   initializeAgentPanel();
+  function applyTheme(theme) {
+    document.body.dataset.theme = theme;
+    const button=document.querySelector('[data-theme-toggle]');
+    button?.setAttribute('aria-pressed',String(theme==='dark'));
+    button?.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+    const label=button?.querySelector('[data-theme-label]');
+    if(label) label.textContent=theme==='dark'?'Light mode':'Dark mode';
+  }
+  let theme='light';
+  try { if(localStorage.getItem('opennext.theme')==='dark') theme='dark'; } catch {}
+  applyTheme(theme);
+  window.addEventListener('click',event=>{
+    if(!event.target.closest?.('[data-theme-toggle]')) return;
+    theme=theme==='dark'?'light':'dark';
+    applyTheme(theme);
+    try { localStorage.setItem('opennext.theme',theme); } catch {}
+  },true);
+  window.addEventListener('opennext:open-agent',()=>{
+    app.classList.remove('agent-collapsed');
+    if(mobile.matches){panel.classList.add('is-open');panel.inert=false;backdrop.hidden=false;}
+    toggle.setAttribute('aria-expanded','true');
+    panel.querySelector('textarea')?.focus({preventScroll:true});
+  });
   function closeMobileAgent() {
     panel.classList.remove('is-open');
     panel.inert = mobile.matches;

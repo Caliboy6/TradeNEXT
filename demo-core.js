@@ -7,14 +7,14 @@ import {
   rfqExamples,
   indexSeries,
   marketStats
-} from "./data.js?v=opennext-20260913-4";
+} from "./data.js?v=opennext-20260914-desk-1";
 import {
   createSchedule,
   overrideRoute,
   recalculatePlan,
   simulateFallback,
   getEligibleRoutes
-} from "./scheduler.js?v=opennext-20260913-4";
+} from "./scheduler.js?v=opennext-20260914-desk-1";
 
 export {
   demoMeta,

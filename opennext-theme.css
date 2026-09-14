@@ -1,0 +1,88 @@
+/* Shared workspace theme. The public site deliberately stays paper-white. */
+body:not(.is-public) { --on-paper:#fff; --on-wash:#f6f7f5; --on-panel:#fbfbfa; --on-text:#1b201e; --on-subtle:#6e7571; --on-border:#dfe3df; --on-button:#202622; --on-button-text:#fff; background:var(--on-paper);color:var(--on-text); }
+body[data-theme="dark"]:not(.is-public) { color-scheme:dark; --on-paper:#111715; --on-wash:#1b2420; --on-panel:#151d19; --on-text:#e6ece6; --on-subtle:#a2aea5; --on-border:#344039; --on-button:#dce5dc; --on-button-text:#142017; --ink:var(--on-text); --ink-soft:#c7d2c9; --muted:var(--on-subtle); --muted-2:#9ba69f; --canvas:var(--on-paper); --surface:var(--on-panel); --surface-soft:var(--on-wash); --surface-blue:var(--on-wash); --line:var(--on-border); --line-strong:#546559; --primary:var(--on-text); --primary-soft:var(--on-wash); --ac-ink:var(--on-text); --ac-muted:var(--on-subtle); --ac-line:var(--on-border); --ac-paper:var(--on-panel); }
+#app.workspace-shell { --agent-width:360px; grid-template-columns:minmax(0,1fr) var(--agent-width); }
+#app.workspace-shell > .workspace { grid-column:1; grid-row:2; background:var(--on-paper); }
+#app.workspace-shell > .agent-panel { grid-column:2; border-right:0; border-left:1px solid var(--on-border); background:var(--on-panel); }
+#app.workspace-shell > .workspace-header,.workspace-header-main,#app.workspace-shell .workspace-toolbar { background:var(--on-paper);border-color:var(--on-border); }
+.workspace-brand,.workspace-brand strong,.workspace-top-nav .top-nav-item.is-active { color:var(--on-text); }
+.workspace-top-nav .top-nav-item.is-active { border-bottom-color:var(--on-text); }
+.workspace-account,.workspace-more summary { color:var(--on-subtle); }
+.workspace-theme-toggle { display:inline-flex;align-items:center;gap:7px;padding:8px 10px;white-space:nowrap;border:1px solid var(--on-border);border-radius:2px;color:var(--on-text);background:var(--on-paper);font:12px Arial,sans-serif; }
+.workspace-theme-toggle>span:first-child { font-size:17px; }
+.workspace-breadcrumb { font:10px/1.5 Arial,sans-serif;letter-spacing:.11em;color:var(--on-subtle);white-space:nowrap; }
+.workspace-breadcrumb span { margin:0 12px;color:var(--on-border); }
+.workspace-agent-toggle { color:var(--on-text);background:var(--on-panel);border-color:var(--on-border); }
+.workspace-shell #mainContent.is-opendesk { padding:20px 20px 28px; }
+.is-opendesk .on-personal-nav { gap:20px;margin-bottom:18px; }
+.on-personal-workspace,.on-capacity,.on-messages { color:var(--on-text); }
+.on-personal-nav { border-color:var(--on-border); }
+.on-personal-nav button { color:var(--on-subtle); }
+.on-personal-nav button[aria-current] { color:var(--on-text);border-color:var(--on-text); }
+body[data-theme="dark"]:not(.is-public) .workspace-brand img { filter:invert(1); }
+body[data-theme="dark"]:not(.is-public) :is(.workspace-account>span:first-child,.workspace-more nav,.workspace-more nav button,.workspace-more nav a,.workspace-top-nav .top-nav-item:hover,.topbar-selection-summary button,.secondary-button,.icon-button,.input,.select,.textarea,.route-select,.modal,.modal-head,.modal-footer,.drawer,.drawer-head,.drawer-body,.toast,.on-account-dialog,.on-account-dialog>footer) { background:var(--on-panel);color:var(--on-text);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .primary-button { background:var(--on-button);color:var(--on-button-text);border-color:var(--on-button); }
+body[data-theme="dark"]:not(.is-public) :is(.on-capacity,.on-account,.on-messages,.on-account-dialog) :is(p,dt,small,label,th) { color:var(--on-subtle); }
+body[data-theme="dark"]:not(.is-public) :is(.on-capacity,.on-account,.on-messages,.on-account-dialog) :is(button,input,select,textarea,summary,td,dd,h1,h2,h3,strong) { color:var(--on-text); }
+body[data-theme="dark"]:not(.is-public) :is(.on-capacity,.on-account,.on-messages,.on-account-dialog) :is(button,input,select,textarea,.cap-allocation,.cap-panel,.cap-section,.cap-identity,.cap-family-mark,.cap-gpu-card,.cap-storage-note,.cap-kpis,.cap-status,.cap-hardware-mark,.ac-settings-card,.ac-billing-details,.ac-table-wrap,.ac-table th,.ac-card-heading,.ac-summary,.ac-empty,.on-thread-list,.on-thread,.on-message) { background:var(--on-panel);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) :is(.cap-identity,.cap-section-head,.cap-kpi,.cap-activity li,.cap-attention-list article,.cap-allocation summary,.cap-gpu-row,.ac-security-row,.ac-card-heading,.ac-switch-row,.ac-pagination,.ac-tabs,.ac-table td,.ac-detail-list>div,.ac-document-lines li,.on-message-workspace,.on-thread-list,.on-thread>header,.on-thread form) { border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) :is(.cap-button-dark,.ac-button-primary,.on-account .ac-button-dark) { background:var(--on-button)!important;color:var(--on-button-text)!important; }
+body[data-theme="dark"]:not(.is-public) :is(.cap-allocation[open]>summary,.ac-card-heading,.ac-billing-details,.on-message.is-mine) { background:var(--on-wash); }
+body[data-theme="dark"]:not(.is-public) .on-account { --ac-ink:var(--on-text);--ac-muted:var(--on-subtle);--ac-line:var(--on-border);--ac-paper:var(--on-panel); }
+
+/* Existing My OpenNEXT components use these concrete classes. Keep their
+   surfaces, content and interaction states paired when the theme changes. */
+body[data-theme="dark"]:not(.is-public) .on-personal-nav button:hover { color:var(--on-text); }
+body[data-theme="dark"]:not(.is-public) .on-capacity :is(.cap-stats,.cap-block,.cap-avatar,.cap-table,.cap-table-wrap,.cap-allocation-content,.cap-preferences) { background:var(--on-panel);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-capacity :is(.cap-stat,.cap-block>.cap-section-head,.cap-running-list article,.cap-token-overview article,.cap-table th,.cap-table td,.cap-allocation-terms,.cap-details>div,.cap-counter) { border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-capacity :is(.cap-block>.cap-section-head,.cap-allocation-terms,.cap-filter-bar,.cap-table th,.cap-gpu-table tbody tr:hover) { background:var(--on-wash); }
+body[data-theme="dark"]:not(.is-public) .on-capacity :is(.cap-avatar,.cap-activity b,.cap-details dd,.cap-token-overview strong) { color:var(--on-text); }
+body[data-theme="dark"]:not(.is-public) .on-capacity :is(.cap-identity div>span,.cap-stat>span,.cap-family-numbers>span,.cap-family-progress>span,.cap-allocation-terms span,.cap-running-list span:not(.cap-status),.cap-token-overview article>div>span,.cap-activity div>span,.cap-filter-bar>span,.cap-chevron,.cap-counter,.cap-attention-marker,.cap-footnote) { color:var(--on-subtle); }
+body[data-theme="dark"]:not(.is-public) .on-capacity :is(.cap-button:hover,.cap-allocation>summary:hover) { background:var(--on-wash);border-color:var(--line-strong); }
+body[data-theme="dark"]:not(.is-public) .on-capacity .cap-meter { background:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-capacity .cap-meter>span { background:#9fac9e; }
+body[data-theme="dark"]:not(.is-public) .on-capacity .cap-status { color:var(--on-subtle); }
+body[data-theme="dark"]:not(.is-public) .on-capacity .cap-status.is-running { color:#b2ceb3;background:#203128;border-color:#3c5443; }
+body[data-theme="dark"]:not(.is-public) .on-capacity .cap-status.is-running i { background:#aac5a8; }
+body[data-theme="dark"]:not(.is-public) :is(.cap-toggle-track,.ac-switch) { background:#344239;border-color:#647468; }
+body[data-theme="dark"]:not(.is-public) :is(.cap-toggle input:checked+.cap-toggle-track,.ac-switch-row input:checked+.ac-switch) { background:#819b83;border-color:#93aa94; }
+
+body[data-theme="dark"]:not(.is-public) :is(.on-account,.on-account-dialog) { --ac-ink:var(--on-text);--ac-muted:var(--on-subtle);--ac-line:var(--on-border);--ac-paper:var(--on-panel); }
+body[data-theme="dark"]:not(.is-public) .on-account :is(.ac-table-scroll,table,td,.ac-key-empty) { background:var(--on-panel);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-account :is(th,.ac-filters,.ac-subsection) { background:var(--on-wash);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-account tbody tr:hover td { background:var(--on-wash); }
+body[data-theme="dark"]:not(.is-public) :is(.on-account,.on-account-dialog) :is(.ac-button:hover:not(:disabled),.ac-demo-code,.ac-invoice-recipient) { background:var(--on-wash);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) :is(.on-account,.on-account-dialog) :is(.ac-static-field,.ac-switch-row div>span,.ac-billing-details span:last-child,.ac-note,.ac-document-stamp,.ac-demo-code span,.ac-steps,.ac-dialog-body>p:first-child) { color:var(--on-subtle); }
+body[data-theme="dark"]:not(.is-public) :is(.on-account,.on-account-dialog) .ac-badge { color:var(--on-subtle);background:var(--on-wash);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-account :is(.ac-badge-ok,.ac-feedback:not(:empty)) { color:#b2ceb3;background:#203128;border-color:#3c5443; }
+body[data-theme="dark"]:not(.is-public) .on-account .ac-badge-warn { color:#dcc28d;background:#302b20;border-color:#63583b; }
+body[data-theme="dark"]:not(.is-public) :is(.on-account,.on-account-dialog) .ac-form-error { color:#e4b2a9; }
+body[data-theme="dark"]:not(.is-public) .on-account-dialog .ac-button-dark { background:var(--on-button)!important;color:var(--on-button-text)!important;border-color:var(--on-button); }
+body[data-theme="dark"]:not(.is-public) .on-thread-list button[aria-current],body[data-theme="dark"]:not(.is-public) .on-thread-list button:hover { color:var(--on-text);background:var(--on-wash); }
+body[data-theme="dark"]:not(.is-public) .on-thread>header span { color:var(--on-subtle); }
+
+/* Supplies and RFQs retain the shared procurement renderers. */
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.procurement-metrics,.data-table,.table-wrap,.transaction-record,.publication-gate,.supplier-review-strip,.supplier-review-strip.is-approved,.supply-type-grid article,.supply-rules>div,.procurement-tape .procurement-demand-row) { background:var(--on-panel);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.data-table th,.demand-grid-head,.procurement-tape .procurement-demand-row:hover,.data-table tbody tr:hover,.supplier-review-icon,.supply-type-icon) { background:var(--on-wash);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.data-table td,.supplier-review-icon,.supply-type-icon) { color:var(--on-text); }
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.data-table th,.procurement-metrics small,.supplier-review-meta span,.supplier-review-meta small,.supply-type-grid p) { color:var(--on-subtle); }
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.badge,.provenance-badge,.quote-state,.rating-pill,.supplier-rating,.demand-source .badge) { color:#c0cdc2;background:var(--on-wash);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.badge-amber,.badge-red) { color:#dcc28d;background:#302b20;border-color:#63583b; }
+body[data-theme="dark"]:not(.is-public) .on-personal-content :is(.ghost-button,.text-button) { color:var(--on-text); }
+
+/* Quote/RFQ forms and review dialogs must follow the page that opened them. */
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) :is(input,select,textarea,.rfq-type-card,.passport-grid>div,.quote-review>div,.counterparty-trust-card>div,.reservation-summary>div,.calendar-strip>div) { color:var(--on-text);background:var(--on-panel);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) :is(.rfq-selected-type,.authorization-boundary,.passport-scope,.supply-review-grid>div,.workflow-progress>div,.check-row,.workflow-callout,.test-console>div:first-child,.workflow-success,.supplier-score-inline,.activation-panel>div,.reservation-product,.hardware-detail-hero,.eligibility-checklist label,.reused-review-note,.offer-review-block,.selected-offer-context,.compare-scope,.compare-best-legend,.selection-empty,.selection-item:hover) { color:var(--on-text);background:var(--on-wash);border-color:var(--on-border); }
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) :is(.rfq-type-card>span,.rfq-selected-type>span,.authorization-boundary>span,.workflow-callout>span,.workflow-progress span,.activation-panel>div>span) { color:var(--on-text);background:var(--on-border);border-color:var(--line-strong); }
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) .workflow-progress .is-active { color:var(--on-text);border-color:#829683;box-shadow:inset 0 -2px #829683; }
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) .workflow-progress .is-active span { color:var(--on-button-text);background:var(--on-button); }
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) :is(.booking-conflict.has-conflict,.market-selection-error,.on-rfq-error) { color:#e4b2a9;background:#382523;border-color:#65433c; }
+body[data-theme="dark"]:not(.is-public) :is(.modal,.drawer) .booking-conflict.is-clear { color:#b2ceb3;background:#203128;border-color:#3c5443; }
+body[data-theme="dark"]:not(.is-public) :is(.on-personal-workspace,.modal,.drawer) .primary-button { background:var(--on-button);color:var(--on-button-text);border-color:var(--on-button); }
+body[data-theme="dark"]:not(.is-public) :is(.on-personal-workspace,.modal,.drawer) .primary-button:hover { background:#c6d4c6;color:var(--on-button-text);border-color:#c6d4c6; }
+body[data-theme="dark"]:not(.is-public) :is(.on-personal-workspace,.modal,.drawer) :is(input,textarea)::placeholder { color:var(--on-subtle);opacity:.8; }
+body[data-theme="dark"]:not(.is-public) :is(.on-personal-workspace,.modal,.drawer) :is(button,a,input,select,textarea):focus-visible { outline-color:#a9c2ad; }
+@media(min-width:1800px){#app.workspace-shell{--agent-width:390px}.workspace-shell #mainContent.is-opendesk{padding:24px 28px 32px}}
+@media(max-width:1180px){#app.workspace-shell{--agent-width:330px}.workspace-breadcrumb{letter-spacing:0;font-size:9px}.workspace-shell #mainContent.is-opendesk{padding:16px}}
+@media(max-width:1000px){#app.workspace-shell{--agent-width:0px}#app.workspace-shell>.agent-panel{left:auto;right:0;width:380px;transform:translateX(105%);border-left:1px solid var(--on-border);box-shadow:-8px 0 25px #0002}#app.workspace-shell>.agent-panel.is-open{transform:translateX(0)}}
+@media(max-width:720px){.workspace-theme-toggle{padding:5px 8px}.workspace-theme-toggle [data-theme-label]{display:none}.workspace-top-nav .top-nav-item{flex:0 0 auto}.workspace-breadcrumb{font-size:9px}.workspace-breadcrumb span{margin:0 5px}.workspace-shell #mainContent.is-opendesk{padding:16px 12px}.is-opendesk .on-personal-nav{gap:20px;margin-bottom:16px}.workspace-header-main{gap:12px}.workspace-shell .workspace-toolbar .topbar-left{display:none}.workspace-shell .workspace-toolbar .topbar-right{width:100%;justify-content:flex-end}}

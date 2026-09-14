@@ -29,3 +29,13 @@ test('reopening the same sample quote does not duplicate a token allocation',()=
   assert.equal(first.ok,true);assert.equal(again.id,first.id);
   assert.equal(getCapacityLedgerRecords().filter(r=>r.allocationId===first.id).length,1);
 });
+
+test('Agent reservations sync once to GPU holdings and the purchase ledger',()=>{
+  const order={kind:'gpu',sourceKey:'ON-AGENT-TEST',model:'H100',quantity:64,hours:720,rate:198000/(64*720),region:'Singapore',supplier:'Supplier 03',startAt:new Date(Date.now()+86400000).toISOString().slice(0,10)};
+  const first=addDemoAllocation(order);
+  const again=addDemoAllocation(order);
+  assert.equal(first.ok,true);assert.equal(again.id,first.id);
+  const records=getCapacityLedgerRecords().filter(r=>r.allocationId===first.id);
+  assert.equal(records.length,1);assert.equal(records[0].amount,198000);
+  assert.match(renderCapacityPage('my-gpus'),/Supplier 03/);
+});

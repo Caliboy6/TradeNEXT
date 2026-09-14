@@ -1,9 +1,9 @@
 // A tab-scoped demo session. This is not production authentication.
-export const workspaceRoutes = new Set(['models', 'gpus', 'rfq', 'supply', 'data', 'docs', 'scheduler', 'profile', 'tokens', 'my-gpus', 'messages', 'billing', 'account']);
+export const workspaceRoutes = new Set(['opendesk', 'models', 'gpus', 'rfq', 'supply', 'data', 'docs', 'scheduler', 'profile', 'tokens', 'my-gpus', 'messages', 'billing', 'account']);
 export const DEMO_CODE = '123456';
 const KEY = 'opennext.demo-session.v1';
 export function safeDestination(value) {
-  return workspaceRoutes.has(value) ? value : 'models';
+  return workspaceRoutes.has(value) ? value : 'opendesk';
 }
 export function readSession(storage) {
   try {

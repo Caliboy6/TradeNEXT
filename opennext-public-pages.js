@@ -44,11 +44,14 @@ function gpuTicker() {
   return `<section class="public-gpu-ticker" aria-label="GPU rental price preview"><input class="public-ticker-toggle" type="checkbox" id="public-ticker-paused" aria-label="Pause GPU price ticker"><div class="public-ticker-caption"><strong>GPU MARKET</strong><span>Indicative · $/GPU-hour</span></div><div class="public-ticker-window" tabindex="0" aria-label="Sample GPU rental prices"><div class="public-ticker-track"><div class="public-ticker-group">${items}</div><div class="public-ticker-group" aria-hidden="true">${items}</div></div></div><label class="public-ticker-control" for="public-ticker-paused"><span class="public-ticker-pause" aria-hidden="true">Ⅱ</span><span class="public-ticker-play" aria-hidden="true">▷</span><span class="public-ticker-control-label">Pause prices</span></label></section>`;
 }
 
-// The line and each moving packet reuse one path definition. The artwork is
-// entirely vector, so no rasterized endpoint dots remain underneath the motion.
+// A route's visible line and motion path are generated from the same geometry.
+// Actual circles travel from 0% to 100%; no dash wrap or alternate animation can
+// make a packet appear to reverse at the end of a route.
 function capacityPlane(x, y, ux, uy, vx, vy, depth) {
-  const point = (u, v, z = 0) => `${x + ux * u + vx * v} ${y + uy * u + vy * v + z}`;
+  const point = (u, v, z = 0) => `${+(x + ux * u + vx * v).toFixed(2)} ${+(y + uy * u + vy * v + z).toFixed(2)}`;
   const outline = `M${point(0, 0)} L${point(1, 0)} L${point(1, 1)} L${point(0, 1)} Z`;
+  const frontFace = `M${point(0, 0)} L${point(1, 0)} L${point(1, 0, depth)} L${point(0, 0, depth)} Z`;
+  const sideFace = `M${point(1, 0)} L${point(1, 1)} L${point(1, 1, depth)} L${point(1, 0, depth)} Z`;
   const roof = Array.from({length: 11}, (_, i) => {
     const v = (i + 1) / 12;
     return `M${point(0, v)} L${point(1, v)}`;
@@ -62,12 +65,15 @@ function capacityPlane(x, y, ux, uy, vx, vy, depth) {
     return `M${point(1, v)} L${point(1, v, depth)}`;
   }).join(' ');
   const louvers = [0.25, 0.5, 0.75].map(z => `M${point(0, 0, depth * z)} L${point(1, 0, depth * z)}`).join(' ');
-  return `<g class="public-flow-building"><path class="public-flow-plane" d="${outline}"/><path class="public-flow-detail" d="${roof}"/><path class="public-flow-face" d="M${point(0, 0)} L${point(0, 0, depth)} L${point(1, 0, depth)} L${point(1, 1, depth)} L${point(1, 1)} M${point(1, 0)} L${point(1, 0, depth)}"/><path class="public-flow-detail" d="${panels} ${side} ${louvers}"/><path class="public-flow-base" d="M${point(-0.015, -0.015, depth + 10)} L${point(1.015, -0.015, depth + 10)} L${point(1.015, 1.015, depth + 10)}"/></g>`;
+  return `<g class="public-flow-building"><path class="public-flow-base" d="M${point(-0.015, -0.015, depth + 10)} L${point(1.015, -0.015, depth + 10)} L${point(1.015, 1.015, depth + 10)}"/><path class="public-flow-face public-flow-front-face" d="${frontFace}"/><path class="public-flow-face public-flow-side-face" d="${sideFace}"/><path class="public-flow-plane" d="${outline}"/><path class="public-flow-detail" d="${roof} ${panels} ${side} ${louvers}"/></g>`;
 }
 
 function capacityNetworkArtwork() {
   const floor = 'M70 646 L1780 338 M70 719 L1780 411 M70 792 L1780 484 M406 805 L1780 557 M780 812 L1780 630';
-  return `<g class="public-flow-ground"><path d="${floor}"/></g>${capacityPlane(985, 413, 475, 64, 172, -48, 28)}${capacityPlane(630, 476, 520, 82, 193, -53, 31)}${capacityPlane(210, 605, 440, 134, 383, -123, 39)}`;
+  // All three rectangular enclosures share the same axonometric projection.
+  // The foreground enclosure must not use a steeper, incompatible roof axis.
+  const building = (x, y, width, length, depth) => capacityPlane(x, y, width, width * 0.22, length, length * -0.32, depth);
+  return `<g class="public-flow-ground"><path d="${floor}"/></g>${building(985, 413, 475, 172, 28)}${building(630, 476, 520, 193, 31)}${building(210, 605, 440, 383, 39)}`;
 }
 
 function capacityGlobalArtwork() {
@@ -93,7 +99,7 @@ function capacityIllustration(kind) {
   ];
   const routes = paths.map(([d], i) => `<path id="${id}-route-${i}" d="${d}" pathLength="1000"/>`).join('');
   const lines = paths.map((_, i) => `<use class="public-flow-line" href="#${id}-route-${i}"/>`).join('');
-  const packets = paths.map(([, duration, delay], i) => [0, 0.5].map(phase => `<use class="public-flow-packet" href="#${id}-route-${i}" style="--flow-duration:${duration}s;--flow-delay:${delay - duration * phase}s"/>`).join('')).join('');
+  const packets = paths.map(([d, duration, delay], i) => [0, 0.5].map(phase => `<circle class="public-flow-packet" data-route="${id}-route-${i}" cx="0" cy="0" r="4.5" style="offset-path:path('${d}');--flow-duration:${duration}s;--flow-delay:${delay - duration * phase}s"/>`).join('')).join('');
   const caption = network ? 'From supply to workload.' : 'Local nodes. Global reach.';
   const label = network ? 'Capacity flowing between connected compute locations' : 'Compute nodes connecting through OpenNEXT to global destinations';
   return `<figure class="public-flow-figure ${network ? 'public-hero-visual' : 'public-auth-visual'}" aria-label="${label}"><input class="public-flow-toggle" type="checkbox" id="${id}" aria-label="Pause capacity flow animation"><div class="public-flow-art"><svg class="public-flow-drawing" viewBox="0 0 1860 846" aria-hidden="true" focusable="false"><defs>${routes}</defs>${network ? capacityNetworkArtwork() : capacityGlobalArtwork()}<g class="public-flow-routes">${lines}</g><g class="public-flow-packets">${packets}</g></svg></div><figcaption class="public-flow-caption"><span>${caption}</span><label class="public-flow-control" for="${id}"><span class="public-flow-pause" aria-hidden="true">Ⅱ</span><span class="public-flow-play" aria-hidden="true">▷</span><span class="public-flow-running-label">Pause motion</span><span class="public-flow-paused-label">Resume motion</span></label></figcaption></figure>`;

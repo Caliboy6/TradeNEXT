@@ -1,5 +1,5 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260913-4';
-import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260913-4';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260914-desk-1';
+import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260914-desk-1';
 
 const publicContent = document.querySelector('#publicContent');
 const workspace = document.querySelector('#app');
@@ -13,7 +13,7 @@ let pendingProvider = '';
 let workspaceRender;
 let workspaceNavigate;
 let current = '';
-let pending = 'models';
+let pending = 'opendesk';
 let ignoreNextHash = false;
 let draft = { mode: 'account', email: '', name: '', company: '', terms: false, error: '' };
 const lang = () => 'en';
@@ -69,7 +69,7 @@ function parseRoute(raw) {
   const [path, query] = String(raw || 'home').replace(/^#/, '').split('?');
   const params = new URLSearchParams(query || '');
   if (params.has('next')) pending = safeDestination(params.get('next'));
-  return path === 'my-opennext' ? 'profile' : path === 'fees' ? 'billing' : path === 'signin' ? 'login' : path === 'overview' || path === 'native' ? 'models' : path;
+  return path === 'my-opennext' ? 'opendesk' : path === 'fees' ? 'billing' : path === 'signin' ? 'login' : path === 'overview' || path === 'native' ? 'models' : path;
 }
 
 export function navigatePublic(raw = 'home', options = {}) {
@@ -106,7 +106,7 @@ function completeDemo(profile) {
   session = writeSession(storage, profile);
   draft.error = '';
   draft.mode = 'account';
-  navigatePublic(pending, { replace: true });
+  navigatePublic('opendesk', { replace: true });
 }
 
 function showInfo(type) {
@@ -161,7 +161,7 @@ document.addEventListener('click', event => {
   const flow = event.target.closest?.('[data-flow-action]');
   if (flow?.dataset.flowAction === 'confirm-logout') {
     event.preventDefault(); event.stopImmediatePropagation();
-    clearSession(storage); session = null; draft = { mode: 'account', email: '', terms: false, error: '' }; pending = 'models'; pendingProvider = '';
+    clearSession(storage); session = null; draft = { mode: 'account', email: '', terms: false, error: '' }; pending = 'opendesk'; pendingProvider = '';
     window.dispatchEvent?.(new Event('opennext:signout'));
     navigatePublic('login', { replace: true }); return;
   }
@@ -278,7 +278,7 @@ export function initializePublic(initialRoute) {
   if (pendingGpuMode) window.OpenNEXTSetGpuMode?.(pendingGpuMode);
   navigatePublic(current || initialRoute || 'home', { replace: true });
   // These files deliberately override legacy styles injected during startup.
-  for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style', 'opennext-capacity-style', 'opennext-account-style', 'opennext-portal-style']) {
+  for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style', 'opennext-capacity-style', 'opennext-account-style', 'opennext-portal-style', 'opennext-desk-style', 'opennext-theme-style']) {
     const style = document.getElementById(id);
     if (style) document.head.append(style);
   }

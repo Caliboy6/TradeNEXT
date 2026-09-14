@@ -1,7 +1,7 @@
 import { state } from './demo-core.js?v=opennext-20260914-desk-1';
 import { demandTape } from './procurement-data.js?v=opennext-20260914-desk-1';
-import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260914-desk-1';
-import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260914-desk-1';
+import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260914-ledger-3';
+import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260914-ledger-3';
 import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260914-desk-1';
 import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260914-desk-1';
 

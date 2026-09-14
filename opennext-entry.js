@@ -10,7 +10,7 @@ try {
   window.OpenNEXTSetGpuMode = mode => { procurementState.gpuMode = mode === 'hardware' ? 'hardware' : 'rental'; };
   const { initializeWorkspaceShell } = await import('./opennext-workspace-shell.js?v=opennext-20260914-desk-1');
   initializeWorkspaceShell();
-  const { initializePortal } = await import('./opennext-portal.js?v=opennext-20260914-desk-1');
+  const { initializePortal } = await import('./opennext-portal.js?v=opennext-20260914-ledger-3');
   initializePortal();
   initializePublic(initialRoute);
   console.info('OpenNEXT public site and procurement workspace ready');

@@ -1,4 +1,4 @@
-import { getCapacityLedgerRecords } from './opennext-capacity.js?v=opennext-20260914-desk-1';
+import { getCapacityLedgerRecords } from './opennext-capacity.js?v=opennext-20260914-ledger-3';
 
 // Billing and account controls are local, explicitly labelled demo workflows.
 // No payment, identity, authentication or cloud provider endpoint is contacted.
@@ -66,25 +66,34 @@ function filtered(records, match = () => true) {
 }
 
 // Normalization keeps capacity purchases authoritative across Profile, My GPU and Fees.
-function purchases() {
-  return getCapacityLedgerRecords().map((r, i) => ({
+function purchases(ledgerRecords = getCapacityLedgerRecords()) {
+  return ledgerRecords.map((r, i) => ({
     id: String(r.id || `CAP-${1001 + i}`), date: new Date(r.date || r.createdAt || Date.now()).toISOString(),
     title: r.description || r.title || r.product || r.label || 'Capacity purchase',
     category: r.kind || r.category || r.type || 'Capacity', amount: Math.abs(Number(r.amount ?? r.total ?? 0)),
     status: 'Completed', raw: r,
   }));
 }
-function transactions() {
-  const ordered = [...purchases()].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+export function buildAccountTransactions(ledgerRecords = getCapacityLedgerRecords()) {
+  const ordered = [...purchases(ledgerRecords)].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
   let balance = 10000;
   const records = [{ id: 'TXN-DEMO-1000', date: new Date(Math.min(...ordered.map((r) => Date.parse(r.date)), Date.now()) - 86400000).toISOString(), title: 'Opening credit', category: 'Funding', amount: 10000, direction: 'in', balance: 10000, channel: 'Workspace credit', status: 'Completed' }];
-  for (const item of ordered) { balance -= item.amount; records.push({ ...item, direction: 'out', balance: Math.round(balance * 100) / 100, channel: 'Workspace credit' }); }
+  for (const item of ordered) {
+    // Agent reservations arrive only after their separate simulated checkout
+    // completed. They are purchase history, not another debit to workspace
+    // credit. The order amount already includes the fee credit and escrow.
+    const external = item.raw.kind === 'gpu' && typeof item.raw.sourceKey === 'string' && /^ON-[A-Z0-9-]+$/i.test(item.raw.sourceKey);
+    const workspaceImpact = external ? 0 : -item.amount;
+    balance += workspaceImpact;
+    records.push({ ...item, direction: 'out', balance: Math.round(balance * 100) / 100, workspaceImpact, sourceKey: item.raw.sourceKey || '', channel: external ? 'External checkout (simulation)' : 'Workspace credit', status: external ? 'Settled (simulation)' : item.status });
+  }
   return records.sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
 }
+function transactions() { return buildAccountTransactions(); }
 function transactionRecords() { return filtered(transactions(), (r) => view.type === 'all' || r.direction === view.type); }
 function renderTransactions() {
   const records = transactionRecords();
-  return `<div class="ac-section-head"><div><h2>Transactions</h2><p>Credits and capacity purchases, in one ledger.</p></div>${badge('USD')}</div>${filters({ types: [['all','All transactions'],['in','Money in'],['out','Money out']], dates: true, exportLabel: 'Export CSV' })}${records.length ? table(['Date / reference', 'Description', 'Type', 'Payment method', 'Amount', 'Balance', ''], paged(records).map((r) => `<tr><td>${dateLabel(r.date)}<small>${escape(r.id)}</small></td><td>${escape(r.title)}</td><td>${badge(r.direction === 'in' ? 'Credit' : 'Purchase')}</td><td>${r.channel}</td><td class="ac-number">${r.direction === 'in' ? '+' : '−'}${usd(r.amount)}</td><td class="ac-number">${usd(r.balance)}</td><td>${button('Details', 'transaction', `data-id="${escape(r.id)}"`, 'ac-button-quiet')}</td></tr>`).join(''), 'Transaction records') + pagination(records.length) : empty('Try a different date range or transaction type.')}`;
+  return `<div class="ac-section-head"><div><h2>Transactions</h2><p>Capacity purchases and workspace credit. External checkout does not debit your workspace balance.</p></div>${badge('USD')}</div>${filters({ types: [['all','All transactions'],['in','Money in'],['out','Money out']], dates: true, exportLabel: 'Export CSV' })}${records.length ? table(['Date / reference', 'Description', 'Type', 'Payment method', 'Amount', 'Workspace balance', ''], paged(records).map((r) => `<tr><td>${dateLabel(r.date)}<small>${escape(r.id)}</small></td><td>${escape(r.title)}</td><td>${badge(r.direction === 'in' ? 'Credit' : 'Purchase')}</td><td>${r.channel}</td><td class="ac-number">${r.direction === 'in' ? '+' : '−'}${usd(r.amount)}</td><td class="ac-number">${usd(r.balance)}</td><td>${button('Details', 'transaction', `data-id="${escape(r.id)}"`, 'ac-button-quiet')}</td></tr>`).join(''), 'Transaction records') + pagination(records.length) : empty('Try a different date range or transaction type.')}`;
 }
 function statements() {
   const all = purchases();
@@ -173,7 +182,7 @@ function requestInvoice() {
   if (!eligible.length) return showDialog('All purchases are covered', '<p>Every current capacity purchase already has an invoice preview. A new demo purchase will become available here.</p>', button('Done', 'close-dialog', '', 'ac-button-dark'));
   showDialog('Request an invoice', `<form data-ac-form="invoice"><label>Purchase<select name="orderId" required><option value="">Select a purchase</option>${eligible.map((r) => `<option value="${escape(r.id)}">${escape(r.title)} — ${usd(r.amount)}</option>`).join('')}</select></label><div class="ac-invoice-recipient"><strong>${escape(state.billing.company)}</strong><span>${escape(state.billing.email)}</span><span>${escape(state.billing.address)}, ${escape(state.billing.country)}</span></div><label class="ac-consent"><input type="checkbox" name="confirm" required><span>I confirm the sample billing details above are correct.</span></label><p class="ac-note">This creates one local demo document per purchase. It is not a tax invoice.</p><p class="ac-form-error" data-ac-form-error role="alert"></p><div class="ac-form-actions"><button class="ac-button ac-button-dark" type="submit">Create invoice preview</button></div></form>`);
 }
-function transactionDialog(id) { const r = transactions().find((x) => x.id === id); if (!r) return; showDialog('Transaction details', facts([['Reference',r.id],['Date',`${dateLabel(r.date)} · ${r.date.slice(11,16)} UTC`],['Description',r.title],['Type',r.direction === 'in' ? 'Credit' : 'Capacity purchase'],['Payment method',r.channel],['Amount',`${r.direction === 'in' ? '+' : '−'}${usd(r.amount)}`],['Balance after transaction',usd(r.balance)],['Status',r.status]]) + '<p class="ac-note">Sample record only. No funds were transferred.</p>', button('Download record', 'download-transaction', `data-id="${escape(id)}"`, 'ac-button-dark')); }
+function transactionDialog(id) { const r = transactions().find((x) => x.id === id); if (!r) return; showDialog('Transaction details', facts([['Reference',r.id],['Date',`${dateLabel(r.date)} · ${r.date.slice(11,16)} UTC`],['Description',r.title],['Type',r.direction === 'in' ? 'Credit' : 'Capacity purchase'],['Payment method',r.channel],['Amount',`${r.direction === 'in' ? '+' : '−'}${usd(r.amount)}`],['Workspace credit impact',usd(r.workspaceImpact ?? r.amount)],['Workspace balance after transaction',usd(r.balance)],['Status',r.status]]) + '<p class="ac-note">Simulated transaction record; no funds were transferred. External checkout purchases have already been settled in the reservation flow and are not charged again.</p>', button('Download record', 'download-transaction', `data-id="${escape(id)}"`, 'ac-button-dark')); }
 function statementDialog(id) { const r = statements().find((x) => x.id === id); if (!r) return; showDialog(r.period + ' statement', facts([['Statement',r.id],['Organization',state.billing.company],['Status',r.status],['Capacity purchases',r.count],['Total',usd(r.amount)]]) + (r.items.length ? `<ul class="ac-document-lines">${r.items.map((p) => `<li><span>${escape(p.title)}</span><strong>${usd(p.amount)}</strong></li>`).join('')}</ul>` : '<p>No purchases were recorded in this sample period.</p>') + '<p class="ac-note">Demo statement. This document is not proof of payment.</p>', button('Download statement', 'download-statement', `data-id="${id}"`, 'ac-button-dark')); }
 function invoiceDialog(id) { const r = invoiceRecords().find((x) => x.id === id); if (!r) return; showDialog('Invoice preview', `<div class="ac-document-stamp">DEMO DOCUMENT · NOT A TAX INVOICE</div>` + facts([['Invoice',r.id],['Date',dateLabel(r.date)],['Billed to',r.billing.company],['Billing email',r.billing.email],['Address',`${r.billing.address}, ${r.billing.country}`],['Purchase',r.title],['Order reference',r.orderId],['Purchase amount',usd(r.amount)],['Tax','Not assessed in demo'],['Document total',usd(r.amount)]]) + '<p class="ac-note">No payment is requested by this preview.</p>', button('Download preview', 'download-invoice', `data-id="${escape(id)}"`, 'ac-button-dark')); }
 function contractDialog(id) { const r = contracts().find((x) => x.id === id); if (!r) return; showDialog('Capacity order terms', '<div class="ac-document-stamp">SAMPLE · UNSIGNED</div>' + facts([['Contract',r.id],['Buyer',state.billing.company],['Provider',r.counterparty],['Capacity',r.title],['Order value',usd(r.amount)],['Term',r.term],['Next payment','None scheduled in demo']]) + '<div class="ac-terms"><h3>Delivery & acceptance</h3><p>Capacity, region, start time and access method would be confirmed in the order schedule. Acceptance would be recorded after the agreed checks.</p><h3>Usage & renewal</h3><p>Usage is measured against the purchased allowance. Renewals require a separate review and confirmation; reminder preferences do not authorize payment.</p><h3>Service & support</h3><p>Service levels, maintenance notices and any credits would be specified in a signed provider agreement.</p></div>', button('Download sample terms', 'download-contract', `data-id="${id}"`, 'ac-button-dark')); }
@@ -188,7 +197,7 @@ export function accountCsv(rows) { const cell = (value) => { let text = String(v
 function exportCsv() {
   let rows;
   if (view.section === 'account') rows = [['DEMO ACCESS HISTORY'], ['Date UTC','IP address','Location','Method','User','Result'], ...filtered(accessRecords(), (r) => view.type === 'all' || r.result.toLowerCase() === view.type).map((r) => [r.date,r.ip,r.region,r.method,r.user,r.result])];
-  else if (view.billing === 'transactions') rows = [['DEMO TRANSACTIONS - NOT REAL FUNDS'],['Date UTC','Reference','Description','Direction','Amount USD','Balance USD'], ...transactionRecords().map((r) => [r.date,r.id,r.title,r.direction,r.amount,r.balance])];
+  else if (view.billing === 'transactions') rows = [['DEMO TRANSACTIONS - NOT REAL FUNDS'],['Date UTC','Reference','Description','Direction','Amount USD','Payment method','Workspace impact USD','Workspace balance USD','Source reservation'], ...transactionRecords().map((r) => [r.date,r.id,r.title,r.direction,r.amount,r.channel,r.workspaceImpact ?? r.amount,r.balance,r.sourceKey || ''])];
   else if (view.billing === 'statements') rows = [['DEMO STATEMENTS'],['Period','Reference','Purchases','Total USD','Status'], ...filtered(statements()).map((r) => [r.period,r.id,r.count,r.amount,r.status])];
   else if (view.billing === 'invoices') rows = [['DEMO INVOICES - NOT TAX DOCUMENTS'],['Date UTC','Invoice','Order','Billed to','Amount USD'], ...filtered(invoiceRecords()).map((r) => [r.date,r.id,r.orderId,r.billing.company,r.amount])];
   else rows = [['DEMO CONTRACTS - UNSIGNED'],['Reference','Order','Counterparty','Scope','Value USD'], ...filtered(contracts()).map((r) => [r.id,r.orderId,r.counterparty,r.term,r.amount])];
@@ -196,7 +205,7 @@ function exportCsv() {
 }
 function downloadRecord(kind, id) {
   let title, data, paragraphs = '';
-  if (kind === 'transaction') { const r = transactions().find((x) => x.id === id); if (!r) return; title='Transaction record'; data={ Reference:r.id, Date:r.date, Description:r.title, Direction:r.direction, Amount:usd(r.amount), 'Balance after transaction':usd(r.balance) }; }
+  if (kind === 'transaction') { const r = transactions().find((x) => x.id === id); if (!r) return; title='Transaction record'; data={ Reference:r.id, Date:r.date, Description:r.title, Direction:r.direction, Amount:usd(r.amount), 'Payment method':r.channel, 'Workspace credit impact':usd(r.workspaceImpact ?? r.amount), 'Workspace balance after transaction':usd(r.balance), 'Source reservation':r.sourceKey || 'Not applicable' }; }
   if (kind === 'statement') { const r = statements().find((x) => x.id === id); if (!r) return; title='Monthly statement'; data={ Reference:r.id, Period:r.period, Organization:state.billing.company, Total:usd(r.amount) }; paragraphs=r.items.map((x)=>`${x.id} | ${x.title} | ${usd(x.amount)}`).join('\n'); }
   if (kind === 'invoice') { const r = invoiceRecords().find((x) => x.id === id); if (!r) return; title='Invoice preview — NOT A TAX INVOICE'; data={ Invoice:r.id, Date:r.date, 'Billed to':r.billing.company, Email:r.billing.email, Address:`${r.billing.address}, ${r.billing.country}`, Order:r.orderId, Purchase:r.title, Amount:usd(r.amount), Tax:'Not assessed in demo' }; }
   if (kind === 'contract') { const r = contracts().find((x) => x.id === id); if (!r) return; title='Sample capacity order terms — UNSIGNED'; data={ Reference:r.id, Buyer:state.billing.company, Provider:r.counterparty, Capacity:r.title, Value:usd(r.amount), Scope:r.term }; paragraphs='Delivery: capacity, region, start time and access method would be confirmed in the order schedule.\nUsage: measured against the purchased allowance. Renewals require separate confirmation.\nService: service levels, maintenance and credits would be specified in a signed provider agreement.'; }

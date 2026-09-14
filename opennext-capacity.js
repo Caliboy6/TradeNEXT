@@ -52,7 +52,7 @@ export function validateCapacityState(candidate) {
       if ('inputPurchased' in m && (!finite(m.inputPurchased,0,m.purchased) || !finite(m.outputPurchased,0,m.purchased) || m.inputPurchased+m.outputPurchased!==m.purchased || !finite(m.inputRate,0,1e6) || !finite(m.outputRate,0,1e6))) return false;
     }
   }
-  for (const g of candidate.gpus) if (!id(g.id) || ![g.model,g.region,g.supplier].every(text) || !finite(g.quantity,1,1e5) || !Number.isInteger(g.quantity) || !finite(g.hours,1,87600) || !finite(g.initialHours,1,g.hours) || !finite(g.rate,0,1e6) || !finite(g.startsAt,1,1e14) || !finite(g.createdAt,1,1e14) || typeof g.renewalReminder !== 'boolean') return false;
+  for (const g of candidate.gpus) if (!id(g.id) || ![g.model,g.region,g.supplier].every(text) || !finite(g.quantity,1,1e5) || !Number.isInteger(g.quantity) || !finite(g.hours,1,87600) || !finite(g.initialHours,1,g.hours) || !finite(g.rate,0,1e6) || !finite(g.startsAt,1,1e14) || !finite(g.createdAt,1,1e14) || typeof g.renewalReminder !== 'boolean' || (g.sourceKey !== undefined && !text(g.sourceKey))) return false;
   for (const r of candidate.receipts) if (!id(r.id) || !text(r.description) || !text(r.allocationId) || !finite(r.amount,0,1e14) || !finite(r.date,1,1e14)) return false;
   return true;
 }
@@ -78,7 +78,7 @@ export function getCapacityLedgerRecords() {
   const s=getState();
   return [
     ...s.families.map(f => ({id:`INV-${f.id}`,allocationId:f.id,date:f.createdAt,description:`${f.name} token capacity`,amount:Math.round(calculateTokenFamily(f).cost*100)/100,kind:'tokens',direction:'debit',status:'Paid',supplier:f.supplier})),
-    ...s.gpus.map(g => ({id:`INV-${g.id}`,allocationId:g.id,date:g.createdAt,description:`${g.quantity} × ${g.model} · ${g.initialHours} hours`,amount:Math.round(g.quantity*g.initialHours*g.rate*100)/100,kind:'gpu',direction:'debit',status:'Paid',supplier:g.supplier})),
+    ...s.gpus.map(g => ({id:`INV-${g.id}`,allocationId:g.id,sourceKey:g.sourceKey,date:g.createdAt,description:`${g.quantity} × ${g.model} · ${g.initialHours} hours`,amount:Math.round(g.quantity*g.initialHours*g.rate*100)/100,kind:'gpu',direction:'debit',status:'Paid',supplier:g.supplier})),
     ...s.receipts.map(r => ({...r,kind:'renewal',direction:'debit',status:'Paid',supplier:s.gpus.find(g=>g.id===r.allocationId)?.supplier||'Demo supplier'})),
   ].sort((a,b)=>b.date-a.date);
 }

@@ -15,3 +15,7 @@ The requested Claude design URL was not readable in this environment. Its conten
 ## Verification
 
 Run `npm test`, `npm run check`, and `npm run build`. Test the public sign-in, theme toggle, GPU/region/timeframe selectors, missing-parameter collection, RFQ review, guardrail states, separate fee/escrow consent, supplier rejection reasons, payment simulation, and the resulting reservation. The $500 credit and escrow must not be charged again at final checkout.
+
+Browser acceptance on 2026-09-14 verified the default OpenDesk route, light/dark appearance, GPU/region/period chart selectors, all intake and approval stages, three supplier outcomes, a confirmed $198,000 reservation, and synchronization to My GPUs and Billing. With optional $105,000 escrow and a $500 fee credit, final checkout is $92,500. Externally settled Agent purchases leave workspace credit unchanged. The 390px and 768px layouts have no page-level horizontal overflow; the right-hand Agent opens and closes on mobile.
+
+The final artwork uses native SVG `animateMotion` / `mpath` to avoid CSS motion-path offsets under SVG scaling. All 14 Landing packets move on their visible routes; the login artwork has six packets. A pause control hides moving packets, and reduced-motion preferences suppress the animation.

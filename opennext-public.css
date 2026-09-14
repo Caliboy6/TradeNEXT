@@ -303,7 +303,7 @@
 .public-flow-front-face{fill:#fafbf8!important}
 .public-flow-side-face{fill:#f1f3ed!important}
 .public-flow-line{stroke:#555d4e;stroke-width:1.65}
-.public-flow-packet{fill:#151713;stroke:none;offset-distance:0%;offset-rotate:0deg;offset-anchor:center;animation:public-capacity-flow var(--flow-duration,18s) linear var(--flow-delay,0s) infinite;animation-direction:normal}
+.public-flow-packet{fill:#151713;stroke:none}
 .public-flow-node-grid{stroke:#d8dcd3;stroke-width:1}
 .public-flow-node>rect{fill:#fff;stroke:#676f5f;stroke-width:1.8}
 .public-flow-node .public-flow-node-core{fill:#20251a;stroke:none}
@@ -312,7 +312,6 @@
 .public-flow-coast{stroke:#a7afa0;stroke-width:1.5;opacity:.85}
 .public-flow-exchange>path{fill:#fff;stroke:#242a1e;stroke-width:2}
 .public-flow-exchange .public-flow-exchange-inner{stroke:#69715f;stroke-width:1.3}
-@keyframes public-capacity-flow{0%{offset-distance:0%;opacity:0}2%{opacity:1}98%{opacity:1}100%{offset-distance:100%;opacity:0}}
 .public-flow-caption{display:flex;align-items:center;justify-content:space-between;gap:20px;color:#737b69;font-size:11px;letter-spacing:.02em;margin-top:8px;min-height:32px}
 .public-flow-toggle{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 .public-flow-control{display:inline-flex;align-items:center;gap:8px;cursor:pointer;pointer-events:auto;white-space:nowrap;min-height:32px;color:#525b48;padding:3px 0;font-size:11px;line-height:1.5}
@@ -320,7 +319,7 @@
 .public-flow-pause{font-size:12px;line-height:1;letter-spacing:1px}
 .public-flow-play{font-size:15px;line-height:1}
 .public-flow-play,.public-flow-paused-label{display:none}
-.public-flow-toggle:checked~.public-flow-art .public-flow-packet{animation-play-state:paused}
+.public-flow-toggle:checked~.public-flow-art .public-flow-packet{visibility:hidden}
 .public-flow-toggle:checked~.public-flow-caption .public-flow-pause,.public-flow-toggle:checked~.public-flow-caption .public-flow-running-label{display:none}
 .public-flow-toggle:checked~.public-flow-caption .public-flow-play,.public-flow-toggle:checked~.public-flow-caption .public-flow-paused-label{display:inline}
 .public-flow-toggle:focus-visible~.public-flow-caption .public-flow-control{outline:2px solid #151713;outline-offset:4px}

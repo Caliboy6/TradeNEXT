@@ -44,9 +44,9 @@ function gpuTicker() {
   return `<section class="public-gpu-ticker" aria-label="GPU rental price preview"><input class="public-ticker-toggle" type="checkbox" id="public-ticker-paused" aria-label="Pause GPU price ticker"><div class="public-ticker-caption"><strong>GPU MARKET</strong><span>Indicative · $/GPU-hour</span></div><div class="public-ticker-window" tabindex="0" aria-label="Sample GPU rental prices"><div class="public-ticker-track"><div class="public-ticker-group">${items}</div><div class="public-ticker-group" aria-hidden="true">${items}</div></div></div><label class="public-ticker-control" for="public-ticker-paused"><span class="public-ticker-pause" aria-hidden="true">Ⅱ</span><span class="public-ticker-play" aria-hidden="true">▷</span><span class="public-ticker-control-label">Pause prices</span></label></section>`;
 }
 
-// A route's visible line and motion path are generated from the same geometry.
-// Actual circles travel from 0% to 100%; no dash wrap or alternate animation can
-// make a packet appear to reverse at the end of a route.
+// Native SVG motion and the visible line reference the very same route. Both
+// stay in SVG user coordinates even when the illustration resizes. Packets
+// travel start to end and restart; they never reverse direction.
 function capacityPlane(x, y, ux, uy, vx, vy, depth) {
   const point = (u, v, z = 0) => `${+(x + ux * u + vx * v).toFixed(2)} ${+(y + uy * u + vy * v + z).toFixed(2)}`;
   const outline = `M${point(0, 0)} L${point(1, 0)} L${point(1, 1)} L${point(0, 1)} Z`;
@@ -99,7 +99,10 @@ function capacityIllustration(kind) {
   ];
   const routes = paths.map(([d], i) => `<path id="${id}-route-${i}" d="${d}" pathLength="1000"/>`).join('');
   const lines = paths.map((_, i) => `<use class="public-flow-line" href="#${id}-route-${i}"/>`).join('');
-  const packets = paths.map(([d, duration, delay], i) => [0, 0.5].map(phase => `<circle class="public-flow-packet" data-route="${id}-route-${i}" cx="0" cy="0" r="4.5" style="offset-path:path('${d}');--flow-duration:${duration}s;--flow-delay:${delay - duration * phase}s"/>`).join('')).join('');
+  const packets = paths.map(([, duration, delay], i) => [0, 0.5].map(phase => {
+    const begin = delay - duration * phase;
+    return `<circle class="public-flow-packet" data-route="${id}-route-${i}" cx="0" cy="0" r="4.5"><animateMotion dur="${duration}s" begin="${begin}s" calcMode="paced" repeatCount="indefinite"><mpath href="#${id}-route-${i}"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.02;0.98;1" dur="${duration}s" begin="${begin}s" repeatCount="indefinite"/></circle>`;
+  }).join('')).join('');
   const caption = network ? 'From supply to workload.' : 'Local nodes. Global reach.';
   const label = network ? 'Capacity flowing between connected compute locations' : 'Compute nodes connecting through OpenNEXT to global destinations';
   return `<figure class="public-flow-figure ${network ? 'public-hero-visual' : 'public-auth-visual'}" aria-label="${label}"><input class="public-flow-toggle" type="checkbox" id="${id}" aria-label="Pause capacity flow animation"><div class="public-flow-art"><svg class="public-flow-drawing" viewBox="0 0 1860 846" aria-hidden="true" focusable="false"><defs>${routes}</defs>${network ? capacityNetworkArtwork() : capacityGlobalArtwork()}<g class="public-flow-routes">${lines}</g><g class="public-flow-packets">${packets}</g></svg></div><figcaption class="public-flow-caption"><span>${caption}</span><label class="public-flow-control" for="${id}"><span class="public-flow-pause" aria-hidden="true">Ⅱ</span><span class="public-flow-play" aria-hidden="true">▷</span><span class="public-flow-running-label">Pause motion</span><span class="public-flow-paused-label">Resume motion</span></label></figcaption></figure>`;

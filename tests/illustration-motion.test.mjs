@@ -10,7 +10,7 @@ test('every illustration packet follows its visible vector route without static 
     assert.doesNotMatch(artwork, /<(?:image|img)\b/, 'no baked-in packet remains');
     const routes = new Map([...artwork.matchAll(/<path id="([^"]+)" d="([^"]+)" pathLength="1000"/g)].map(match => [match[1], match[2]]));
     const lines = [...artwork.matchAll(/<use class="public-flow-line" href="#([^"]+)"/g)].map(match => match[1]);
-    const packets = [...artwork.matchAll(/<circle class="public-flow-packet" data-route="([^"]+)" cx="0" cy="0" r="4.5" style="offset-path:path\('([^']+)'\);--flow-duration:([\d.]+)s;--flow-delay:([\d.-]+)s"/g)];
+    const packets = [...artwork.matchAll(/<circle class="public-flow-packet" data-route="([^"]+)" cx="0" cy="0" r="4.5"><animateMotion dur="([\d.]+)s" begin="([\d.-]+)s" calcMode="paced" repeatCount="indefinite"><mpath href="#([^"]+)"\/><\/animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.02;0.98;1" dur="([\d.]+)s" begin="([\d.-]+)s" repeatCount="indefinite"\/><\/circle>/g)];
     assert.ok(routes.size >= 3);
     assert.ok(packets.length >= routes.size);
     for (const [id] of routes) {
@@ -18,19 +18,18 @@ test('every illustration packet follows its visible vector route without static 
       assert.ok(packets.some(packet => packet[1] === id), 'each route carries moving capacity');
     }
     assert.equal([...artwork.matchAll(/<circle\b/g)].length, packets.length, 'every circular packet is animated');
-    for (const [, id, path, duration, delay] of packets) {
+    for (const [, id, duration, delay, motionRoute, fadeDuration, fadeDelay] of packets) {
       assert.ok(routes.has(id));
-      assert.equal(path, routes.get(id), 'the circle moves on exactly the visible line');
+      assert.equal(motionRoute, id, 'native SVG motion references exactly the visible line');
       assert.ok(Number(duration) > 0);
       assert.ok(Number(delay) < 0, 'every packet is already in motion at first paint');
+      assert.equal(fadeDuration, duration, 'fade timing stays synchronized with each journey');
+      assert.equal(fadeDelay, delay);
     }
   }
   const css = readFileSync(new URL('../opennext-public.css', import.meta.url), 'utf8');
-  assert.match(css, /animation:public-capacity-flow[^}]*linear[^}]*infinite/);
-  assert.match(css, /\.public-flow-packet\{[^}]*animation-direction:normal/);
-  assert.match(css, /@keyframes public-capacity-flow\{0%\{offset-distance:0%;opacity:0\}2%\{opacity:1\}98%\{opacity:1\}100%\{offset-distance:100%;opacity:0\}\}/);
-  assert.doesNotMatch(css, /stroke-dashoffset|animation-direction:alternate/);
-  assert.match(css, /\.public-flow-toggle:checked~\.public-flow-art \.public-flow-packet\{animation-play-state:paused\}/);
+  assert.doesNotMatch(css, /stroke-dashoffset|offset-path|offset-distance|animation-direction:alternate/);
+  assert.match(css, /\.public-flow-toggle:checked~\.public-flow-art \.public-flow-packet\{visibility:hidden\}/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\s*\.public-flow-packet\{animation:none;display:none\}/);
 });
 

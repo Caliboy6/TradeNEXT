@@ -336,18 +336,8 @@ function selectionSummary() {
 }
 
 function ensureSelectionSummaries() {
-  document.querySelectorAll(".market-board-head > .market-selection-summary").forEach((summary) => summary.remove());
-  const host = document.querySelector(".topbar-right");
-  if (!host) return;
-  const expected = `${zh() ? "zh" : "en"}-${procurementState.starredOfferIds.length}-${procurementState.cartOfferIds.length}`;
-  const summary = host.querySelector(".market-selection-summary");
-  if (!summary) {
-    const languageSwitch = host.querySelector(".language-switch");
-    if (languageSwitch) languageSwitch.insertAdjacentHTML("beforebegin", selectionSummary());
-    else host.insertAdjacentHTML("afterbegin", selectionSummary());
-  } else if (summary.dataset.selectionState !== expected) {
-    summary.outerHTML = selectionSummary();
-  }
+  // Private sourcing uses RFQs and inventory. Do not recreate legacy carts.
+  document.querySelectorAll(".market-selection-summary").forEach(summary => summary.remove());
 }
 
 function ensureRankControls() {
@@ -474,7 +464,7 @@ export function installMarketTools() {
   restoreSelections();
   const style = document.createElement("link");
   style.rel = "stylesheet";
-  style.href = "./market-tools.css?v=opennext-20260914-desk-1";
+  style.href = "./market-tools.css?v=opennext-20260915-marketplace-1";
   document.head.append(style);
 
   document.addEventListener("click", (event) => {

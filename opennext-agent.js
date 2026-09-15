@@ -10,7 +10,7 @@ let timer = null;
 let rfqPrefillTimer = null;
 let initialized = false;
 let runId = 0;
-function freshState() { return { request: { ...defaultRequest }, brief: {}, messages: [], phase: 'idle', running: false, prompt: '', progress: -1, authorized: false, escrow: false, feePaid: 0, escrowFunded: 0, reservation: null, error: '' }; }
+function freshState() { return { request: { ...defaultRequest }, brief: {}, messages: [], phase: 'idle', running: false, prompt: '', progress: -1, authorized: false, escrow: false, feePaid: 0, escrowFunded: 0, reservation: null, postedRfq: null, inventoryError: '', error: '' }; }
 const escape = (text) => String(text ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const money = (value, digits = 0) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: digits, minimumFractionDigits: digits }).format(value);
 const arrow = '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.4"/></svg>';
@@ -152,6 +152,11 @@ function renderAuthorization() {
   const b = agentState.brief, escrow = calculateEscrow(b.monthlyBudget, b.months);
   return `<form id="agentAuthorizationForm" class="agent-card agent-authorization"><span class="agent-kicker">Your approval</span><h3>Let us source this request.</h3><dl class="agent-facts"><div><dt>Sourcing fee</dt><dd>$500</dd></div><div><dt>Credit on completed order</dt><dd>−$500</dd></div></dl><p class="agent-note">The $500 sourcing fee is credited against the final compute price when you complete an order. It is non-refundable if you do not place an order.</p><label class="agent-check"><input type="checkbox" name="authorize" required><span>I authorize supplier inquiries and the $500 sourcing fee under these terms.</span></label><div class="agent-escrow"><span class="agent-kicker">Optional · third-party escrow</span><p class="agent-note">Pre-fund a reserve to secure suitable capacity faster. Funds remain separate from the sourcing fee; no order is placed without your final approval.</p><label class="agent-check"><input type="checkbox" name="escrow"${escrow.available ? '' : ' disabled'}${agentState.escrow ? ' checked' : ''}><span>${escrow.available ? `Reserve ${money(escrow.amount)} with a third-party escrow provider.` : 'Escrow terms require a custom quote for this duration.'}</span></label><p class="agent-note">${escape(escrow.label)}. This simulation moves no funds.</p></div><div class="agent-total"><span>Simulated payment now</span><strong id="agentAuthorizeTotal">${money(SOURCING_FEE + (agentState.escrow ? escrow.amount : 0))}</strong></div><button type="submit" class="agent-primary">Authorize &amp; continue ${arrow}</button></form>`;
 }
+function renderInventoryPosting() {
+  const posted = agentState.postedRfq;
+  const result = posted ? (posted.matchCount ? `${posted.matchCount} potential inventory ${posted.matchCount === 1 ? 'match' : 'matches'} found. Review the details in My RFQs.` : 'No matching inventory yet. Your RFQ remains open for new supply.') : 'Check submitted inventory using your reviewed specifications. Additional requirements remain subject to supplier confirmation.';
+  return `<section class="agent-card"><span class="agent-kicker">Private supply matching</span><h3>${posted ? 'Posted to My RFQs' : 'Check available inventory.'}</h3><p class="agent-note"${posted ? ' role="status"' : ''}>${escape(result)}</p>${posted ? `<p class="agent-note">Reference: ${escape(posted.id)}</p>` : '<p class="agent-note">Posting an RFQ does not authorize paid sourcing, reserve capacity or move funds.</p>'}${agentState.inventoryError ? `<p class="agent-error" role="alert">${escape(agentState.inventoryError)}</p>` : ''}<button type="button" class="agent-secondary" data-agent-action="post-inventory-rfq"${posted ? ' disabled' : ''}>${posted ? 'RFQ posted' : 'Post to My RFQs'}</button></section>`;
+}
 function renderProgress() {
   return `<section class="agent-card agent-work-log"><span class="agent-kicker">Execution activity · simulation</span>${progressSteps.map(([label, detail], index) => `<div class="agent-log-step ${index < agentState.progress || agentState.phase === 'offers' || agentState.phase === 'payment' || agentState.phase === 'confirmed' ? 'is-complete' : index === agentState.progress ? 'is-current' : ''}"><span>${index < agentState.progress || agentState.progress >= progressSteps.length ? '✓' : String(index + 1).padStart(2, '0')}</span><div><strong>${label}</strong>${index <= agentState.progress ? `<p>${detail}</p>` : ''}</div></div>`).join('')}${agentState.running ? '<button type="button" class="agent-text-button" data-agent-action="stop">Stop sourcing</button>' : ''}</section>`;
 }
@@ -172,7 +177,7 @@ function renderCurrentStage() {
   if (phase === 'intake') return renderIntake();
   if (phase === 'review') return `${renderRfq()}<p class="agent-note">Confirm that the RFQ accurately reflects your instructions.</p>${primary('Confirm RFQ &amp; run guardrail', 'guardrail')}<button class="agent-text-button" type="button" data-agent-action="edit">Edit requirements</button>`;
   if (phase === 'guardrail') return `${renderRfq()}${renderGuardrail()}`;
-  if (phase === 'authorization') return `${renderGuardrail()}${renderAuthorization()}`;
+  if (phase === 'authorization') return `${renderGuardrail()}${renderInventoryPosting()}${renderAuthorization()}`;
   if (phase === 'sourcing') return renderProgress();
   if (phase === 'stopped') return `${renderProgress()}<p class="agent-note">Sourcing paused. No order has been placed. Your simulated fee and escrow remain recorded for this request.</p>${primary('Resume sourcing', 'resume')}`;
   if (phase === 'offers') return `<details class="agent-details"><summary>View completed execution activity</summary>${renderProgress()}</details>${renderOffers()}`;
@@ -226,6 +231,24 @@ function runGuardrail() {
   stopRun(); agentState.phase = 'guardrail'; agentState.running = true; refreshConversation();
   const epoch = runId;
   timer = setTimeout(() => { if (epoch !== runId || agentState.phase !== 'guardrail') return; timer = null; agentState.running = false; agentState.phase = 'authorization'; refreshConversation(); }, 1700);
+}
+function postInventoryRfq() {
+  if (agentState.phase !== 'authorization' || agentState.running || agentState.postedRfq) return;
+  const errors = validateProcurementBrief(agentState.brief);
+  if (errors.length) { agentState.inventoryError = errors.join(' '); refreshConversation(false); return; }
+  if (typeof window.OpenNEXTPostAgentRfq !== 'function') {
+    agentState.inventoryError = 'RFQ posting is unavailable right now. Please try again when the workspace is ready.';
+    refreshConversation(false); return;
+  }
+  try {
+    const result = window.OpenNEXTPostAgentRfq({ ...agentState.brief });
+    if (!result?.record?.id || !Number.isInteger(result.matchCount) || result.matchCount < 0) throw new Error('The workspace could not confirm your RFQ. Check My RFQs before trying again.');
+    agentState.postedRfq = { id: String(result.record.id), matchCount: result.matchCount };
+    agentState.inventoryError = '';
+  } catch (error) {
+    agentState.inventoryError = error instanceof Error && !/[\u3400-\u9fff]/u.test(error.message) ? error.message : 'Your RFQ could not be posted. Please review the specifications and try again.';
+  }
+  refreshConversation(false);
 }
 function startSourcing(resume = false) {
   if (!agentState.authorized || (!resume && agentState.phase !== 'authorization') || (resume && agentState.phase !== 'stopped')) return;
@@ -284,6 +307,7 @@ export function initializeAgentPanel() {
     else if (action === 'edit' && agentState.phase === 'review') { agentState.phase = 'intake'; refreshConversation(); }
     else if (action === 'no-requirements') { const field = document.getElementById('agentBriefForm')?.elements.namedItem('requirements'); if (field) { field.value = 'No additional requirements'; agentState.brief.requirements = field.value; } }
     else if (action === 'guardrail') runGuardrail();
+    else if (action === 'post-inventory-rfq') postInventoryRfq();
     else if (action === 'stop' && agentState.phase === 'sourcing') { stopRun(); agentState.phase = 'stopped'; refreshConversation(); }
     else if (action === 'resume') startSourcing(true);
     else if (action === 'select-3' && agentState.phase === 'offers') { agentState.phase = 'payment'; refreshConversation(); }

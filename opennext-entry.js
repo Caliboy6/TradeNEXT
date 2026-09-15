@@ -5,12 +5,12 @@ const initialRoute = location.hash.slice(1);
 initializePublicShell(initialRoute);
 const watchdog = setTimeout(() => reportWorkspaceFailure(new Error('Workspace startup timed out')), 15000);
 try {
-  await import('./phase1-entry-v2.js?v=opennext-20260914-desk-1');
+  await import('./phase1-entry-v2.js?v=opennext-20260915-marketplace-1');
   const { procurementState } = await import('./procurement-data.js?v=opennext-20260914-desk-1');
   window.OpenNEXTSetGpuMode = mode => { procurementState.gpuMode = mode === 'hardware' ? 'hardware' : 'rental'; };
-  const { initializeWorkspaceShell } = await import('./opennext-workspace-shell.js?v=opennext-20260914-desk-1');
+  const { initializeWorkspaceShell } = await import('./opennext-workspace-shell.js?v=opennext-20260915-marketplace-1');
   initializeWorkspaceShell();
-  const { initializePortal } = await import('./opennext-portal.js?v=opennext-20260914-ledger-3');
+  const { initializePortal } = await import('./opennext-portal.js?v=opennext-20260915-marketplace-1');
   initializePortal();
   initializePublic(initialRoute);
   console.info('OpenNEXT public site and procurement workspace ready');

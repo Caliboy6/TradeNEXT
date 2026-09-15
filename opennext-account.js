@@ -1,4 +1,4 @@
-import { getCapacityLedgerRecords } from './opennext-capacity.js?v=opennext-20260914-ledger-3';
+import { getCapacityLedgerRecords } from './opennext-capacity.js?v=opennext-20260915-marketplace-1';
 
 // Billing and account controls are local, explicitly labelled demo workflows.
 // No payment, identity, authentication or cloud provider endpoint is contacted.

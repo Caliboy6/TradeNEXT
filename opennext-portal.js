@@ -1,15 +1,18 @@
 import { state } from './demo-core.js?v=opennext-20260914-desk-1';
 import { demandTape } from './procurement-data.js?v=opennext-20260914-desk-1';
-import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260914-ledger-3';
-import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260914-ledger-3';
+import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260915-marketplace-1';
+import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260915-marketplace-1';
 import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260914-desk-1';
 import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260914-desk-1';
+import { createMarketplaceStore } from './opennext-marketplace-state.js?v=opennext-20260915-marketplace-1';
+import { initializeMarketplace, renderMarketplacePage, openMarketplaceComposer } from './opennext-marketplace.js?v=opennext-20260915-marketplace-1';
 
 const sections=[['opendesk','My OpenDesk'],['profile','Profile'],['tokens','My Tokens'],['my-gpus','My GPUs'],['supply','My Supplies'],['rfq','My RFQs'],['messages','Messages'],['billing','Billing'],['account','Account']];
 const personal=new Set(sections.map(([id])=>id));
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storage=(()=>{try{return sessionStorage;}catch{return null;}})();
 const records=createWorkspaceStore(storage);
+const marketplace=createMarketplaceStore(storage);
 let selectedThread='OpenNEXT Capacity Desk', context='', toastTimer, legacyRender, installed=false;
 const go=route=>window.__openNextProcurementNavigate?.(route);
 function notify(message) {
@@ -23,16 +26,26 @@ function openDialog({title,body}) {
   document.getElementById('modal-host').innerHTML=`<div class="modal-backdrop" data-portal-action="close-dialog"><section class="modal on-portal-dialog" role="dialog" aria-modal="true" aria-label="${escape(title)}"><header class="modal-head"><h2>${escape(title)}</h2><button type="button" class="close-button" data-portal-action="close-dialog" aria-label="Close">×</button></header><div class="modal-body">${body}</div></section></div>`;
   document.body.classList.add('overlay-open');
 }
-function nav(route){return `<nav class="on-personal-nav" aria-label="My OpenNEXT sections">${sections.map(([id,label])=>`<button type="button" data-route="${id}" ${route===id?'aria-current="page"':''}>${label}</button>`).join('')}</nav>`;}
 function messagesPage(){
   const names=[...new Set(['OpenNEXT Capacity Desk','Meridian Compute','Aurora Authorized Channel',...Object.keys(records.threads)])];
   const thread=records.thread(selectedThread);
   return `<section class="on-messages"><header class="on-messages-title"><div><p class="eyebrow">MY OPENNEXT / MESSAGES</p><h1>Your conversations.</h1><p>Keep requirements, quotes and delivery updates with each counterparty.</p></div></header><div class="on-message-workspace"><nav class="on-thread-list" aria-label="Conversations">${names.map(name=>`<button type="button" data-portal-action="thread" data-thread="${escape(name)}" ${selectedThread===name?'aria-current="true"':''}><span>${escape(name)}</span><small>${name==='OpenNEXT Capacity Desk'?'Procurement support':'Supplier conversation'}</small></button>`).join('')}</nav><div class="on-thread"><header><strong>${escape(selectedThread)}</strong><span>${context?escape(context):'Private procurement thread'}</span></header><div class="on-thread-log" role="log" aria-label="Conversation messages">${thread.map(message=>`<article class="on-message ${message.side==='me'?'is-mine':''}"><div><strong>${message.side==='me'?'You':escape(selectedThread)}</strong><span>${escape(message.time === 'Demo thread' ? 'Conversation opened' : message.time === 'Demo reply' ? 'Automated reply' : message.time)}</span></div><p>${escape(message.text)}</p></article>`).join('')}</div><form id="portalMessageForm"><label for="portalMessage">Message</label><textarea id="portalMessage" name="message" rows="3" maxlength="2000" required placeholder="Ask about capacity, delivery or commercial terms…"></textarea><div><button class="primary-button" type="submit">Send message →</button></div></form></div></div></section>`;
 }
 function updateNavigation(route){
-  document.querySelectorAll('.workspace-top-nav [data-nav]').forEach(item=>{const active=item.dataset.nav===(personal.has(route)?'opendesk':route);item.classList.toggle('is-active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current');});
+  document.querySelectorAll('.workspace-header [data-route]').forEach(item=>{const active=item.dataset.route===route;item.classList.toggle('is-active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current');});
+  const current=document.querySelector('[data-workspace-current-section]');
+  if(current)current.textContent=sections.find(([id])=>id===route)?.[1]||({docs:'Documentation',scheduler:'Capacity Optimizer'}[route]||'Workspace');
+  updateMarketplaceBadge();
+}
+function updateMarketplaceBadge(){
+  const count=marketplace.notifications.filter(item=>!item.read).length;
+  document.querySelectorAll('[data-marketplace-unread]').forEach(badge=>{badge.textContent=count>99?'99+':String(count);badge.hidden=count===0;});
+  document.querySelectorAll('[data-marketplace-action="notifications"]').forEach(button=>button.setAttribute('aria-label',count?`Notifications, ${count} unread`:'Notifications'));
 }
 function render(route){
+  // Catalog URLs remain valid bookmarks, but procurement now starts privately.
+  if(['models','gpus','native','overview'].includes(route))route='rfq';
+  if(route==='data')route='opendesk';
   closeAccountDialogs();
   const main=document.getElementById('mainContent');
   main.classList.toggle('is-opendesk',route==='opendesk');
@@ -43,8 +56,8 @@ function render(route){
     else if(['profile','tokens','my-gpus'].includes(route))content=renderCapacityPage(route);
     else if(['billing','account'].includes(route))content=renderAccountPage(route);
     else if(route==='messages')content=messagesPage();
-    else {legacyRender(route);content=main.innerHTML;}
-    main.innerHTML=`<div class="on-personal-workspace">${nav(route)}<div class="on-personal-content">${content}</div></div>`;
+    else if(['supply','rfq'].includes(route))content=renderMarketplacePage(route);
+    main.innerHTML=`<div class="on-personal-workspace"><div class="on-personal-content">${content}</div></div>`;
   } else {route=legacyRender(route);}
   updateNavigation(route);
   return route;
@@ -58,6 +71,17 @@ export function initializePortal(){
   initializeCapacity({navigate:go,notify,openDialog,closeDialog});
   initializeAccount({navigate:go,notify});
   initializeOpenDesk();
+  initializeMarketplace({store:marketplace,navigate:go,notify,openDialog,closeDialog,onChange:updateMarketplaceBadge});
+  window.OpenNEXTPostAgentRfq=brief=>{
+    const sla=String(brief.requirements||'').match(/(?:SLA|uptime)\s*(?:of|:|>=|at least)?\s*(\d{2}(?:\.\d+)?)\s*%|(\d{2}(?:\.\d+)?)\s*%\s*(?:SLA|uptime)/i);
+    const record=marketplace.createRfq({market:'gpu',model:brief.accelerator,gpuCount:brief.quantity,
+      region:brief.region==='No region preference'?'Any region':brief.region,durationMonths:brief.months,monthlyBudget:brief.monthlyBudget,
+      startDate:brief.startDate==='As soon as available'?new Date().toISOString().slice(0,10):brief.startDate,
+      minSlaPercent:sla?Number(sla[1]||sla[2]):0,notes:brief.requirements});
+    updateMarketplaceBadge();
+    if(state.route==='rfq')render('rfq');
+    return {record,matchCount:marketplace.getMatches('rfq',record.id).length};
+  };
   window.addEventListener('opennext:reservation',event=>{
     const detail=event.detail;if(!detail?.id)return;
     const hours=Number(detail.months||1)*30*24;
@@ -78,6 +102,11 @@ export function initializePortal(){
   // Run before legacy document-capture actions that stop propagation.
   window.addEventListener('click',event=>{
     const flow=event.target.closest?.('[data-flow-action]');
+    const procurement=event.target.closest?.('[data-proc-action="post-rfq"]');
+    if(procurement||(flow&&['add-supply-picker','add-supply'].includes(flow.dataset.flowAction))){
+      event.preventDefault();event.stopImmediatePropagation();
+      openMarketplaceComposer(procurement?'rfq':'supply');return;
+    }
     if(flow&&['messages','open-chat','account-profile','account-settings','account-menu'].includes(flow.dataset.flowAction)){
       event.preventDefault();event.stopImmediatePropagation();
       if(['messages','open-chat'].includes(flow.dataset.flowAction)){selectedThread=flow.dataset.supplier||'OpenNEXT Capacity Desk';context=flow.dataset.context||'';go('messages');}

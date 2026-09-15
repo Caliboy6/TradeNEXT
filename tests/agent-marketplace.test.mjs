@@ -1,0 +1,73 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+test('reviewed agent RFQs post only on explicit approval, once per request, without authorizing paid sourcing', async () => {
+  const previous = { window: globalThis.window, document: globalThis.document, FormData: globalThis.FormData, setTimeout: globalThis.setTimeout, clearTimeout: globalThis.clearTimeout };
+  const listeners = new Map(), windowListeners = new Map(), timers = new Map();
+  let html = '', timerId = 0;
+  const posted = [];
+  const log = { set innerHTML(value) { html = value; } };
+  const panel = { querySelector: selector => selector === '#agentConversation' ? log : selector === '#agentContext' ? { textContent: '' } : { scrollTop: 0, scrollHeight: 100 }, querySelectorAll: () => [] };
+  globalThis.window = { addEventListener: (name, handler) => windowListeners.set(name, handler) };
+  globalThis.document = { addEventListener: (name, handler) => listeners.set(name, handler), querySelector: () => panel, getElementById: () => null };
+  globalThis.FormData = class { constructor(form) { this.values = form.values; } get(key) { return this.values[key] ?? null; } has(key) { return Object.hasOwn(this.values, key); } };
+  globalThis.setTimeout = callback => { timers.set(++timerId, callback); return timerId; };
+  globalThis.clearTimeout = id => timers.delete(id);
+  const click = action => listeners.get('click')({ target: { closest: () => ({ dataset: { agentAction: action }, disabled: false }) } });
+  const submit = (id, values) => listeners.get('submit')({ target: { id, values }, preventDefault() {} });
+  const advance = () => { const [id, callback] = timers.entries().next().value; timers.delete(id); callback(); };
+  const complete = { accelerator: 'H100', quantity: '64', months: '1', monthlyBudget: '210000', region: 'United States', asap: 'on', requirements: 'No additional requirements' };
+  try {
+    const { initializeAgentPanel } = await import('../opennext-agent.js?marketplace-handoff-test');
+    initializeAgentPanel();
+    const callback = brief => { posted.push(brief); return { record: { id: `RFQ-${posted.length}` }, matchCount: posted.length === 1 ? 2 : 0 }; };
+    window.OpenNEXTPostAgentRfq = callback;
+    click('post-inventory-rfq');
+    click('run');
+    click('post-inventory-rfq');
+    submit('agentBriefForm', complete);
+    click('post-inventory-rfq');
+    assert.equal(posted.length, 0, 'intake and review cannot post, even with a forged action');
+    assert.doesNotMatch(html, /Post to My RFQs/);
+    click('guardrail');
+    click('post-inventory-rfq');
+    assert.equal(posted.length, 0, 'a running guardrail cannot post');
+    advance();
+    assert.equal(posted.length, 0, 'passing the guardrail does not post automatically');
+    assert.match(html, /type="button"[^>]+data-agent-action="post-inventory-rfq"/);
+    assert.equal(timers.size, 0);
+
+    delete window.OpenNEXTPostAgentRfq;
+    click('post-inventory-rfq');
+    assert.match(html, /RFQ posting is unavailable/);
+    assert.doesNotMatch(html, /No matching inventory yet/);
+    window.OpenNEXTPostAgentRfq = () => { throw new Error('Review <region> before posting.'); };
+    click('post-inventory-rfq');
+    assert.match(html, /Review &lt;region&gt; before posting/);
+    assert.doesNotMatch(html, /Posted to My RFQs/);
+
+    window.OpenNEXTPostAgentRfq = callback;
+    click('post-inventory-rfq');
+    click('post-inventory-rfq');
+    assert.equal(posted.length, 1, 'duplicate clicks cannot post the same request twice');
+    assert.deepEqual(posted[0], { accelerator: 'H100', quantity: 64, months: 1, monthlyBudget: 210000, region: 'United States', startDate: 'As soon as available', requirements: 'No additional requirements' });
+    assert.match(html, /Posted to My RFQs/);
+    assert.match(html, /2 potential inventory matches/);
+    assert.match(html, /data-agent-action="post-inventory-rfq" disabled/);
+    assert.equal(timers.size, 0, 'posting does not begin paid sourcing or move funds');
+    submit('agentAuthorizationForm', {});
+    assert.equal(timers.size, 0, 'fee approval is still required independently');
+    submit('agentAuthorizationForm', { authorize: 'on' });
+    assert.match(html, /\$500 sourcing fee payment simulated/);
+    assert.equal(timers.size, 1, 'explicit sourcing approval retains its existing flow');
+    click('reset');
+    assert.equal(timers.size, 0);
+    click('run');
+    submit('agentBriefForm', complete);
+    click('guardrail'); advance();
+    click('post-inventory-rfq');
+    assert.equal(posted.length, 2, 'a separate request can be posted after reset');
+    assert.match(html, /No matching inventory yet. Your RFQ remains open for new supply/);
+    windowListeners.get('opennext:signout')();
+  } finally { Object.assign(globalThis, previous); }
+});

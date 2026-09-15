@@ -1,4 +1,4 @@
-import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260914-desk-1';
+import { renderAgentPanel, initializeAgentPanel } from './opennext-agent.js?v=opennext-20260915-marketplace-1';
 
 export function initializeWorkspaceShell() {
   const app = document.querySelector('#app');
@@ -6,6 +6,16 @@ export function initializeWorkspaceShell() {
   const toggle = document.querySelector('#agentToggle');
   const backdrop = document.querySelector('.agent-panel-backdrop');
   const mobile = matchMedia('(max-width:1000px)');
+  const header = app.querySelector('.workspace-header');
+  // The compact navigation can wrap or scale with browser zoom. Keep the agent
+  // aligned to the actual header edge, including when the public shell reveals it.
+  function updateHeaderHeight() {
+    const height = Math.ceil(header.getBoundingClientRect().height);
+    if (height) app.style.setProperty('--workspace-header-height', `${height}px`);
+  }
+  if (typeof ResizeObserver === 'function') new ResizeObserver(updateHeaderHeight).observe(header);
+  window.addEventListener('resize', updateHeaderHeight, { passive:true });
+  updateHeaderHeight();
   panel.innerHTML = renderAgentPanel();
   initializeAgentPanel();
   function applyTheme(theme) {
@@ -13,6 +23,7 @@ export function initializeWorkspaceShell() {
     const button=document.querySelector('[data-theme-toggle]');
     button?.setAttribute('aria-pressed',String(theme==='dark'));
     button?.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+    button?.setAttribute('title',theme==='dark'?'Switch to light mode':'Switch to dark mode');
     const label=button?.querySelector('[data-theme-label]');
     if(label) label.textContent=theme==='dark'?'Light mode':'Dark mode';
   }
@@ -37,15 +48,17 @@ export function initializeWorkspaceShell() {
     backdrop.hidden = true;
     toggle.setAttribute('aria-expanded', String(!mobile.matches && !app.classList.contains('agent-collapsed')));
   }
-  function closeMenus() {
-    document.querySelectorAll('.workspace-more[open]').forEach(menu => { menu.open = false; });
+  function closeMenus(except) {
+    document.querySelectorAll('.workspace-more[open]').forEach(menu => { if (menu !== except) menu.open = false; });
   }
   window.OpenNEXTCloseTransientUi = () => { closeMenus(); closeMobileAgent(); };
   mobile.addEventListener('change', () => { app.classList.remove('agent-collapsed'); closeMobileAgent(); });
   closeMobileAgent();
   // Legacy actions stop propagation at document capture; clean up menus first.
   window.addEventListener('click', event => {
-    if (!event.target.closest?.('.workspace-more') || event.target.closest?.('.workspace-more button,.workspace-more a')) closeMenus();
+    const menu = event.target.closest?.('.workspace-more');
+    if (!menu || event.target.closest?.('.workspace-more button,.workspace-more a')) closeMenus();
+    else if (event.target.closest?.('summary')) closeMenus(menu);
   }, true);
   document.addEventListener('click', event => {
     const control = event.target.closest?.('[data-shell-action]');
@@ -68,7 +81,9 @@ export function initializeWorkspaceShell() {
     if (event.key !== 'Escape') return;
     // Let a dialog consume Escape before dismissing the panel beneath it.
     if (document.querySelector('#modal-host [role="dialog"],#drawer-host [role="dialog"],dialog[open]')) return;
+    const openMenu = document.querySelector('.workspace-more[open]');
     closeMenus();
+    openMenu?.querySelector('summary')?.focus({ preventScroll:true });
     if (mobile.matches && panel.classList.contains('is-open')) { closeMobileAgent(); toggle.focus(); }
   }, true);
 }

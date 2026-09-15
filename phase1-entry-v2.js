@@ -13,7 +13,7 @@ if (titleDescriptor?.get && titleDescriptor?.set) {
 const { initI18n, localizeDocument } = await import("./i18n-stable.js?v=opennext-20260914-desk-1");
 const { installInteractionStability, finalizeInteractionStability } = await import("./interaction-stability.js?v=opennext-20260914-desk-1");
 const { installSearchCopyFix } = await import("./search-copy-fix-v2.js?v=opennext-20260914-desk-1");
-const { installMarketTools } = await import("./market-tools.js?v=opennext-20260914-desk-1");
+const { installMarketTools } = await import("./market-tools.js?v=opennext-20260915-marketplace-1");
 
 initI18n();
 installInteractionStability();

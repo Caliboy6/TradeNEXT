@@ -8,9 +8,11 @@
 - No external accounts, funds, suppliers or infrastructure are contacted. Activity records are deterministic simulation steps, not internal model reasoning.
 - The sourcing fee is $500, credited once against a completed order; it is not refunded if no order is placed. Optional one-month escrow is 50% of the monthly budget. Terms longer than six months use the first month plus 10% of the full budget. Two-to-six-month escrow terms are left for a separate agreement.
 
-## Pending original GCI source
+## GCI Index Factory
 
-The requested Claude design URL was not readable in this environment. Its contents have not been reconstructed or substituted. The intended integration point is between the Landing procurement process and the buyer/supplier section, with a locally hosted, responsive HTML panel titled **OpenNEXT GCI Index Factory**, and **System Architecture** / **End-to-End Workflow** views matching the public typography and border system. Integration needs the original `Price Index Factory.dc.html` upload.
+The original `OpenNEXT Index Factory.html` was supplied on 2026-09-15. The authored factory composition has been adapted into native HTML, CSS and SVG with **System Architecture** / **End-to-End Workflow** views, between the Landing procurement process and the buyer/supplier section. `gci-index-factory.html` offers a standalone view of the same component.
+
+The presentation preserves the master orchestrator, shared SLM, eight processing stages, duplicate rejection, evidence ledger, dual human sign-off and reviewed-lesson feedback. The displayed price, venue/quote counts and cadence are illustrative values from the supplied animation, not a live index feed. The original spec-alias example is expressed as reviewed spec handling; HBM3 and HBM3e are not treated as interchangeable. The upload's editor, bundler, React/Babel and cross-frame host controls are not included in the public application.
 
 ## Verification
 

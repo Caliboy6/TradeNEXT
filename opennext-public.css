@@ -27,7 +27,7 @@
 .public-container{width:calc(100% - 104px);max-width:1200px;margin:0 auto}
 .public-header{border-bottom:1px solid var(--on-line);height:76px;position:relative;z-index:5;background:#fff}
 .public-header-inner{height:100%;max-width:1304px;padding:0 52px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:30px}
-.public-nav{display:flex;gap:31px;margin-left:auto;margin-right:auto;padding-left:40px}
+.public-nav{display:flex;gap:27px;margin-left:auto;margin-right:auto;padding-left:20px}
 .public-nav button,.public-auth-header-links>button{border:0;background:transparent;padding:8px 0;color:var(--on-ink);font-size:13px}
 .public-nav button:hover,.public-auth-header-links>button:hover{text-decoration:underline;text-underline-offset:5px}
 .public-header-actions{display:flex;align-items:center;gap:30px}
@@ -403,3 +403,14 @@
   .public-flow-packet{animation:none;display:none}
   .public-flow-toggle,.public-flow-control{display:none}
 }
+
+/* Index Factory: a distinct, softly framed chapter in the public site. */
+.public-gci-band{background:linear-gradient(180deg,#fff,#f6f7f3 72px,#f6f7f3 calc(100% - 64px),#fff);scroll-margin-top:24px}
+.public-gci-section{padding-top:64px;padding-bottom:80px;border-top:1px solid var(--on-line)}
+.public-gci-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:28px}
+.public-gci-heading .on-eyebrow{margin-bottom:18px}
+.public-gci-heading .public-section-description{max-width:680px;font-size:15px}
+.public-gci-heading>.on-button{flex-shrink:0;font-size:12px!important;margin-bottom:3px}
+.public-sr-only{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:800px){.public-gci-section{padding-top:44px;padding-bottom:54px}.public-gci-heading{gap:20px;align-items:flex-start;flex-direction:column}.public-gci-heading .on-eyebrow{margin-bottom:14px}}
+@media(max-width:540px){.public-gci-heading h2{max-width:310px;font-size:32px}.public-gci-heading .public-section-description{font-size:14px}}

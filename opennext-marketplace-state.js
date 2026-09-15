@@ -157,7 +157,7 @@ function notificationFor(match, role, createdAt, read = false) {
     role,
     title: buyer ? 'Matching supply found' : 'Matching buyer found',
     body: buyer
-      ? `A ${match.model} inventory listing matches your request. Review the terms in My RFQs.`
+      ? `New ${match.model} inventory matches your request. Review the terms in My RFQs.`
       : `A buyer request matches your ${match.model} inventory. Review the request in My Supplies.`,
     rfqId: match.rfqId,
     supplyId: match.supplyId,

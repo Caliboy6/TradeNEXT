@@ -1,4 +1,4 @@
-import { initializePublic, initializePublicShell, reportWorkspaceFailure } from './opennext-public.js?v=opennext-20260915-original-1';
+import { initializePublic, initializePublicShell, reportWorkspaceFailure } from './opennext-public.js?v=opennext-20260915-public-cleanup-1';
 import './opennext-a11y.js?v=opennext-20260914-desk-1';
 const initialRoute = location.hash.slice(1);
 // The public site must never wait for the procurement application to load.

@@ -9,8 +9,8 @@ test('GCI is a public chapter between procurement and the supplier section',()=>
   assert.ok(start>html.indexOf('id="how-it-works"'));
   assert.ok(start<html.indexOf('id="suppliers"'));
   assert.match(html,/System Architecture and End-to-End Workflow for the GPU Compute Index/);
-  assert.match(html,/data-section="public-gci"/);
-  assert.match(html,/href="\.\/gci-index-factory\.html\?v=opennext-20260915-original-1"/);
+  assert.doesNotMatch(html,/data-section="public-gci"/);
+  assert.doesNotMatch(html,/Open full view/);
   assert.doesNotMatch(html,/[\u3400-\u9fff]/);
 });
 

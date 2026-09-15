@@ -1,4 +1,4 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260915-original-1';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260915-public-cleanup-1';
 import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260914-desk-1';
 
 const publicContent = document.querySelector('#publicContent');

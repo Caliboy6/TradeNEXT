@@ -10,16 +10,18 @@ test('GCI is a public chapter between procurement and the supplier section',()=>
   assert.ok(start<html.indexOf('id="suppliers"'));
   assert.match(html,/System Architecture and End-to-End Workflow for the GPU Compute Index/);
   assert.match(html,/data-section="public-gci"/);
-  assert.match(html,/href="\.\/gci-index-factory\.html"/);
+  assert.match(html,/href="\.\/gci-index-factory\.html\?v=opennext-20260915-original-1"/);
   assert.doesNotMatch(html,/[\u3400-\u9fff]/);
 });
 
-test('both public entry points ship prerendered GCI content without an authoring runtime',()=>{
-  for(const path of ['../index.html','../gci-index-factory.html']){
-    const html=readFileSync(new URL(path,import.meta.url),'utf8');
-    assert.match(html,/class="gci-factory/);
-    assert.match(html,/Index Generation Master Agent/);
-    assert.match(html,/Shared SLM/);
-    assert.doesNotMatch(html,/__bundler|babel-standalone|text\/babel|unpkg\.com|claude\.ai/);
-  }
+test('the landing page embeds the original composition without replacing it with a new interface',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  assert.match(html,/<iframe class="gci-original-frame"/);
+  assert.match(html,/src="\.\/gci-index-factory\.html\?v=opennext-20260915-original-1"/);
+  assert.match(html,/sandbox="allow-scripts"/);
+  assert.doesNotMatch(html,/gci-agent-grid|gci-stage-nav|gci-tabs|__bundler/);
+  const standalone=readFileSync(new URL('../gci-index-factory.html',import.meta.url),'utf8');
+  assert.match(standalone,/type="__bundler\/manifest"/);
+  assert.match(standalone,/type="__bundler\/template"/);
+  assert.doesNotMatch(standalone,/gci-stage-nav|gci-tabs/);
 });

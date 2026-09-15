@@ -1,5 +1,4 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260915-gci-1';
-import { initializeGciFactory, disposeGciFactory } from './opennext-gci.js?v=opennext-20260915-gci-1';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260915-original-1';
 import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260914-desk-1';
 
 const publicContent = document.querySelector('#publicContent');
@@ -30,13 +29,11 @@ function closeOverlays() {
 }
 
 function showPublic(route) {
-  disposeGciFactory();
   current = route;
   workspace.hidden = true;
   publicContent.hidden = false;
   document.body.classList.add('is-public');
   publicContent.innerHTML = route === 'home' ? renderLanding(lang()) : renderLogin(lang(), { ...draft, mode: route === 'signup' ? 'register' : draft.mode });
-  if (route === 'home') initializeGciFactory(publicContent);
   document.documentElement.classList.remove('i18n-loading');
 }
 
@@ -77,7 +74,6 @@ function parseRoute(raw) {
 
 export function navigatePublic(raw = 'home', options = {}) {
   const route = parseRoute(raw);
-  disposeGciFactory();
   closeOverlays();
   if (workspaceRoutes.has(route)) {
     if (!session || session.expiresAt <= Date.now()) {

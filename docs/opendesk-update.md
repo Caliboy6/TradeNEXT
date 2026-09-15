@@ -10,9 +10,9 @@
 
 ## GCI Index Factory
 
-The original `OpenNEXT Index Factory.html` was supplied on 2026-09-15. The authored factory composition has been adapted into native HTML, CSS and SVG with **System Architecture** / **End-to-End Workflow** views, between the Landing procurement process and the buyer/supplier section. `gci-index-factory.html` offers a standalone view of the same component.
+The original `OpenNEXT Index Factory.html` supplied on 2026-09-15 is embedded directly as its original continuous 1920 × 1080 composition. All eight stations remain on the same factory floor; the conveyor, tracked lot, duplicate-case escalation, shared-memory feedback, camera movement, opening title, release overlay and original playback controls are preserved. The standalone `gci-index-factory.html` is the same self-contained uploaded bundle, with only background/text colors and page metadata changed.
 
-The presentation preserves the master orchestrator, shared SLM, eight processing stages, duplicate rejection, evidence ledger, dual human sign-off and reviewed-lesson feedback. The displayed price, venue/quote counts and cadence are illustrative values from the supplied animation, not a live index feed. The original spec-alias example is expressed as reviewed spec handling; HBM3 and HBM3e are not treated as interchangeable. The upload's editor, bundler, React/Babel and cross-frame host controls are not included in the public application.
+The scene uses Landing Page white/paper backgrounds and ink/muted text. Original accent graphics, fonts, geometry, timings and loop configuration remain intact. `scripts/theme-gci.mjs` applies the explicit palette-only transformations to the uploaded file; source-fidelity tests protect the original composition and bundled dependencies. Values inside the original animation remain scripted examples, not a live index feed.
 
 ## Verification
 

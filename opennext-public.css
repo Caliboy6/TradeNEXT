@@ -405,7 +405,7 @@
 }
 
 /* Index Factory: a distinct, softly framed chapter in the public site. */
-.public-gci-band{background:linear-gradient(180deg,#fff,#f6f7f3 72px,#f6f7f3 calc(100% - 64px),#fff);scroll-margin-top:24px}
+.public-gci-band{background:#fff;scroll-margin-top:24px}
 .public-gci-section{padding-top:64px;padding-bottom:80px;border-top:1px solid var(--on-line)}
 .public-gci-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:28px}
 .public-gci-heading .on-eyebrow{margin-bottom:18px}

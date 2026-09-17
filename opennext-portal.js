@@ -3,7 +3,7 @@ import { demandTape } from './procurement-data.js?v=opennext-20260914-desk-1';
 import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260915-marketplace-1';
 import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260917-english-only-1';
 import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260914-desk-1';
-import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260917-market-perspective-1';
+import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260917-market-perspective-2';
 import { createMarketplaceStore } from './opennext-marketplace-state.js?v=opennext-20260917-rental-terms-1';
 import { initializeMarketplace, renderMarketplacePage, openMarketplaceComposer } from './opennext-marketplace.js?v=opennext-20260917-rental-terms-1';
 

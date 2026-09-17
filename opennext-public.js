@@ -1,4 +1,4 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260917-public-landing-1';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260917-public-landing-2';
 import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260914-desk-1';
 
 const publicContent = document.querySelector('#publicContent');
@@ -14,6 +14,7 @@ let workspaceRender;
 let workspaceNavigate;
 let current = '';
 let pending = 'opendesk';
+let pendingGpuMarket = '';
 let ignoreNextHash = false;
 let draft = { mode: 'account', email: '', name: '', company: '', terms: false, error: '' };
 let publicTickerTimer = null;
@@ -42,16 +43,20 @@ function startPublicTicker() {
   const rows = [...(root?.querySelectorAll('[data-ticker-row]') || [])];
   if (!root || !stack || rows.length < 2) return;
   let index = 0;
+  const isPaused = () => root.querySelector('.public-ticker-toggle')?.checked || root.matches(':hover') || root.matches(':focus-within');
   const render = () => {
-    const paused = root.querySelector('.public-ticker-toggle')?.checked;
-    if (paused) return;
+    if (isPaused()) return;
     rows.forEach((row, rowIndex) => row.classList.toggle('is-active', rowIndex === index));
     stack.dataset.tickerActive = String(index);
   };
   delete stack.dataset.tickerActive;
   render();
+  root.addEventListener('pointerenter', () => root.classList.add('is-hovered'));
+  root.addEventListener('pointerleave', () => { root.classList.remove('is-hovered'); render(); });
+  root.addEventListener('focusin', render);
+  root.addEventListener('focusout', () => requestAnimationFrame(render));
   publicTickerTimer = setInterval(() => {
-    if (root.querySelector('.public-ticker-toggle')?.checked) return;
+    if (isPaused()) return;
     index = (index + 1) % rows.length;
     render();
   }, 5000);
@@ -63,8 +68,18 @@ function startPublicAgentDemo() {
   if (!root) return;
   const steps = [...root.querySelectorAll('[data-agent-step]')];
   const details = [...root.querySelectorAll('[data-agent-detail]')];
+  const workspaceDetails = [...root.querySelectorAll('[data-agent-workspace-detail]')];
   if (!steps.length) return;
   let index = 0;
+  const activity = ['Parsing the buyer brief', 'Drafting the standard RFQ', 'Comparing private supply', 'Completing shared terms', 'Preparing buyer approval', 'Sealing the order record'];
+  const messages = [
+    'Understood. I am capturing the minimum fields needed to start a private match.',
+    'The RFQ is ready. Only buyer-approved specifications are included.',
+    'Three private supply signals are being compared against the brief.',
+    'The shared rental agreement is being completed from buyer and seller terms.',
+    'The best-fit quote is ready for buyer approval with counterparties masked.',
+    'The order record is sealed. Capacity is reserved in this simulated run.',
+  ];
   const render = () => {
     steps.forEach((step, stepIndex) => {
       step.classList.toggle('is-active', stepIndex === index);
@@ -73,6 +88,7 @@ function startPublicAgentDemo() {
       if (state) state.textContent = stepIndex < index || (index === steps.length - 1 && stepIndex === index) ? 'Complete' : stepIndex === index ? 'Live' : 'Queued';
     });
     details.forEach((detail, detailIndex) => { detail.hidden = detailIndex !== index; });
+    workspaceDetails.forEach((detail, detailIndex) => { detail.hidden = detailIndex !== index; });
     const finalStep = index === steps.length - 1;
     const status = root.querySelector('[data-agent-demo-status]');
     const progress = root.querySelector('[data-agent-demo-progress]');
@@ -80,9 +96,21 @@ function startPublicAgentDemo() {
     if (status) status.textContent = finalStep ? 'Order confirmed' : 'Running';
     if (progress) progress.textContent = `Step ${String(index + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
     if (order) order.textContent = finalStep ? 'Order confirmed · capacity reserved' : index >= 3 ? 'Agreement in progress' : 'Preparing match';
+    const activityLabel = root.querySelector('[data-agent-demo-activity]');
+    if (activityLabel) activityLabel.textContent = activity[index] || activity[0];
+    const stageTag = root.querySelector('[data-agent-demo-stage-tag]');
+    if (stageTag) stageTag.textContent = finalStep ? 'Complete' : 'Live';
+    const workspaceStatus = root.querySelector('[data-agent-demo-workspace-status]');
+    if (workspaceStatus) workspaceStatus.textContent = finalStep ? 'Order confirmed' : 'Simulating';
+    const workspaceProgress = root.querySelector('[data-agent-demo-workspace-progress]');
+    if (workspaceProgress) workspaceProgress.textContent = `${String(index + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
+    const workspaceRecord = root.querySelector('[data-agent-demo-workspace-record]');
+    if (workspaceRecord) workspaceRecord.textContent = finalStep ? 'Sealed' : index >= 3 ? 'Shared draft' : index >= 1 ? 'Prepared' : 'Draft';
+    const message = root.querySelector('[data-agent-demo-message]');
+    if (message) message.textContent = messages[index] || messages[0];
   };
   render();
-  publicAgentDemoTimer = setInterval(() => { index = (index + 1) % steps.length; render(); }, 2800);
+  publicAgentDemoTimer = setInterval(() => { index = (index + 1) % steps.length; render(); }, 3200);
 }
 
 function showPublic(route) {
@@ -148,6 +176,7 @@ export function navigatePublic(raw = 'home', options = {}) {
     } else {
       current = route;
       if (ready) {
+        applyPendingGpuMarket();
         publicContent.hidden = true;
         workspace.hidden = false;
         document.body.classList.remove('is-public');
@@ -170,6 +199,14 @@ function completeDemo(profile) {
   draft.error = '';
   draft.mode = 'account';
   navigatePublic('opendesk', { replace: true });
+}
+
+function applyPendingGpuMarket() {
+  if (!pendingGpuMarket || typeof window.OpenNEXTSetGpuMarket !== 'function') return false;
+  const market = pendingGpuMarket;
+  const applied = window.OpenNEXTSetGpuMarket(market);
+  if (applied) pendingGpuMarket = '';
+  return Boolean(applied);
 }
 
 function showContactModal() {
@@ -272,12 +309,22 @@ document.addEventListener('click', event => {
     return completeDemo({ email:`${provider}.user@demo.example`, name:`${providers[provider]} demo user` });
   }
   if (action === 'open-workspace') {
+    pendingGpuMarket = '';
     pending = safeDestination(item.dataset.target);
     if (item.dataset.mode) {
       pendingGpuMode = item.dataset.mode;
       window.OpenNEXTSetGpuMode?.(pendingGpuMode);
     }
     return navigatePublic(pending);
+  }
+  if (action === 'open-market') {
+    const market = String(item.dataset.gpuMarket || '').toUpperCase();
+    if (!['H100', 'H200', 'A100'].includes(market)) return;
+    pending = 'opendesk';
+    pendingGpuMarket = market;
+    pendingGpuMode = 'rental';
+    window.OpenNEXTSetGpuMode?.(pendingGpuMode);
+    return navigatePublic(session && session.expiresAt > Date.now() ? 'opendesk' : 'login');
   }
   if (action === 'locale') {
     return;
@@ -365,6 +412,7 @@ export function initializePublic(initialRoute) {
   ready = true;
   window.OpenNEXTWorkspaceReady = true;
   if (pendingGpuMode) window.OpenNEXTSetGpuMode?.(pendingGpuMode);
+  applyPendingGpuMarket();
   navigatePublic(current || initialRoute || 'home', { replace: true });
   // These files deliberately override legacy styles injected during startup.
   for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style', 'opennext-capacity-style', 'opennext-account-style', 'opennext-portal-style', 'opennext-desk-style', 'opennext-theme-style', 'opennext-gci-style']) {

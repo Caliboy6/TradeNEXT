@@ -178,6 +178,13 @@ function refresh() {
   const root = document.getElementById('openDesk');
   if (root) root.outerHTML = renderOpenDesk();
 }
+export function setDeskMarket(gpuId) {
+  const selected = GPU_MARKETS.find(item => item.id === String(gpuId || '').toUpperCase());
+  if (!selected) return false;
+  view.gpu = selected.id;
+  refresh();
+  return true;
+}
 function showPoint(index) {
   const root = document.querySelector('[data-desk-chart]');
   if (!root) return;
@@ -197,6 +204,7 @@ function showPoint(index) {
 export function initializeOpenDesk() {
   if (initialized || typeof window === 'undefined') return;
   initialized = true;
+  window.OpenNEXTSetGpuMarket = setDeskMarket;
   loadReservations();
   window.addEventListener('click', event => {
     const target = event.target.closest?.('[data-desk-gpu], [data-desk-region], [data-desk-range], [data-desk-tab], [data-desk-action]');

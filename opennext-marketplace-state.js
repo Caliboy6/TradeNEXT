@@ -59,6 +59,7 @@ function agreementSide(values, keys) {
   return result;
 }
 function restoredAgreementSide(values, keys) {
+  if (!isObject(values) || !keys.some(key => Object.prototype.hasOwnProperty.call(values, key))) return {};
   const result = {};
   for (const key of keys) {
     try { result[key] = cleanText(values?.[key], key, 180, true); } catch { result[key] = ''; }

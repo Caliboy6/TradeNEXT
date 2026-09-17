@@ -1,7 +1,7 @@
-// OpenDesk is a local market-operations view. Indicative series and activity
-// fixtures are deliberately deterministic; no live feed or orderbook is used.
+// OpenDesk is a local market-operations view. The terminal snapshot uses
+// deterministic data and privacy-safe activity signals; no live feed or orderbook is exposed.
 const STORAGE_KEY = 'opennext.desk.reservations.v1';
-const MARKET_AS_OF = '2026-09-14T09:00:00Z';
+const MARKET_AS_OF = '2026-09-17T09:00:00Z';
 const DAY = 86400000;
 const GPU_MARKETS = [
   { id: 'H100', spec: 'SXM · 80 GB HBM3', rate: 2.72, change: 3.42, available: 4096 },
@@ -19,12 +19,12 @@ const REGIONS = [
   { id: 'Tokyo', code: 'AP-JP', multiplier: 1.09, suppliers: 4 },
 ];
 const recentFixtures = [
-  ['H100', 'Order completed', '64 GPUs', 'Singapore', '09:00'],
-  ['H200', 'Order delivered', '32 GPUs', 'US East', '08:57'],
-  ['B300', 'Order completed', '16 GPUs', 'Frankfurt', '08:53'],
-  ['H100', 'Order delivered', '128 GPUs', 'US West', '08:48'],
-  ['B200', 'Order completed', '64 GPUs', 'Singapore', '08:42'],
-  ['H200', 'Order completed', '16 GPUs', 'Tokyo', '08:38'],
+  { code: 'M-7F2C', model: 'H100', status: 'Order confirmed', signal: 'SLA 99.95% · 4/4 terms', fit: '96% fit', time: '09:00' },
+  { code: 'M-4A91', model: 'H200', status: 'Capacity delivered', signal: 'SLA 99.90% · 3/4 terms', fit: '93% fit', time: '08:57' },
+  { code: 'M-0D68', model: 'B300', status: 'Terms aligned', signal: 'Availability verified · 30d', fit: '91% fit', time: '08:53' },
+  { code: 'M-8C34', model: 'H100', status: 'Order confirmed', signal: 'Topology matched · private', fit: '89% fit', time: '08:48' },
+  { code: 'M-2E75', model: 'B200', status: 'Buyer review', signal: 'SLA 99.95% · 2/4 terms', fit: '87% fit', time: '08:42' },
+  { code: 'M-6B12', model: 'H200', status: 'Supply verified', signal: 'Policy passed · private', fit: '84% fit', time: '08:38' },
 ];
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const number = value => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value);
@@ -117,11 +117,18 @@ function regionList() {
 }
 
 function recentMatches() {
-  const matches = [...reservations.slice(0, 2).map(item => [item.gpu, 'Order reserved', `${item.quantity} GPUs`, item.region, 'Just now']), ...recentFixtures];
-  const batch = matches.map(([model, status, , , time]) => `<article class="od-match"><span class="od-match-top"><strong>${esc(model)}</strong><small>${esc(time)}</small></span><p><i aria-hidden="true"></i>${esc(status)}</p></article>`).join('');
-  return `<section class="od-panel od-recent"><div class="od-panel-title"><h2>Recent matches</h2><button type="button" class="od-icon-button" data-desk-action="pause" aria-label="${view.paused ? 'Resume' : 'Pause'} recent matches" aria-pressed="${view.paused}">${view.paused ? '▶' : 'Ⅱ'}</button></div><p class="od-recent-intro">Across the network</p><div class="od-match-window"><div class="od-match-track${view.paused ? ' is-paused' : ''}"><div>${batch}</div><div aria-hidden="true">${batch}</div></div></div><div class="od-recent-footer"><span class="od-status-dot"></span>Completed &amp; delivered</div></section>`;
+  const privateMatches = reservations.slice(0, 2).map((item, index) => ({
+    code: `M-PR${String(index + 1).padStart(2, '0')}`,
+    model: String(item.gpu).split(' ')[0],
+    status: 'Private match reserved',
+    signal: 'Counterparties masked · terms private',
+    fit: 'Matched',
+    time: 'Just now',
+  }));
+  const matches = [...privateMatches, ...recentFixtures];
+  const batch = matches.map(item => `<article class="od-match"><span class="od-match-top"><strong>${esc(item.model)}</strong><small>${esc(item.time)}</small></span><p><i aria-hidden="true"></i>${esc(item.status)}</p><div class="od-match-meta"><span>${esc(item.code)}</span><span>${esc(item.fit)}</span></div><small class="od-match-signal">${esc(item.signal)}</small></article>`).join('');
+  return `<section class="od-panel od-recent"><div class="od-panel-title"><h2>Recent matches</h2><button type="button" class="od-icon-button" data-desk-action="pause" aria-label="${view.paused ? 'Resume' : 'Pause'} recent matches" aria-pressed="${view.paused}">${view.paused ? '▶' : 'Ⅱ'}</button></div><p class="od-recent-intro">Across the network · identities and transaction terms masked</p><div class="od-match-window"><div class="od-match-track${view.paused ? ' is-paused' : ''}"><div>${batch}</div><div aria-hidden="true">${batch}</div></div></div><div class="od-recent-footer"><span class="od-status-dot"></span>Completed &amp; delivered · privacy-safe view</div></section>`;
 }
-
 function seededCapacity() {
   return [
     { id: 'ON-9428', gpu: 'H100 SXM', quantity: 32, region: 'Singapore', supplier: 'Meridian Compute', hourlyRate: 2.28, startDate: seededAt - DAY, durationDays: 3, totalPrice: 5253.12, status: 'Running' },
@@ -150,13 +157,13 @@ function holdings() {
 
 function insights() {
   const items = [
-    ['Procurement note', 'The hourly rate is only part of the cost.', 'Compare networking, storage, egress, support and minimum commitments before choosing a supplier. A lower GPU-hour rate does not always produce a lower total reservation cost.'],
-    ['Capacity planning', 'Match delivery dates before comparing prices.', 'Confirm your required start date, region, interconnect and allocation size first. A quote is actionable only when the supplier can meet the complete specification.'],
-    ['Index methodology', 'An index is a reference, not an executable offer.', 'The GCI line compares indicative GPU-hour pricing over time. It is not a bid, ask or guaranteed transaction price. Figures shown in this workspace are illustrative and do not represent a real-time supplier feed.'],
+    { type: 'SUPPLY CHAIN', time: '08:52 UTC', title: 'HBM3e lead time remains the key constraint', body: 'Keep a delivery buffer for H100 and H200 requests. Confirm allocation date, interconnect and power envelope before comparing a lower GPU-hour rate.', impact: 'Supply · High' },
+    { type: 'POWER / FABRIC', time: '08:31 UTC', title: 'Interconnect is widening quote variance', body: '400G fabric, RDMA and facility power are now first-order quote inputs. Record them in the RFQ so supplier responses remain comparable.', impact: 'Pricing · Medium' },
+    { type: 'DEMAND PULSE', time: '08:04 UTC', title: 'Shorter inference windows are clearing faster', body: 'The latest snapshot shows more demand for flexible terms under 30 days. Keep the first RFQ concise, then confirm longer commitments in the shared rental document.', impact: 'Demand · Positive' },
+    { type: 'INDEX WATCH', time: '07:46 UTC', title: 'GCI reference breadth expands across regions', body: 'The reference view combines qualified signals across five regions. It is a benchmark for comparison, never a bid, ask or executable offer.', impact: 'Reference · Stable' },
   ];
-  return `<section class="od-panel od-insights"><div class="od-panel-title"><h2>Market perspective</h2><span>For better procurement decisions</span></div>${items.map(([type, title, body]) => `<details><summary><small>${type}</small><strong>${title}</strong><span aria-hidden="true">↗</span></summary><p>${body}</p></details>`).join('')}</section>`;
+  return `<section class="od-panel od-insights"><div class="od-panel-title"><h2>Market perspective</h2><span>Terminal view · 17 Sep 2026, 09:00 UTC</span></div><div class="od-insights-wire"><span><i></i>EVENTS &amp; DATA</span><small>Illustrative market snapshot</small></div>${items.map(item => `<details><summary><small>${item.type}</small><strong>${item.title}</strong><span aria-hidden="true">↗</span><time>${item.time}</time><em>${item.impact}</em></summary><p>${item.body}</p></details>`).join('')}</section>`;
 }
-
 export function renderOpenDesk() {
   loadReservations();
   const item = gpu(), place = region();

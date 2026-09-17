@@ -161,6 +161,9 @@ body[data-theme="dark"] .mp-field input[type="date"] { color-scheme:dark; }
 .mp-agreement-flow>.mp-form-section{padding-top:17px}
 .mp-agreement-flow>.mp-form-section:last-child{border-bottom:0;padding-bottom:15px}
 .mp-agreement-flow .mp-form-section + .mp-form-section{margin-top:0}
+.mp-agreement-clauses{display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid var(--on-border,#dfe3df)}
+.mp-agreement-clauses span{flex:none;color:var(--on-subtle,#6e7571);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.mp-agreement-clauses p{margin:0;color:var(--on-text,#1b201e);font-size:10px;line-height:1.6}
 @media(max-width:620px){
   .mp-agreement-flow-head{flex-direction:column;gap:11px}
   .mp-agreement-stages{grid-template-columns:1fr}

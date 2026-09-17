@@ -1,4 +1,4 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260915-public-cleanup-1';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260917-public-landing-1';
 import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260914-desk-1';
 
 const publicContent = document.querySelector('#publicContent');
@@ -16,6 +16,8 @@ let current = '';
 let pending = 'opendesk';
 let ignoreNextHash = false;
 let draft = { mode: 'account', email: '', name: '', company: '', terms: false, error: '' };
+let publicTickerTimer = null;
+let publicAgentDemoTimer = null;
 const lang = () => 'en';
 const copy = (en, zh) => lang() === 'zh-CN' ? zh : en;
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -28,6 +30,61 @@ function closeOverlays() {
   window.OpenNEXTCloseTransientUi?.();
 }
 
+function stopPublicMotion() {
+  if (publicTickerTimer) { clearInterval(publicTickerTimer); publicTickerTimer = null; }
+  if (publicAgentDemoTimer) { clearInterval(publicAgentDemoTimer); publicAgentDemoTimer = null; }
+}
+
+function startPublicTicker() {
+  if (publicTickerTimer) clearInterval(publicTickerTimer);
+  const root = publicContent.querySelector('.public-gpu-ticker');
+  const stack = root?.querySelector('.public-ticker-row-stack');
+  const rows = [...(root?.querySelectorAll('[data-ticker-row]') || [])];
+  if (!root || !stack || rows.length < 2) return;
+  let index = 0;
+  const render = () => {
+    const paused = root.querySelector('.public-ticker-toggle')?.checked;
+    if (paused) return;
+    rows.forEach((row, rowIndex) => row.classList.toggle('is-active', rowIndex === index));
+    stack.dataset.tickerActive = String(index);
+  };
+  delete stack.dataset.tickerActive;
+  render();
+  publicTickerTimer = setInterval(() => {
+    if (root.querySelector('.public-ticker-toggle')?.checked) return;
+    index = (index + 1) % rows.length;
+    render();
+  }, 5000);
+}
+
+function startPublicAgentDemo() {
+  if (publicAgentDemoTimer) clearInterval(publicAgentDemoTimer);
+  const root = publicContent.querySelector('[data-agent-demo]');
+  if (!root) return;
+  const steps = [...root.querySelectorAll('[data-agent-step]')];
+  const details = [...root.querySelectorAll('[data-agent-detail]')];
+  if (!steps.length) return;
+  let index = 0;
+  const render = () => {
+    steps.forEach((step, stepIndex) => {
+      step.classList.toggle('is-active', stepIndex === index);
+      step.classList.toggle('is-complete', stepIndex < index || (index === steps.length - 1 && stepIndex === index));
+      const state = step.querySelector('em');
+      if (state) state.textContent = stepIndex < index || (index === steps.length - 1 && stepIndex === index) ? 'Complete' : stepIndex === index ? 'Live' : 'Queued';
+    });
+    details.forEach((detail, detailIndex) => { detail.hidden = detailIndex !== index; });
+    const finalStep = index === steps.length - 1;
+    const status = root.querySelector('[data-agent-demo-status]');
+    const progress = root.querySelector('[data-agent-demo-progress]');
+    const order = root.querySelector('[data-agent-demo-order-status]');
+    if (status) status.textContent = finalStep ? 'Order confirmed' : 'Running';
+    if (progress) progress.textContent = `Step ${String(index + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
+    if (order) order.textContent = finalStep ? 'Order confirmed · capacity reserved' : index >= 3 ? 'Agreement in progress' : 'Preparing match';
+  };
+  render();
+  publicAgentDemoTimer = setInterval(() => { index = (index + 1) % steps.length; render(); }, 2800);
+}
+
 function showPublic(route) {
   current = route;
   workspace.hidden = true;
@@ -35,6 +92,12 @@ function showPublic(route) {
   document.body.classList.add('is-public');
   publicContent.innerHTML = route === 'home' ? renderLanding(lang()) : renderLogin(lang(), { ...draft, mode: route === 'signup' ? 'register' : draft.mode });
   document.documentElement.classList.remove('i18n-loading');
+  if (route === 'home') {
+    startPublicTicker();
+    startPublicAgentDemo();
+  } else {
+    stopPublicMotion();
+  }
 }
 
 function showWorkspaceStartup() {
@@ -109,6 +172,20 @@ function completeDemo(profile) {
   navigatePublic('opendesk', { replace: true });
 }
 
+function showContactModal() {
+  const host = document.getElementById('modal-host');
+  host.innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog public-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="public-contact-title"><header class="modal-head"><h2 id="public-contact-title">Contact OpenNEXT</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><p class="public-contact-intro">Tell us what you are sourcing, where you need it, and when you want to start. Our capacity desk will follow up with the right next step.</p><form class="public-contact-form" data-contact-form novalidate><label><span>Work email</span><input type="email" name="email" autocomplete="email" placeholder="you@company.com" required></label><label><span>Full name</span><input type="text" name="name" autocomplete="name" placeholder="Your name" required></label><label><span>Company</span><input type="text" name="company" autocomplete="organization" placeholder="Company name" required></label><label><span>Job title</span><input type="text" name="title" autocomplete="organization-title" placeholder="Your role" required></label><label class="public-contact-wide"><span>What would you like to discuss?</span><textarea name="message" rows="4" maxlength="2000" placeholder="Capacity, delivery, commercial terms or partnership context" required></textarea></label><div class="public-contact-actions"><button type="button" class="on-button on-button-outline" data-public-action="close-info">Cancel</button><button type="submit" class="on-button on-button-primary">Send inquiry</button></div></form></div></section></div>`;
+  document.body.classList.add('overlay-open');
+  host.querySelector('[name="email"]')?.focus();
+}
+
+function showContactSuccess() {
+  const host = document.getElementById('modal-host');
+  host.innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog public-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="public-contact-success-title"><header class="modal-head"><h2 id="public-contact-success-title">Inquiry ready</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><div class="public-contact-success"><h3>Thank you — we have your note.</h3><p>This demo does not send email, but your inquiry details have been validated and are ready for the OpenNEXT capacity desk.</p></div></div><footer class="modal-footer"><button type="button" class="on-button on-button-primary" data-public-action="close-info">Close</button></footer></section></div>`;
+  document.body.classList.add('overlay-open');
+  host.querySelector('[data-public-action="close-info"]')?.focus();
+}
+
 function showInfo(type) {
   const policies = {
     terms: ['Terms of Service · Demo preview', 'OpenNEXT is currently a product demonstration. Accounts, listings, quotes and transactions are illustrative. No purchase, payment or delivery is executed. Production service terms will be presented before real trading is enabled.'],
@@ -157,6 +234,11 @@ function showProvider(provider) {
 
 // Register before legacy listeners so public routes never enter market renderers.
 document.addEventListener('click', event => {
+  const replay = event.target.closest?.('[data-public-demo-replay]');
+  if (replay) {
+    event.preventDefault(); event.stopImmediatePropagation();
+    startPublicAgentDemo(); return;
+  }
   const item = event.target.closest?.('[data-public-action]');
   const flow = event.target.closest?.('[data-flow-action]');
   if (flow?.dataset.flowAction === 'confirm-logout') {
@@ -178,6 +260,7 @@ document.addEventListener('click', event => {
   const action = item.dataset.publicAction;
   if (action === 'retry') return location.reload();
   if (action === 'home') return navigatePublic('home');
+  if (action === 'contact') return showContactModal();
   if (action === 'signin') { captureAuthDraft(); draft.mode = 'account'; draft.error = ''; return navigatePublic('login'); }
   if (action === 'register') { captureAuthDraft(); draft.error = ''; return navigatePublic('signup'); }
   if (action === 'email-code' || action === 'forgot-password') { captureAuthDraft(); draft.mode = 'email'; draft.error = ''; return navigatePublic('login'); }
@@ -214,6 +297,12 @@ document.addEventListener('click', event => {
 }, true);
 
 document.addEventListener('submit', event => {
+  const contactForm = event.target.closest?.('[data-contact-form]');
+  if (contactForm) {
+    event.preventDefault(); event.stopImmediatePropagation();
+    if (!contactForm.reportValidity()) return;
+    showContactSuccess(); return;
+  }
   const form = event.target.closest?.('[data-auth-form]');
   if (!form) return;
   event.preventDefault(); event.stopImmediatePropagation();

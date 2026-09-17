@@ -537,6 +537,61 @@
 .public-demo-workspace-footer i{width:6px;height:6px;border-radius:50%;background:#87a56e}
 .public-agent-demo-footer-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 17px;border-top:1px solid #d5d8d1;color:#7a8272;background:#fbfcf9;font-size:10px}
 .public-agent-demo-footer-bar button{border:0;border-bottom:1px solid #9ba392;background:transparent;padding:3px 0;color:#4c5946;font-size:10px;cursor:pointer}
+.public-agent-demo-shell{grid-template-columns:minmax(0,1.12fr) minmax(320px,.72fr);min-height:0;align-items:stretch}
+.public-demo-explainer{min-width:0;padding:27px 30px 25px;border-right:1px solid #d5d8d1;background:#f6f8f3}
+.public-demo-explainer-intro{max-width:520px}
+.public-demo-explainer-intro h4{margin:10px 0 7px;color:#171a16;font-family:var(--on-serif);font-size:25px;font-weight:400;letter-spacing:-.6px;line-height:1.15}
+.public-demo-explainer-intro>p:last-child{margin:0;color:#6d7469;font-size:12px;line-height:1.6}
+.public-demo-step-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:23px}
+.public-demo-step-button{display:grid;grid-template-columns:25px minmax(0,1fr) auto;gap:10px;align-items:start;min-width:0;min-height:62px;padding:11px 11px 10px;border:1px solid #d5dbd0;border-radius:0;background:#fbfcf9;color:#657060;text-align:left;cursor:pointer;transition:border-color .16s ease,background .16s ease,box-shadow .16s ease,transform .16s ease}
+.public-demo-step-button:hover{border-color:#9aaa91;background:#fff;transform:translateY(-1px)}
+.public-demo-step-button:focus-visible{outline:2px solid #6f8768;outline-offset:2px}
+.public-demo-step-button.is-active{border-color:#78906e;background:#fff;box-shadow:inset 3px 0 #78906e}
+.public-demo-step-number{color:#879380;font-size:10px;font-variant-numeric:tabular-nums;line-height:1.6}
+.public-demo-step-button.is-active .public-demo-step-number{color:#4f704a}
+.public-demo-step-copy{display:grid;gap:4px;min-width:0}
+.public-demo-step-copy strong{color:#313b2e;font-size:11px;font-weight:600;line-height:1.3}
+.public-demo-step-copy small{overflow-wrap:anywhere;color:#7a8272;font-size:9px;line-height:1.35}
+.public-demo-step-button em{justify-self:end;padding-top:1px;color:#9aa397;font-size:8px;font-style:normal;font-weight:600;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.public-demo-step-button.is-active em{color:#4f704a}
+.public-demo-step-details{margin-top:19px}
+.public-demo-step-detail{padding:17px 17px 15px;border:1px solid #d5dbd0;background:#fff}
+.public-demo-step-detail[hidden]{display:none!important}
+.public-demo-step-detail h4{margin:8px 0 6px;color:#20271e;font-family:var(--on-serif);font-size:22px;font-weight:400;letter-spacing:-.45px;line-height:1.2}
+.public-demo-step-detail>p{max-width:560px;margin:0;color:#6d7469;font-size:11px;line-height:1.6}
+.public-demo-agent-panel{min-width:0;min-height:0;height:auto;overflow:hidden;border:0;background:#fff}
+.public-demo-agent-panel .agent-heading{padding:18px 20px 14px}
+.public-demo-agent-panel .agent-heading h2{font-size:20px}
+.public-demo-agent-panel .agent-heading p{margin-top:4px;font-size:10px}
+.public-demo-agent-panel .agent-context{padding:8px 20px;font-size:10px}
+.public-demo-agent-panel .agent-context strong{font-size:10px}
+.public-demo-agent-panel .agent-scroll{padding:0 20px 16px}
+.public-demo-agent-panel .agent-intro{padding:11px 0 13px}
+.public-demo-agent-panel .agent-intro p{font-size:10px;line-height:1.55}
+.public-demo-agent-panel .agent-message{margin-bottom:10px}
+.public-demo-agent-panel .agent-message-user{padding:9px 10px}
+.public-demo-agent-panel .agent-speaker{margin-bottom:3px;font-size:9px}
+.public-demo-agent-panel .agent-message p{font-size:10px;line-height:1.55}
+.public-demo-auto-badge{min-height:21px;padding:3px 6px;font-size:8px}
+.public-agent-demo-active-card{margin:0 0 11px!important;padding:11px 11px 10px!important}
+.public-agent-demo-activity{gap:4px 8px;padding-bottom:9px}
+.public-agent-demo-activity strong{font-size:11px}
+.public-agent-demo-activity em{font-size:8px}
+.public-agent-demo-agent-state{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 9px;margin-top:10px;padding-top:9px;border-top:1px solid var(--agent-subtle)}
+.public-agent-demo-agent-state>span{grid-column:1/-1;color:var(--agent-muted);font-size:9px}
+.public-agent-demo-agent-state>strong{min-width:0;overflow-wrap:anywhere;color:var(--agent-text);font-size:10px;font-weight:500;line-height:1.35}
+.public-agent-demo-agent-state>small{align-self:end;color:var(--agent-muted);font-size:9px;white-space:nowrap}
+.public-demo-agent-panel .public-agent-demo-work-log{margin:0!important;padding:10px 10px 4px!important}
+.public-demo-agent-panel .public-agent-demo-work-log>.agent-kicker{margin-bottom:2px}
+.public-demo-agent-panel .public-agent-demo-work-log .agent-log-step{min-height:31px;padding:6px 0;gap:8px}
+.public-demo-agent-panel .public-agent-demo-work-log .agent-log-step>span{flex-basis:16px;font-size:9px;line-height:1.5}
+.public-demo-agent-panel .public-agent-demo-work-log .agent-log-step strong{font-size:10px;line-height:1.35}
+.public-demo-agent-panel .public-agent-demo-work-log .agent-log-step em{font-size:7px}
+.public-demo-agent-panel .public-agent-demo-work-log .agent-log-step.is-current>span{animation:none!important}
+.public-demo-agent-footer{padding:9px 20px;font-size:9px}
+.public-demo-agent-footer strong{font-size:8px}
+.public-agent-demo-footer-bar{padding:11px 17px;font-size:9px}
+.public-agent-demo-footer-bar>span:last-child{color:#929b8d}
 .public-contact-dialog{width:min(640px,96vw)}
 .public-contact-intro{margin:0 0 17px;color:#666d62;font-size:13px;line-height:1.55}
 .public-contact-form{display:grid;grid-template-columns:1fr 1fr;gap:13px 15px}
@@ -557,7 +612,9 @@
   .public-ticker-terms{display:none}
   .public-agent-demo-head{grid-template-columns:1fr;gap:17px;padding:21px 18px}
   .public-agent-demo-shell{grid-template-columns:1fr}
-  .public-demo-agent-panel{min-height:650px;border-right:0;border-bottom:1px solid #d5d8d1}
+  .public-demo-explainer{border-right:0;border-bottom:1px solid #d5d8d1}
+  .public-demo-agent-panel{min-height:0;border:0}
+  .public-demo-step-list{grid-template-columns:repeat(2,minmax(0,1fr))}
   .public-demo-workspace-view{min-height:620px}
   .public-demo-workspace-stage{min-height:430px}
   .public-demo-brief-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -573,6 +630,9 @@
   .public-ticker-row>span:not(.public-ticker-side){font-size:10px}
   .public-agent-demo-head h3{font-size:23px}
   .public-agent-demo-head>div:first-child>p:last-child{font-size:12px}
+  .public-demo-explainer{padding:22px 16px}
+  .public-demo-step-list{grid-template-columns:1fr}
+  .public-demo-step-button{min-height:54px}
   .public-demo-agent-panel .agent-heading,.public-demo-agent-panel .agent-context,.public-demo-agent-panel .agent-scroll{padding-left:16px;padding-right:16px}
   .public-demo-agent-footer{padding-left:16px;padding-right:16px}
   .public-demo-workspace-head{padding:18px 16px 15px}

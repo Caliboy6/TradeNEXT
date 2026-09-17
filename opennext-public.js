@@ -19,7 +19,7 @@ let draft = { mode: 'account', email: '', name: '', company: '', terms: false, e
 let publicTickerTimer = null;
 let publicAgentDemoTimer = null;
 const lang = () => 'en';
-const copy = (en, zh) => lang() === 'zh-CN' ? zh : en;
+const copy = en => en;
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function closeOverlays() {

@@ -51,6 +51,21 @@ function boolean(value, fallback = true) {
   throw new Error('Choose whether partial allocation is available.');
 }
 
+const BUYER_AGREEMENT_KEYS = ['buyerAcceptanceWindow', 'buyerPaymentCadence', 'buyerNetwork'];
+const SELLER_AGREEMENT_KEYS = ['legalEntity', 'billingCadence', 'supportWindow', 'warranty', 'acceptanceWindow'];
+function agreementSide(values, keys) {
+  const result = {};
+  for (const key of keys) result[key] = cleanText(values?.[key], key, 180, true);
+  return result;
+}
+function restoredAgreementSide(values, keys) {
+  const result = {};
+  for (const key of keys) {
+    try { result[key] = cleanText(values?.[key], key, 180, true); } catch { result[key] = ''; }
+  }
+  return result;
+}
+
 function normalizeRecord(values, kind, today) {
   if (!isObject(values)) throw new Error('Complete the required fields before submitting.');
   const supply = kind === 'supply';
@@ -94,6 +109,14 @@ function normalizeRecord(values, kind, today) {
       record.maxOutputPrice = number(values.maxOutputPrice, 'Maximum output price', {minimum: 0, maximum: 1e6});
       record.sourceRequirement = choice(values.sourceRequirement, ['any', 'authorized', 'original'], 'source requirement', 'any');
     }
+  }
+  if (market === 'gpu') {
+    record.agreement = {
+      version: 'OpenNEXT GPU Rental Agreement v1',
+      stage: supply ? 'Seller terms ready' : 'Fast match brief',
+      buyer: supply ? {} : agreementSide(values, BUYER_AGREEMENT_KEYS),
+      seller: supply ? agreementSide(values, SELLER_AGREEMENT_KEYS) : {},
+    };
   }
   return record;
 }
@@ -188,10 +211,20 @@ export function createMarketplaceStore(storage, options = {}) {
     const prefix = kind === 'rfq' ? 'RFQ' : 'SUP';
     if (!isObject(value) || !validId(value.id, prefix) || !validTimestamp(value.createdAt)) return null;
     try {
-      return {...normalizeRecord(value, kind, now().toISOString().slice(0, 10)), id: value.id, createdAt: new Date(value.createdAt).toISOString()};
+      const normalized = normalizeRecord(value, kind, now().toISOString().slice(0, 10));
+      const savedAgreement = value.agreement;
+      if (normalized.agreement && isObject(savedAgreement)) {
+        const stages = new Set(['Fast match brief', 'Seller terms ready', 'Open for bilateral confirmation']);
+        normalized.agreement = {
+          ...normalized.agreement,
+          stage: stages.has(savedAgreement.stage) ? savedAgreement.stage : normalized.agreement.stage,
+          buyer: { ...normalized.agreement.buyer, ...restoredAgreementSide(savedAgreement.buyer, BUYER_AGREEMENT_KEYS) },
+          seller: { ...normalized.agreement.seller, ...restoredAgreementSide(savedAgreement.seller, SELLER_AGREEMENT_KEYS) },
+        };
+      }
+      return { ...normalized, id: value.id, createdAt: new Date(value.createdAt).toISOString() };
     } catch { return null; }
   }
-
   try {
     const raw = storage?.getItem(STORAGE_KEY);
     // Refuse unexpectedly large payloads before parsing untrusted persisted data.

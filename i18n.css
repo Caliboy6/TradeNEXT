@@ -54,3 +54,9 @@ html[data-locale="zh-CN"] body {
     display: none;
   }
 }
+
+
+/* Public release is English-only; retain the locale runtime for compatibility without exposing a switcher. */
+.language-switch,[data-locale]{display:none!important}
+html,body{lang:en}
+input[type="date"],input[type="datetime-local"]{font-variant-numeric:tabular-nums}

@@ -1,4 +1,4 @@
-import "./procurement-workflows.js?v=opennext-20260914-desk-1";
+import "./procurement-workflows.js?v=opennext-20260917-english-only-1";
 import "./procurement-interactions.js?v=opennext-20260914-desk-1";
 import { navigateProcurement } from "./procurement-router.js?v=opennext-20260914-desk-1";
 

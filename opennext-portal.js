@@ -1,11 +1,11 @@
 import { state } from './demo-core.js?v=opennext-20260914-desk-1';
 import { demandTape } from './procurement-data.js?v=opennext-20260914-desk-1';
 import { renderCapacityPage, initializeCapacity, addDemoAllocation } from './opennext-capacity.js?v=opennext-20260915-marketplace-1';
-import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260915-marketplace-1';
+import { renderAccountPage, initializeAccount, closeAccountDialogs } from './opennext-account.js?v=opennext-20260917-english-only-1';
 import { createWorkspaceStore } from './opennext-portal-state.js?v=opennext-20260914-desk-1';
-import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260914-desk-1';
-import { createMarketplaceStore } from './opennext-marketplace-state.js?v=opennext-20260915-marketplace-2';
-import { initializeMarketplace, renderMarketplacePage, openMarketplaceComposer } from './opennext-marketplace.js?v=opennext-20260915-marketplace-2';
+import { renderOpenDesk, initializeOpenDesk } from './opennext-desk.js?v=opennext-20260917-market-perspective-3';
+import { createMarketplaceStore } from './opennext-marketplace-state.js?v=opennext-20260917-rental-terms-3';
+import { initializeMarketplace, renderMarketplacePage, openMarketplaceComposer } from './opennext-marketplace.js?v=opennext-20260917-rental-terms-2';
 
 const sections=[['opendesk','My OpenDesk'],['profile','Profile'],['tokens','My Tokens'],['my-gpus','My GPUs'],['supply','My Supplies'],['rfq','My RFQs'],['messages','Messages'],['billing','Billing'],['account','Account']];
 const personal=new Set(sections.map(([id])=>id));

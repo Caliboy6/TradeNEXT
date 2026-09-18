@@ -1,4 +1,4 @@
-import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260915-public-cleanup-1';
+import { renderLanding, renderLogin, logoMarkup } from './opennext-public-pages.js?v=opennext-20260917-public-landing-3';
 import { safeDestination, workspaceRoutes, readSession, writeSession, clearSession, DEMO_CODE } from './opennext-session.js?v=opennext-20260914-desk-1';
 
 const publicContent = document.querySelector('#publicContent');
@@ -14,10 +14,13 @@ let workspaceRender;
 let workspaceNavigate;
 let current = '';
 let pending = 'opendesk';
+let pendingGpuMarket = '';
 let ignoreNextHash = false;
 let draft = { mode: 'account', email: '', name: '', company: '', terms: false, error: '' };
+let publicTickerTimer = null;
+let publicAgentDemoTimer = null;
 const lang = () => 'en';
-const copy = (en, zh) => lang() === 'zh-CN' ? zh : en;
+const copy = en => en;
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function closeOverlays() {
@@ -28,6 +31,101 @@ function closeOverlays() {
   window.OpenNEXTCloseTransientUi?.();
 }
 
+function stopPublicMotion() {
+  if (publicTickerTimer) { clearInterval(publicTickerTimer); publicTickerTimer = null; }
+  if (publicAgentDemoTimer) { clearInterval(publicAgentDemoTimer); publicAgentDemoTimer = null; }
+}
+
+function startPublicTicker() {
+  if (publicTickerTimer) clearInterval(publicTickerTimer);
+  const root = publicContent.querySelector('.public-gpu-ticker');
+  const stack = root?.querySelector('.public-ticker-row-stack');
+  const rows = [...(root?.querySelectorAll('[data-ticker-row]') || [])];
+  if (!root || !stack || rows.length < 2) return;
+  let index = 0;
+  const isPaused = () => root.querySelector('.public-ticker-toggle')?.checked || root.matches(':hover') || root.matches(':focus-within');
+  const render = () => {
+    if (isPaused()) return;
+    rows.forEach((row, rowIndex) => row.classList.toggle('is-active', rowIndex === index));
+    stack.dataset.tickerActive = String(index);
+  };
+  delete stack.dataset.tickerActive;
+  render();
+  root.addEventListener('pointerenter', () => root.classList.add('is-hovered'));
+  root.addEventListener('pointerleave', () => { root.classList.remove('is-hovered'); render(); });
+  root.addEventListener('focusin', render);
+  root.addEventListener('focusout', () => requestAnimationFrame(render));
+  publicTickerTimer = setInterval(() => {
+    if (isPaused()) return;
+    index = (index + 1) % rows.length;
+    render();
+  }, 5000);
+}
+
+function startPublicAgentDemo() {
+  if (publicAgentDemoTimer) { clearInterval(publicAgentDemoTimer); publicAgentDemoTimer = null; }
+  const root = publicContent.querySelector('[data-agent-demo]');
+  if (!root) return;
+  const steps = [...root.querySelectorAll('[data-agent-step]')];
+  const details = [...root.querySelectorAll('[data-agent-detail]')];
+  const stages = [...root.querySelectorAll('[data-agent-stage]')];
+  if (!steps.length) return;
+  const activity = ['Capturing the natural-language request', 'Drafting the standard RFQ', 'Adding match-critical fields', 'Running the VETA guardrail', 'Confirming sourcing authorization', 'Screening seller supply lists', 'Ranking three matches', 'Recording buyer selection', 'Pushing the RFQ to the seller', 'Collecting seller-side terms', 'Requesting buyer confirmation', 'Sealing the order record'];
+  const messages = [
+    'I’ll turn this plain-language request into a private RFQ.',
+    'The standard GPU rental RFQ is ready for the required match fields.',
+    'I’ve added only the fields needed to compare seller supply.',
+    'The request passed the VETA guardrail. Supplier outreach is still gated by your approval.',
+    'Your $500 sourcing authorization is confirmed. It will be credited against a completed order.',
+    'I’m comparing the RFQ with 20 private seller supply lists.',
+    'Three outcomes are ready. Supplier 03 is the strongest fit.',
+    'Supplier 03 is selected. I’m requesting the seller’s response.',
+    'The seller has received a private push with the buyer-approved RFQ.',
+    'The seller-side fields are complete in the shared rental agreement.',
+    'The completed agreement is back with the buyer for final confirmation.',
+    'Final payment is approved. The order is recorded and capacity is reserved.',
+  ];
+  const render = index => {
+    steps.forEach((step, stepIndex) => {
+      step.classList.toggle('is-active', stepIndex === index);
+      step.setAttribute('aria-selected', String(stepIndex === index));
+      if (stepIndex === index) step.setAttribute('aria-current', 'step');
+      else step.removeAttribute('aria-current');
+      const state = step.querySelector('em');
+      if (state) state.textContent = stepIndex === index ? 'Selected' : 'View';
+    });
+    details.forEach((detail, detailIndex) => { detail.hidden = detailIndex !== index; });
+    stages.forEach((stage, stageIndex) => { stage.hidden = stageIndex !== index; });
+    root.querySelectorAll('[data-agent-log-step]').forEach((logStep, logIndex) => {
+      logStep.classList.toggle('is-current', logIndex === index);
+      const state = logStep.querySelector('em');
+      if (state) state.textContent = logIndex === index ? 'Current' : 'Standby';
+    });
+    const status = root.querySelector('[data-agent-demo-status]');
+    if (status) status.textContent = index === 0 ? 'Ready' : 'Viewing';
+    root.querySelectorAll('[data-agent-demo-progress]').forEach(progress => {
+      progress.textContent = `Step ${String(index + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
+    });
+    const activityLabel = root.querySelector('[data-agent-demo-activity]');
+    if (activityLabel) activityLabel.textContent = activity[index] || activity[0];
+    const stageTag = root.querySelector('[data-agent-demo-stage-tag]');
+    if (stageTag) stageTag.textContent = 'Selected';
+    const agentStatus = root.querySelector('[data-agent-demo-agent-status]');
+    if (agentStatus) agentStatus.textContent = steps[index]?.querySelector('strong')?.textContent || 'Selected step';
+    const message = root.querySelector('[data-agent-demo-message]');
+    if (message) message.textContent = messages[index] || messages[0];
+  };
+  root.addEventListener('click', event => {
+    const step = event.target.closest?.('[data-agent-step]');
+    if (!step || !root.contains(step)) return;
+    const index = Number(step.dataset.agentStep);
+    if (!Number.isInteger(index) || index < 0 || index >= steps.length) return;
+    event.preventDefault();
+    render(index);
+  });
+  render(0);
+}
+
 function showPublic(route) {
   current = route;
   workspace.hidden = true;
@@ -35,6 +133,12 @@ function showPublic(route) {
   document.body.classList.add('is-public');
   publicContent.innerHTML = route === 'home' ? renderLanding(lang()) : renderLogin(lang(), { ...draft, mode: route === 'signup' ? 'register' : draft.mode });
   document.documentElement.classList.remove('i18n-loading');
+  if (route === 'home') {
+    startPublicTicker();
+    startPublicAgentDemo();
+  } else {
+    stopPublicMotion();
+  }
 }
 
 function showWorkspaceStartup() {
@@ -85,6 +189,7 @@ export function navigatePublic(raw = 'home', options = {}) {
     } else {
       current = route;
       if (ready) {
+        applyPendingGpuMarket();
         publicContent.hidden = true;
         workspace.hidden = false;
         document.body.classList.remove('is-public');
@@ -107,6 +212,28 @@ function completeDemo(profile) {
   draft.error = '';
   draft.mode = 'account';
   navigatePublic('opendesk', { replace: true });
+}
+
+function applyPendingGpuMarket() {
+  if (!pendingGpuMarket || typeof window.OpenNEXTSetGpuMarket !== 'function') return false;
+  const market = pendingGpuMarket;
+  const applied = window.OpenNEXTSetGpuMarket(market);
+  if (applied) pendingGpuMarket = '';
+  return Boolean(applied);
+}
+
+function showContactModal() {
+  const host = document.getElementById('modal-host');
+  host.innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog public-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="public-contact-title"><header class="modal-head"><h2 id="public-contact-title">Contact OpenNEXT</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><p class="public-contact-intro">Tell us what you are sourcing, where you need it, and when you want to start. Our capacity desk will follow up with the right next step.</p><form class="public-contact-form" data-contact-form novalidate><label><span>Work email</span><input type="email" name="email" autocomplete="email" placeholder="you@company.com" required></label><label><span>Full name</span><input type="text" name="name" autocomplete="name" placeholder="Your name" required></label><label><span>Company</span><input type="text" name="company" autocomplete="organization" placeholder="Company name" required></label><label><span>Job title</span><input type="text" name="title" autocomplete="organization-title" placeholder="Your role" required></label><label class="public-contact-wide"><span>What would you like to discuss?</span><textarea name="message" rows="4" maxlength="2000" placeholder="Capacity, delivery, commercial terms or partnership context" required></textarea></label><div class="public-contact-actions"><button type="button" class="on-button on-button-outline" data-public-action="close-info">Cancel</button><button type="submit" class="on-button on-button-primary">Send inquiry</button></div></form></div></section></div>`;
+  document.body.classList.add('overlay-open');
+  host.querySelector('[name="email"]')?.focus();
+}
+
+function showContactSuccess() {
+  const host = document.getElementById('modal-host');
+  host.innerHTML = `<div class="modal-backdrop" data-public-action="close-info"><section class="modal public-info-dialog public-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="public-contact-success-title"><header class="modal-head"><h2 id="public-contact-success-title">Inquiry ready</h2><button type="button" class="close-button" data-public-action="close-info" aria-label="Close">×</button></header><div class="modal-body"><div class="public-contact-success"><h3>Thank you — we have your note.</h3><p>This demo does not send email, but your inquiry details have been validated and are ready for the OpenNEXT capacity desk.</p></div></div><footer class="modal-footer"><button type="button" class="on-button on-button-primary" data-public-action="close-info">Close</button></footer></section></div>`;
+  document.body.classList.add('overlay-open');
+  host.querySelector('[data-public-action="close-info"]')?.focus();
 }
 
 function showInfo(type) {
@@ -178,6 +305,7 @@ document.addEventListener('click', event => {
   const action = item.dataset.publicAction;
   if (action === 'retry') return location.reload();
   if (action === 'home') return navigatePublic('home');
+  if (action === 'contact') return showContactModal();
   if (action === 'signin') { captureAuthDraft(); draft.mode = 'account'; draft.error = ''; return navigatePublic('login'); }
   if (action === 'register') { captureAuthDraft(); draft.error = ''; return navigatePublic('signup'); }
   if (action === 'email-code' || action === 'forgot-password') { captureAuthDraft(); draft.mode = 'email'; draft.error = ''; return navigatePublic('login'); }
@@ -189,12 +317,22 @@ document.addEventListener('click', event => {
     return completeDemo({ email:`${provider}.user@demo.example`, name:`${providers[provider]} demo user` });
   }
   if (action === 'open-workspace') {
+    pendingGpuMarket = '';
     pending = safeDestination(item.dataset.target);
     if (item.dataset.mode) {
       pendingGpuMode = item.dataset.mode;
       window.OpenNEXTSetGpuMode?.(pendingGpuMode);
     }
     return navigatePublic(pending);
+  }
+  if (action === 'open-market') {
+    const market = String(item.dataset.gpuMarket || '').toUpperCase();
+    if (!['H100', 'H200', 'A100'].includes(market)) return;
+    pending = 'opendesk';
+    pendingGpuMarket = market;
+    pendingGpuMode = 'rental';
+    window.OpenNEXTSetGpuMode?.(pendingGpuMode);
+    return navigatePublic(session && session.expiresAt > Date.now() ? 'opendesk' : 'login');
   }
   if (action === 'locale') {
     return;
@@ -214,6 +352,12 @@ document.addEventListener('click', event => {
 }, true);
 
 document.addEventListener('submit', event => {
+  const contactForm = event.target.closest?.('[data-contact-form]');
+  if (contactForm) {
+    event.preventDefault(); event.stopImmediatePropagation();
+    if (!contactForm.reportValidity()) return;
+    showContactSuccess(); return;
+  }
   const form = event.target.closest?.('[data-auth-form]');
   if (!form) return;
   event.preventDefault(); event.stopImmediatePropagation();
@@ -276,6 +420,7 @@ export function initializePublic(initialRoute) {
   ready = true;
   window.OpenNEXTWorkspaceReady = true;
   if (pendingGpuMode) window.OpenNEXTSetGpuMode?.(pendingGpuMode);
+  applyPendingGpuMarket();
   navigatePublic(current || initialRoute || 'home', { replace: true });
   // These files deliberately override legacy styles injected during startup.
   for (const id of ['opennext-workspace-style', 'opennext-public-style', 'opennext-agent-style', 'opennext-shell-style', 'opennext-capacity-style', 'opennext-account-style', 'opennext-portal-style', 'opennext-desk-style', 'opennext-theme-style', 'opennext-gci-style']) {

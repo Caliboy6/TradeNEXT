@@ -68,15 +68,22 @@ function startPublicAgentDemo() {
   if (!root) return;
   const steps = [...root.querySelectorAll('[data-agent-step]')];
   const details = [...root.querySelectorAll('[data-agent-detail]')];
+  const stages = [...root.querySelectorAll('[data-agent-stage]')];
   if (!steps.length) return;
-  const activity = ['Parsing the buyer brief', 'Drafting the standard RFQ', 'Comparing private supply', 'Completing shared terms', 'Preparing buyer approval', 'Sealing the order record'];
+  const activity = ['Capturing the natural-language request', 'Drafting the standard RFQ', 'Adding match-critical fields', 'Running the VETA guardrail', 'Confirming sourcing authorization', 'Screening seller supply lists', 'Ranking three matches', 'Recording buyer selection', 'Pushing the RFQ to the seller', 'Collecting seller-side terms', 'Requesting buyer confirmation', 'Sealing the order record'];
   const messages = [
-    'Understood. I am capturing the minimum fields needed to start a private match.',
-    'The RFQ is ready. Only buyer-approved specifications are included.',
-    'Three private supply signals are being compared against the brief.',
-    'The shared rental agreement is being completed from buyer and seller terms.',
-    'The best-fit quote is ready for buyer approval with counterparties masked.',
-    'The order record is sealed. Capacity is reserved in this simulated run.',
+    'I’ll turn this plain-language request into a private RFQ.',
+    'The standard GPU rental RFQ is ready for the required match fields.',
+    'I’ve added only the fields needed to compare seller supply.',
+    'The request passed the VETA guardrail. Supplier outreach is still gated by your approval.',
+    'Your $500 sourcing authorization is confirmed. It will be credited against a completed order.',
+    'I’m comparing the RFQ with 20 private seller supply lists.',
+    'Three outcomes are ready. Supplier 03 is the strongest fit.',
+    'Supplier 03 is selected. I’m requesting the seller’s response.',
+    'The seller has received a private push with the buyer-approved RFQ.',
+    'The seller-side fields are complete in the shared rental agreement.',
+    'The completed agreement is back with the buyer for final confirmation.',
+    'Final payment is approved. The order is recorded and capacity is reserved.',
   ];
   const render = index => {
     steps.forEach((step, stepIndex) => {
@@ -88,11 +95,14 @@ function startPublicAgentDemo() {
       if (state) state.textContent = stepIndex === index ? 'Selected' : 'View';
     });
     details.forEach((detail, detailIndex) => { detail.hidden = detailIndex !== index; });
+    stages.forEach((stage, stageIndex) => { stage.hidden = stageIndex !== index; });
     root.querySelectorAll('[data-agent-log-step]').forEach((logStep, logIndex) => {
       logStep.classList.toggle('is-current', logIndex === index);
       const state = logStep.querySelector('em');
       if (state) state.textContent = logIndex === index ? 'Current' : 'Standby';
     });
+    const status = root.querySelector('[data-agent-demo-status]');
+    if (status) status.textContent = index === 0 ? 'Ready' : 'Viewing';
     root.querySelectorAll('[data-agent-demo-progress]').forEach(progress => {
       progress.textContent = `Step ${String(index + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
     });
